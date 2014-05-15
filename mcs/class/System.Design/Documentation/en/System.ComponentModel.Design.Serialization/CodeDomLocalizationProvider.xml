@@ -118,7 +118,6 @@
         <Parameter Name="serializerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomLocalizationProvider" /> instance is cast to an <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationProvider" /> interface.</para>
@@ -127,6 +126,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationProvider.GetSerializer(System.ComponentModel.Design.Serialization.IDesignerSerializationManager,System.Object,System.Type,System.Type)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a serializer of the type requested, or null if the request cannot be satisfied.</para>
+        </returns>
         <param name="manager">
           <attribution license="cc4" from="Microsoft" modified="false" />The serialization manager requesting the serializer. </param>
         <param name="currentSerializer">

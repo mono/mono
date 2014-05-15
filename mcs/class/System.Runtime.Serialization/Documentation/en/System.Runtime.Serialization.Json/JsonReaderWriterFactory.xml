@@ -36,7 +36,6 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload does not accept an <see cref="T:System.Text.Encoding" /> parameter. The character encoding (UTF-8, Unicode or Big-Endian Unicode) is auto-detected when the data is read.</para>
@@ -46,6 +45,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryReader" /> that can map buffers encoded with JavaScript Object Notation (JSON) to an XML Infoset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> that can process JavaScript Object Notation (JSON) data.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Byte" /> buffer array from which to read.</param>
         <param name="quotas">
@@ -67,7 +70,6 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload does not take an <see cref="T:System.Text.Encoding" /> parameter. The character encoding (UTF-8, Unicode or Big-Endian Unicode) is auto-detected when the data is read.</para>
@@ -77,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryReader" /> that can map streams encoded with JavaScript Object Notation (JSON) to an XML Infoset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> that can read JavaScript Object Notation (JSON).</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.IO.Stream" /> from which to read.</param>
         <param name="quotas">
@@ -100,7 +106,6 @@
         <Parameter Name="quotas" Type="System.Xml.XmlDictionaryReaderQuotas" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload does not take an <see cref="T:System.Text.Encoding" /> parameter. The character encoding (UTF-8, Unicode or Big-Endian Unicode) is auto-detected when the data is read.</para>
@@ -110,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryReader" /> that can map buffers encoded with JavaScript Object Notation (JSON), of a specified size and offset, to an XML Infoset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> that can read JavaScript Object Notation (JSON).</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Byte" /> buffer array from which to read.</param>
         <param name="offset">
@@ -137,7 +146,6 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>crabout using <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to prevent Denial of Service attacks when reading untrusted data, see <format type="text/html"><a href="a7eb98da-4a93-4692-8b59-9d670c79ffb2">Security Considerations for Data</a></format>.</para>
@@ -146,6 +154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryReader" /> that can map streams encoded with JavaScript Object Notation (JSON), of a specified size and offset, to an XML Infoset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> that can read JavaScript Object Notation (JSON).</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.IO.Stream" /> from which to read.</param>
         <param name="encoding">
@@ -175,7 +187,6 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>crabout using <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to prevent Denial of Service attacks when reading untrusted data, see <format type="text/html"><a href="a7eb98da-4a93-4692-8b59-9d670c79ffb2">Security Considerations for Data</a></format>.</para>
@@ -184,6 +195,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryReader" /> that can map buffers encoded with JavaScript Object Notation (JSON), with a specified size and offset and character encoding, to an XML Infoset. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> that can read JavaScript Object Notation (JSON).</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input <see cref="T:System.Byte" /> buffer array from which to read.</param>
         <param name="offset">
@@ -212,7 +227,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default character encoding is UTF-8. When the writer is closed, the stream is closed as well.</para>
@@ -221,6 +235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to a stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to the stream based on an XML Infoset.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The output <see cref="T:System.IO.Stream" /> for the JSON writer.</param>
       </Docs>
@@ -240,7 +258,6 @@
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When the writer is closed, the stream is closed as well.</para>
@@ -249,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to a stream with a specified character encoding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to the stream based on an XML Infoset.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The output <see cref="T:System.IO.Stream" /> for the JSON writer.</param>
         <param name="encoding">
@@ -271,12 +292,15 @@
         <Parameter Name="ownsStream" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to a stream with a specified character encoding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryWriter" /> that writes data encoded with JSON to the stream based on an XML Infoset.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The output <see cref="T:System.IO.Stream" /> for the JSON writer.</param>
         <param name="encoding">

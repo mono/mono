@@ -196,27 +196,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>Current instance &gt; <paramref name="value" />.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -230,6 +209,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified <see cref="T:System.Char" /> object and indicates whether this instance precedes, follows, or appears in the same position in the sort order as the specified <see cref="T:System.Char" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the position of this instance in the sort order in relation to the <paramref name="value" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance has the same position in the sort order as <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Char" /> object to compare. </param>
       </Docs>
@@ -251,30 +270,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <para>Current instance &gt; <paramref name="value" />, or
-<paramref name="value" /> is a null reference.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is not a <see cref="T:System.Char" /> and is not a null reference.</exception>
         <remarks>
@@ -287,6 +282,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and indicates whether this instance precedes, follows, or appears in the same position in the sort order as the specified <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the position of this instance in the sort order in relation to the <paramref name="value" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance precedes <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance has the same position in the sort order as <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance follows <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare this instance to, or null. </param>
       </Docs>
@@ -307,7 +345,6 @@
         <Parameter Name="utf32" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -318,6 +355,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified Unicode code point into a UTF-16 encoded string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of one <see cref="T:System.Char" /> object or a surrogate pair of <see cref="T:System.Char" /> objects equivalent to the code point specified by the <paramref name="utf32" /> parameter.</para>
+        </returns>
         <param name="utf32">
           <attribution license="cc4" from="Microsoft" modified="false" />A 21-bit Unicode code point. </param>
       </Docs>
@@ -338,7 +379,6 @@
         <Parameter Name="lowSurrogate" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -349,6 +389,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a UTF-16 encoded surrogate pair into a Unicode code point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 21-bit Unicode code point represented by the <paramref name="highSurrogate" /> and <paramref name="lowSurrogate" /> parameters.</para>
+        </returns>
         <param name="highSurrogate">
           <attribution license="cc4" from="Microsoft" modified="false" />A high surrogate code unit (that is, a code unit ranging from U+D800 through U+DBFF). </param>
         <param name="lowSurrogate">
@@ -371,7 +415,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -381,6 +424,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a UTF-16 encoded character or surrogate pair at a specified position in a string into a Unicode code point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 21-bit Unicode code point represented by the character or surrogate pair at the position in the <paramref name="s" /> parameter specified by the <paramref name="index" /> parameter.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a character or surrogate pair. </param>
         <param name="index">
@@ -402,11 +449,6 @@
         <Parameter Name="obj" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the 
- same value as the current instance; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -416,6 +458,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to the specified <see cref="T:System.Char" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance. </param>
       </Docs>
@@ -437,12 +483,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the 
- same type and value as the current instance. If <paramref name="obj" /> is a null reference
- or is not an instance of <see cref="T:System.Char" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The comparison performed by this method is based on the encoded values of this instance and <paramref name="obj" />, not necessarily their lexicographical characteristics.</para>
@@ -451,6 +491,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.Char" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance or null. </param>
       </Docs>
@@ -471,9 +515,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> value containing a hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to
       generate the hash code is unspecified.</para>
@@ -486,6 +527,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -506,11 +551,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> representing the numeric value associated with
-<paramref name="c" /> if and only if <paramref name="c" /> has an associated numeric value;
-   otherwise, -1.0.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Char.GetNumericValue(System.Char)" /> 
 method.</para>
@@ -547,6 +587,10 @@ public static void Main() {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified numeric Unicode character to a double-precision floating point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The numeric value of <paramref name="c" /> if that character represents a number; otherwise, -1.0.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>
@@ -571,16 +615,11 @@ public static void Main() {
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Double" /> representing the numeric value associated with the
-<see cref="T:System.Char" /> at position 
-<paramref name="index" /> in <paramref name="s" /> if and only if that <see cref="T:System.Char" />
-has an associated numeric value; otherwise, -1.0.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character position in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="s" /> parameter must be the string representation of a numeric value. For example, if the character at position <paramref name="index" /> in <paramref name="s" /> is "5", the return value is 5. However, if the character at position <paramref name="index" /> in <paramref name="s" /> is "z", the return value is -1.</para>
@@ -593,6 +632,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric Unicode character at the specified position in a specified string to a double-precision floating point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The numeric value of the character at position <paramref name="index" /> in <paramref name="s" /> if that character represents a number; otherwise, -1.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" />. </param>
         <param name="index">
@@ -615,12 +658,15 @@ has an associated numeric value; otherwise, -1.0.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.TypeCode" /> for value type <see cref="T:System.Char" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The enumerated constant, <see cref="F:System.TypeCode.Char" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUnicodeCategory">
@@ -640,9 +686,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Globalization.UnicodeCategory" /> of <paramref name="c" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Char.GetUnicodeCategory(System.Char)" /> method does not always return the same <see cref="T:System.Globalization.UnicodeCategory" /> value as the <see cref="M:System.Globalization.CharUnicodeInfo.GetUnicodeCategory(System.Char)" /> method when it is passed a particular character as a parameter. The <see cref="M:System.Globalization.CharUnicodeInfo.GetUnicodeCategory(System.Char)" /> method is designed to reflect the current version of the Unicode standard. In contrast, although the <see cref="M:System.Char.GetUnicodeCategory(System.Char)" /> method usually reflects the current version of the Unicode standard, it may return a character's category based on a previous version of the standard or it may return a category that differs from the current standard in order to preserve backward compatibility. As a result, we recommend that you use the <see cref="M:System.Globalization.CharUnicodeInfo.GetUnicodeCategory(System.Char)" /> method instead of <see cref="M:System.Char.GetUnicodeCategory(System.Char)" />.</para>
@@ -651,6 +694,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Categorizes a specified Unicode character into a group identified by one of the <see cref="T:System.Globalization.UnicodeCategory" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.UnicodeCategory" /> value that identifies the group that contains <paramref name="c" />.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to categorize. </param>
       </Docs>
@@ -674,9 +721,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Globalization.UnicodeCategory" /> of the <see cref="T:System.Char" /> at position index in <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
@@ -689,6 +733,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Categorizes the character at the specified position in a specified string into a group identified by one of the <see cref="T:System.Globalization.UnicodeCategory" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.UnicodeCategory" /> enumerated constant that identifies the group that contains the character at position <paramref name="index" /> in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" />. </param>
         <param name="index">
@@ -713,11 +761,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>true if <paramref name="c" /> is a member of the following category
-   in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Control" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control characters are formatting and other non-printing characters, such as ACK, BEL, CR, FF, LF, and VT. T The Unicode standard assigns code points from \U0000 to \U001F, \U007F, and from \U0080 to \U009F to control characters. According to the Unicode standard, these values are to be interpreted as control characters unless their use is otherwise defined by an application. Valid control characters are members of the <see cref="F:System.Globalization.UnicodeCategory.Control" /> category. </para>
@@ -726,6 +769,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a control character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a control character; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -749,16 +796,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Control" />; otherwise, 
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -768,6 +810,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a control character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a control character; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -792,11 +838,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of the
-   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether a <see cref="T:System.Char" /> is a radix-10 digit. This contrasts with <see cref="M:System.Char.IsNumber(System.Char)" />, which determines whether a Char is of any numeric Unicode category. Numbers include characters such as fractions, subscripts, superscripts, Roman numerals, currency numerators, encircled numbers, and script-specific digits.</para>
@@ -806,6 +847,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a decimal digit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a decimal digit; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -829,16 +874,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, 
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether a <see cref="T:System.Char" /> is a radix-10 digit. This contrasts with <see cref="M:System.Char.IsNumber(System.Char)" />, which determines whether a <see cref="T:System.Char" /> is of any numeric Unicode category. Numbers include characters such as fractions, subscripts, superscripts, Roman numerals, currency numerators, encircled numbers, and script-specific digits.</para>
@@ -849,6 +889,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a decimal digit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a decimal digit; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -871,7 +915,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -881,6 +924,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified <see cref="T:System.Char" /> object is a high surrogate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the numeric value of the <paramref name="c" /> parameter ranges from U+D800 through U+DBFF; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -901,7 +948,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -912,6 +958,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the <see cref="T:System.Char" /> object at the specified position in a string is a high surrogate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the numeric value of the specified character in the <paramref name="s" /> parameter ranges from U+D800 through U+DBFF; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -935,12 +985,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether a <see cref="T:System.Char" /> is a member of any category of Unicode letter. Unicode letters include the following:</para>
@@ -966,6 +1010,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a Unicode letter. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a letter; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -989,16 +1037,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
-<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -1025,6 +1068,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a Unicode letter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a letter; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -1049,11 +1096,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid letters and decimal digits are members of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: UppercaseLetter, LowercaseLetter, TitlecaseLetter, ModifierLetter, OtherLetter, or DecimalDigitNumber.</para>
@@ -1062,6 +1104,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a letter or a decimal digit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a letter or a decimal digit; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -1085,20 +1131,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
-<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.TitlecaseLetter" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierLetter" />, <see cref="F:System.Globalization.UnicodeCategory.OtherLetter" />, or <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />; otherwise, 
-<see langword="false" />. </para>
-          <para>
-            <see langword="" />
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -1108,6 +1145,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a letter or a decimal digit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a letter or a decimal digit; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -1132,12 +1173,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of the
-   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />; otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid lowercase letters are members of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: LowercaseLetter.</para>
@@ -1146,6 +1181,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a lowercase letter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a lowercase letter; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -1169,17 +1208,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of the following category 
-   in <see cref="T:System.Globalization.UnicodeCategory" />:<see cref="F:System.Globalization.UnicodeCategory.LowercaseLetter" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -1189,6 +1222,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a lowercase letter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a lowercase letter; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -1211,7 +1248,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1221,6 +1257,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified <see cref="T:System.Char" /> object is a low surrogate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the numeric value of the <paramref name="c" /> parameter ranges from U+DC00 through U+DFFF; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to evaluate. </param>
       </Docs>
@@ -1241,7 +1281,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1252,6 +1291,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the <see cref="T:System.Char" /> object at the specified position in a string is a low surrogate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the numeric value of the specified character in the <paramref name="s" /> parameter ranges from U+DC00 through U+DFFF; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -1275,12 +1318,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether a <see cref="T:System.Char" /> is of any numeric Unicode category. In addition to including digits, numbers include characters, fractions, subscripts, superscripts, Roman numerals, currency numerators, and encircled numbers. This method contrasts with the <see cref="M:System.Char.IsDigit(System.Char)" /> method, which determines whether a <see cref="T:System.Char" /> is a radix-10 digit.</para>
@@ -1292,6 +1329,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a number; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -1315,17 +1356,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the
-   character at position <paramref name="index" /> in <paramref name="s" /> is a member of one of the
-   following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.DecimalDigitNumber" />, <see cref="F:System.Globalization.UnicodeCategory.LetterNumber" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherNumber" />; otherwise, <see langword="false" />
-   . </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines whether a <see cref="T:System.Char" /> is of any numeric Unicode category. In addition to including digits, numbers include characters, fractions, subscripts, superscripts, Roman numerals, currency numerators, and encircled numbers. This method contrasts with the <see cref="M:System.Char.IsDigit(System.Char)" /> method, which determines whether a <see cref="T:System.Char" /> is a radix-10 digit.</para>
@@ -1338,6 +1373,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a number; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -1362,12 +1401,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.ConnectorPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.DashPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.OpenPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.ClosePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.InitialQuotePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.FinalQuotePunctuation" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherPunctuation" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid punctuation marks are members of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: ConnectorPunctuation, DashPunctuation, OpenPunctuation, ClosePunctuation, InititalQuotePunctuation, FinalQuotePunctuation, or OtherPunctuation. They include characters with the Unicode code points listed in the following table. </para>
@@ -1714,6 +1747,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a punctuation mark.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a punctuation mark; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -1737,18 +1774,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a
-   member of one of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.ConnectorPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.DashPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.OpenPunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.ClosePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.InitialQuotePunctuation" />, <see cref="F:System.Globalization.UnicodeCategory.FinalQuotePunctuation" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherPunctuation" />;
-   otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2096,6 +2126,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a punctuation mark.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a punctuation mark; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2120,12 +2154,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />, <see cref="F:System.Globalization.UnicodeCategory.LineSeparator" />, or <see cref="F:System.Globalization.UnicodeCategory.ParagraphSeparator" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Unicode standard recognizes three subcategories of separators: </para>
@@ -2148,6 +2176,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a separator character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a separator character; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -2171,17 +2203,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
-<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />, <see cref="F:System.Globalization.UnicodeCategory.LineSeparator" />, or <see cref="F:System.Globalization.UnicodeCategory.ParagraphSeparator" />; 
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2205,6 +2231,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a separator character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a separator character; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2229,12 +2259,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of the
-   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Surrogate" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A surrogate is a <see cref="T:System.Char" /> object with a UTF-16 code unit in the range from U+D800 to U+DFFF. Each character with a code unit in this range belongs to the <see cref="F:System.Globalization.UnicodeCategory.Surrogate" /> category. The individual surrogate code unit has no interpretation of its own, but has meaning only when used as part of a surrogate pair. For more information about surrogate pairs, see the Unicode Standard at the <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode home page</see>.</para>
@@ -2243,6 +2267,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified character has a surrogate code unit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is either a high surrogate or a low surrogate; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -2266,16 +2294,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.Surrogate" />; otherwise, 
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2285,6 +2308,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string has a surrogate code unit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a either a high surrogate or a low surrogate; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2308,7 +2335,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="lowSurrogate" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2318,6 +2344,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the two specified <see cref="T:System.Char" /> objects form a surrogate pair.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the numeric value of the <paramref name="highSurrogate" /> parameter ranges from U+D800 through U+DBFF, and the numeric value of the <paramref name="lowSurrogate" /> parameter ranges from U+DC00 through U+DFFF; otherwise, false.</para>
+        </returns>
         <param name="highSurrogate">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to evaluate as the high surrogate of a surrogate pair. </param>
         <param name="lowSurrogate">
@@ -2340,7 +2370,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2350,6 +2379,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two adjacent <see cref="T:System.Char" /> objects at a specified position in a string form a surrogate pair.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="s" /> parameter includes adjacent characters at positions <paramref name="index" /> and <paramref name="index" /> + 1, and the numeric value of the character at position <paramref name="index" /> ranges from U+D800 through U+DBFF, and the numeric value of the character at position <paramref name="index" />+1 ranges from U+DC00 through U+DFFF; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2373,12 +2406,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of one
-   of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.MathSymbol" />, <see cref="F:System.Globalization.UnicodeCategory.CurrencySymbol" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierSymbol" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherSymbol" />; otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid symbols are members of the following categories in <see cref="T:System.Globalization.UnicodeCategory" />: MathSymbol, CurrencySymbol, ModifierSymbol, and OtherSymbol.</para>
@@ -2414,6 +2441,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as a symbol character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is a symbol character; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -2437,17 +2468,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of one of the following categories in 
-<see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.MathSymbol" />, <see cref="F:System.Globalization.UnicodeCategory.CurrencySymbol" />, <see cref="F:System.Globalization.UnicodeCategory.ModifierSymbol" />, or <see cref="F:System.Globalization.UnicodeCategory.OtherSymbol" />; otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2484,6 +2509,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as a symbol character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is a symbol character; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2508,13 +2537,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> is a member of the
-   following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />;
-   otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid uppercase letters are members of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: UppercaseLetter.</para>
@@ -2523,6 +2545,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as an uppercase letter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is an uppercase letter; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -2546,16 +2572,11 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />: <see cref="F:System.Globalization.UnicodeCategory.UppercaseLetter" />; otherwise, 
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2565,6 +2586,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as an uppercase letter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is an uppercase letter; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2589,15 +2614,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="c" /> either has a code
-   point of 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x0085, 0x2028, or 0x2029; or
-   is a member of the following category in <see cref="T:System.Globalization.UnicodeCategory" />:
-<see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />; otherwise,
-<see langword="false" />.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>White space characters are the following Unicode characters:</para>
@@ -2620,6 +2636,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified Unicode character is categorized as white space.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="c" /> is white space; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to evaluate. </param>
       </Docs>
@@ -2643,21 +2663,13 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the character at position
-<paramref name="index" /> in <paramref name="s" /> either has a code point of 0x0009, 0x000a, 0x000b, 
-   0x000c, 0x000d, 0x0085, 0x2028, or 0x2029; or is a member of the following
-   category in <see cref="T:System.Globalization.UnicodeCategory" />:
-<see cref="F:System.Globalization.UnicodeCategory.SpaceSeparator" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="s " />is a null reference.</para>
         </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="index" /> is less than zero, or greater than or equal to the length of <paramref name="s" />.</exception>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position of the character to evaluate in <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Character positions in a string are indexed starting from zero.</para>
@@ -2681,6 +2693,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the character at the specified position in a specified string is categorized as white space.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character at position <paramref name="index" /> in <paramref name="s" /> is white space; otherwise, false.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string. </param>
         <param name="index">
@@ -2759,9 +2775,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The <see cref="T:System.Char" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s " />is a null reference.</exception>
@@ -2771,6 +2784,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified string to its equivalent Unicode character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Unicode character equivalent to the sole character in <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a single character, or null. </param>
       </Docs>
@@ -2792,12 +2809,15 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note   This conversion is not supported. Attempting to do so throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This conversion is not supported. No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2818,7 +2838,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToByte(System.Char)" /> method instead. </para>
@@ -2827,6 +2846,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToByte(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2847,7 +2870,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface.</para>
@@ -2856,6 +2878,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToChar(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.Char" /> object unchanged.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2876,12 +2902,15 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note   This conversion is not supported. Attempting to do so throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2902,12 +2931,15 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note   This conversion is not supported. Attempting to do so throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2928,12 +2960,15 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note   This conversion is not supported. Attempting to do so throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2954,7 +2989,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt16(System.Char)" /> method instead.</para>
@@ -2963,6 +2997,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> For a description of this member, see <see cref="M:System.IConvertible.ToInt16(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -2983,7 +3021,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt32(System.Char)" /> method instead.</para>
@@ -2992,6 +3029,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToInt32(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3012,7 +3053,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToInt64(System.Char)" /> method instead.</para>
@@ -3021,6 +3061,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> For a description of this member, see <see cref="M:System.IConvertible.ToInt64(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3041,7 +3085,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToSByte(System.Char)" /> method instead.</para>
@@ -3050,6 +3093,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> For a description of this member, see <see cref="M:System.IConvertible.ToSByte(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3070,12 +3117,15 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note   This conversion is not supported. Attempting to do so throws an <see cref="T:System.InvalidCastException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored.</param>
       </Docs>
@@ -3098,7 +3148,6 @@ has an associated numeric value; otherwise, -1.0.</para>
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ChangeType(System.Object,System.Type,System.IFormatProvider)" /> method instead.</para>
@@ -3107,6 +3156,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToType(System.Type,System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object. </param>
       </Docs>
@@ -3127,7 +3180,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt16(System.Char)" /> method instead.</para>
@@ -3136,6 +3188,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt16(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object. (Specify null because the <paramref name="provider" /> parameter is ignored.)</param>
       </Docs>
@@ -3156,7 +3212,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt32(System.Char)" /> method instead.</para>
@@ -3165,6 +3220,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt32(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object. (Specify null because the <paramref name="provider" /> parameter is ignored.)</param>
       </Docs>
@@ -3185,7 +3244,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Char" /> instance is cast to an <see cref="T:System.IConvertible" /> interface. The recommended alternative is to call the <see cref="M:System.Convert.ToUInt64(System.Char)" /> method instead.</para>
@@ -3194,6 +3252,10 @@ has an associated numeric value; otherwise, -1.0.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.IConvertible.ToUInt64(System.IFormatProvider)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value of the current <see cref="T:System.Char" /> object.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object. (Specify null because the <paramref name="provider" /> parameter is ignored.)</param>
       </Docs>
@@ -3215,11 +3277,6 @@ has an associated numeric value; otherwise, -1.0.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The lowercase equivalent of <paramref name="c" />, or the value of
-<paramref name="c" /> if and only if <paramref name="c" /> is already lowercase or does not have a 
-   lowercase equivalent.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Char.ToLower(System.Char,System.Globalization.CultureInfo)" /> method.</para>
           <code lang="C#">using System;
@@ -3249,6 +3306,10 @@ public class CharToLower {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a Unicode character to its lowercase equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The lowercase equivalent of <paramref name="c" />, or the unchanged value of <paramref name="c" />, if <paramref name="c" /> is already lowercase or not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>
@@ -3271,7 +3332,6 @@ public class CharToLower {
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.String.ToLower" /> to convert a string to lowercase.</para>
@@ -3280,6 +3340,10 @@ public class CharToLower {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a specified Unicode character to its lowercase equivalent using specified culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The lowercase equivalent of <paramref name="c" />, modified according to <paramref name="culture" />, or the unchanged value of <paramref name="c" />, if <paramref name="c" /> is already lowercase or not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
         <param name="culture">
@@ -3301,7 +3365,6 @@ public class CharToLower {
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3312,6 +3375,10 @@ public class CharToLower {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a Unicode character to its lowercase equivalent using the casing rules of the invariant culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The lowercase equivalent of the <paramref name="c" /> parameter, or the unchanged value of <paramref name="c" />, if <paramref name="c" /> is already lowercase or not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>
@@ -3331,10 +3398,6 @@ public class CharToLower {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note"> This method
@@ -3345,6 +3408,10 @@ representation of the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3364,12 +3431,15 @@ representation of the current instance.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified Unicode character to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of <paramref name="c" />.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>
@@ -3391,10 +3461,6 @@ representation of the current instance.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the value of this instance as
-   specified by <paramref name="provider" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="provider" /> parameter is ignored; it does not participate in this operation.</para>
@@ -3403,6 +3469,10 @@ representation of the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="provider" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />(Reserved) An object that supplies culture-specific formatting information. </param>
       </Docs>
@@ -3425,11 +3495,6 @@ representation of the current instance.</para>
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The uppercase equivalent of <paramref name="c" />, or the value of <paramref name="c" /> if and
-   only if <paramref name="c" /> is already uppercase or does not have an uppercase
-   equivalent.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Char.ToUpper(System.Char,System.Globalization.CultureInfo)" /> method.</para>
           <code lang="C#">using System;
@@ -3460,6 +3525,10 @@ public class CharToUpper {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a Unicode character to its uppercase equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The uppercase equivalent of <paramref name="c" />, or the unchanged value of <paramref name="c" /> if <paramref name="c" /> is already uppercase, has no uppercase equivalent, or is not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>
@@ -3482,7 +3551,6 @@ public class CharToUpper {
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.String.ToUpper" /> to convert a string to uppercase.</para>
@@ -3491,6 +3559,10 @@ public class CharToUpper {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a specified Unicode character to its uppercase equivalent using specified culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The uppercase equivalent of <paramref name="c" />, modified according to <paramref name="culture" />, or the unchanged value of <paramref name="c" /> if <paramref name="c" /> is already uppercase, has no uppercase equivalent, or is not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
         <param name="culture">
@@ -3512,7 +3584,6 @@ public class CharToUpper {
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3523,6 +3594,10 @@ public class CharToUpper {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a Unicode character to its uppercase equivalent using the casing rules of the invariant culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The uppercase equivalent of the <paramref name="c" /> parameter, or the unchanged value of <paramref name="c" />, if <paramref name="c" /> is already uppercase or not alphabetic.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to convert. </param>
       </Docs>

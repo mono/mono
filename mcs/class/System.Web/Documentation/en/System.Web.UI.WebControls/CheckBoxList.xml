@@ -263,7 +263,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Style" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxList.CreateControlStyle" /> method is used primarily by control developers in custom controls that derive from the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> class.</para>
@@ -272,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a style object that is used internally by the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> control to implement all style related properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> that contains the style properties of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -289,7 +292,6 @@
         <Parameter Name="pathOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.Control" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxList.FindControl(System.String,System.Int32)" /> method is used primarily by control developers in custom controls that derive from the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> class.</para>
@@ -299,6 +301,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the current naming container for a server control with the specified ID and path offset. The <see cref="M:System.Web.UI.WebControls.CheckBoxList.FindControl(System.String,System.Int32)" /> method always returns the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="T:System.Web.UI.WebControls.CheckBoxList" />.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to find.</param>
         <param name="pathOffset">
@@ -323,7 +329,6 @@
         <Parameter Name="repeatIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxList.GetItemStyle(System.Web.UI.WebControls.ListItemType,System.Int32)" /> method is used primarily by control developers in custom controls that derive from the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> class.</para>
@@ -333,6 +338,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the style of the specified item type at the specified index in the list control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>null, indicating that style attributes are not set on individual list items in a <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> control.</para>
+        </returns>
         <param name="itemType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> enumeration values. </param>
         <param name="repeatIndex">
@@ -416,7 +425,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBoxList.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers in custom controls that derive from the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> class.</para>
@@ -427,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the posted data for the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the state of the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> is different from the last posting; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control, used to index the <see cref="T:System.Collections.Specialized.NameValueCollection" /> specified in the <paramref name="postCollection" /> parameter.</param>
         <param name="postCollection">
@@ -746,7 +758,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.CheckBoxList.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method to process posted data for a <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> object. </para>
@@ -756,6 +767,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes posted data for the <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control, used to index the <paramref name="postCollection" />.</param>
         <param name="postCollection">
@@ -800,7 +815,6 @@
         <Parameter Name="repeatIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.CheckBoxList.GetItemStyle(System.Web.UI.WebControls.ListItemType,System.Int32)" /> method to retrieve the style of an item in a <see cref="T:System.Web.UI.WebControls.CheckBoxList" /> object. </para>
@@ -810,6 +824,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.WebControls.IRepeatInfoUser.GetItemStyle(System.Web.UI.WebControls.ListItemType,System.Int32)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> object that represents the style of the specified item type at the specified index in the list control.</para>
+        </returns>
         <param name="itemType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ListItemType" /> enumeration values. </param>
         <param name="repeatIndex">

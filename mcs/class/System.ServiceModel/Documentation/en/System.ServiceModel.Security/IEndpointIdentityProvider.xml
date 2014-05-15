@@ -32,7 +32,6 @@
         <Parameter Name="tokenRequirement" Type="System.IdentityModel.Selectors.SecurityTokenRequirement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="tokenRequirement" /> parameter contains the binding information of the endpoint, which is typically used in determining the <see cref="T:System.ServiceModel.EndpointIdentity" /> for the endpoint. For example, if the binding is configured to do Kerberos-based authentication, the default identity returned will be a ServicePrincipalName (SPN) or UserPrincipalName (UPN).</para>
@@ -41,6 +40,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the identity of the current endpoint, based on the security token requirements passed in.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointIdentity" /> of the current endpoint.</para>
+        </returns>
         <param name="tokenRequirement">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Selectors.SecurityTokenRequirement" /> that describes security token requirements.</param>
       </Docs>

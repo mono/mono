@@ -92,7 +92,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve a set of nodes that represents the site navigation structure for the current ASP.NET application. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.SiteMapDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method directly; instead, use the publicly exposed <see cref="Overload:System.Web.UI.WebControls.SiteMapDataSourceView.Select" /> method.</para>
@@ -101,6 +100,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection of the <see cref="T:System.Web.SiteMapNode" /> objects that represents the site navigation structure for the current user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNodeCollection" /> that represents the site navigation structure for the current user.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
@@ -135,7 +138,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -145,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection of the <see cref="T:System.Web.SiteMapNode" /> objects that represents the site navigation structure for the current user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNodeCollection" /> that represents the site navigation structure for the current user. </para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that is used to request operations on the data beyond basic data retrieval.</param>
       </Docs>

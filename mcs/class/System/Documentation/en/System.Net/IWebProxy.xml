@@ -71,11 +71,6 @@
         <Parameter Name="destination" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Uri" /> instance
-   containing the URI of the proxy used to contact
-<paramref name="destination" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IWebProxy.GetProxy(System.Uri)" /> method returns the URI of the proxy server that handles requests to the Internet resource that is specified in the <paramref name="destination" /> parameter.</para>
@@ -84,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the URI of a proxy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Uri" /> instance that contains the URI of the proxy used to contact <paramref name="destination" />.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> that specifies the requested Internet resource. </param>
       </Docs>
@@ -106,12 +105,6 @@
         <Parameter Name="host" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " /> if
-   the proxy server is not used to access the server specified in <paramref name="host" />;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IWebProxy.IsBypassed(System.Uri)" /> method indicates whether to use the proxy server to access the host that is specified in the <paramref name="host" /> parameter. If <see cref="M:System.Net.IWebProxy.IsBypassed(System.Uri)" /> is true, the proxy is not used to contact the host and the request is passed directly to the server.</para>
@@ -120,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates that the proxy should not be used for the specified host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the proxy server should not be used for <paramref name="host" />; otherwise, false.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> of the host to check for proxy use. </param>
       </Docs>

@@ -79,7 +79,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />object will complete after all of the content stream has been created.</para>
@@ -88,6 +87,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an HTTP content stream as an asynchronous operation for reading whose backing store is memory from the <see cref="T:System.Net.Http.ByteArrayContent" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SerializeToStreamAsync">
@@ -105,7 +109,6 @@
         <Parameter Name="context" Type="System.Net.TransportContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation does not block. When the returned <see cref="T:System.Threading.Tasks.Task" /> object completes, the whole byte array has been written to the <paramref name="stream" /> parameter.</para>
@@ -114,6 +117,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serialize and write the byte array provided in the constructor to an HTTP content stream as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />. </para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The target stream.</param>
         <param name="context">

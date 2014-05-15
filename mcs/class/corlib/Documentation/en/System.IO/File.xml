@@ -110,10 +110,18 @@
         <Parameter Name="contents" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method creates the file if it doesn’t exist, but it doesn't create new directories. Therefore, the value of the <paramref name="path" /> parameter must contain existing directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends lines to a file, and then closes the file. If the specified file does not exist, this method creates a file, writes the specified lines to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to append the lines to. The file is created if it doesn't already exist.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to append to the file.</param>
       </Docs>
     </Member>
     <Member MemberName="AppendAllLines">
@@ -132,11 +140,29 @@
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method creates the file if it doesn’t exist, but it doesn't create new directories. Therefore, the value of the <paramref name="path" /> parameter must contain existing directories.</para>
+          <para>You can use this method to create a file that contains the following:</para>
+          <list type="bullet">
+            <item>
+              <para>The results of a <format type="text/html"><a href="73cafe73-37cf-46e7-bfa7-97c7eea7ced9">LINQ to Objects</a></format> query on the lines of a file, as obtained by using the <see cref="Overload:System.IO.File.ReadLines" /> method.</para>
+            </item>
+            <item>
+              <para>The contents of a collection that implements an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of strings. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends lines to a file by using a specified encoding, and then closes the file. If the specified file does not exist, this method creates a file, writes the specified lines to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to append the lines to. The file is created if it doesn't already exist.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to append to the file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
       </Docs>
     </Member>
     <Member MemberName="AppendAllText">
@@ -223,10 +249,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.StreamWriter" /> that appends UTF-8 encoded text to the
-   specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
@@ -252,6 +274,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.StreamWriter" /> that appends UTF-8 encoded text to an existing file, or to a new file if the specified file does not exist.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream writer that appends UTF-8 encoded text to the specified file or to a new file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file to append to. </param>
       </Docs>
@@ -391,9 +417,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <para>
@@ -419,6 +442,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or overwrites a file in the specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the file specified in <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path and name of the file to create. </param>
       </Docs>
@@ -442,9 +469,6 @@
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <para>
@@ -469,6 +493,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or overwrites the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> with the specified buffer size that provides read/write access to the file specified in <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file. </param>
         <param name="bufferSize">
@@ -493,7 +521,6 @@
         <Parameter Name="options" Type="System.IO.FileOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -506,6 +533,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or overwrites the specified file, specifying a buffer size and a <see cref="T:System.IO.FileOptions" /> value that describes how to create or overwrite the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file with the specified buffer size.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file. </param>
         <param name="bufferSize">
@@ -532,7 +563,6 @@
         <Parameter Name="fileSecurity" Type="System.Security.AccessControl.FileSecurity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -545,6 +575,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or overwrites the specified file with the specified buffer size, file options, and file security.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file with the specified buffer size, file options, and file security.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file. </param>
         <param name="bufferSize">
@@ -572,9 +606,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.StreamWriter" /> that writes to the specified file using UTF-8 encoding.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
@@ -597,6 +628,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates or opens a file for writing UTF-8 encoded text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.StreamWriter" /> that writes to the specified file using UTF-8 encoding.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to be opened for writing. </param>
       </Docs>
@@ -723,12 +758,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if the caller
-   has the required permissions and <paramref name="path" /> contains the name of an existing file; otherwise, <see langword="false" />. If <paramref name="path" /> is <see langword="null" /> or a
-   zero-length string, returns <see langword="false" />.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -742,6 +771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified file exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the caller has the required permissions and <paramref name="path" /> contains the name of an existing file; otherwise, false. This method also returns false if <paramref name="path" /> is null, an invalid path, or a zero-length string. If the caller does not have sufficient permissions to read the specified file, no exception is thrown and the method returns false regardless of the existence of <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to check. </param>
       </Docs>
@@ -762,7 +795,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -774,6 +806,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control list (ACL) entries for a specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.     </para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to a file containing a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that describes the file's access control list (ACL) information.</param>
       </Docs>
@@ -794,7 +830,6 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -806,6 +841,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the specified type of access control list (ACL) entries for a particular file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.     </para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to a file containing a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that describes the file's access control list (ACL) information.</param>
         <param name="includeSections">
@@ -828,7 +867,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -838,6 +876,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.IO.FileAttributes" /> of the file on the path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.FileAttributes" /> of the file on the path.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file. </param>
       </Docs>
@@ -859,12 +901,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set
-   to the creation date and time for the specified file or directory. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -889,6 +925,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the creation date and time of the specified file or directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the creation date and time for the specified file or directory. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain creation date and time information. </param>
       </Docs>
@@ -910,7 +950,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -924,6 +963,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the creation date and time, in coordinated universal time (UTC), of the specified file or directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the creation date and time for the specified file or directory. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain creation date and time information. </param>
       </Docs>
@@ -945,12 +988,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set to
-   the date and time the specified file or directory was last accessed. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -974,6 +1011,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time the specified file or directory was last accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the date and time that the specified file or directory was last accessed. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain access date and time information. </param>
       </Docs>
@@ -995,7 +1036,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1009,6 +1049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time, in coordinated universal time (UTC), that the specified file or directory was last accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the date and time that the specified file or directory was last accessed. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain access date and time information. </param>
       </Docs>
@@ -1030,12 +1074,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set to
-   the date and time the specified file or directory was last written to. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -1059,6 +1097,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time the specified file or directory was last written to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the date and time that the specified file or directory was last written to. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain write date and time information. </param>
       </Docs>
@@ -1080,7 +1122,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1094,6 +1135,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time, in coordinated universal time (UTC), that the specified file or directory was last written to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> structure set to the date and time that the specified file or directory was last written to. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain write date and time information. </param>
       </Docs>
@@ -1167,10 +1212,6 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <para>
@@ -1187,6 +1228,8 @@
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1196,6 +1239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a <see cref="T:System.IO.FileStream" /> on the specified path with read/write access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> opened in the specified mode and path, with read/write access and not shared.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open. </param>
         <param name="mode">
@@ -1222,12 +1269,6 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="access">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IO.FileStream" />
-that provides access to the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <para>
@@ -1248,6 +1289,10 @@ that provides access to the specified file.</para>
           <paramref name="path" /> specified a read-only file and <paramref name="access" /> is not <see langword="Read" />, or <paramref name="path" /> specified a directory.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write to the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1256,6 +1301,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a <see cref="T:System.IO.FileStream" /> on the specified path, with the specified mode and access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unshared <see cref="T:System.IO.FileStream" /> that provides access to the specified file, with the specified mode and access.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open. </param>
         <param name="mode">
@@ -1285,13 +1334,6 @@ that provides access to the specified file.</para>
         <Parameter Name="share" Type="System.IO.FileShare" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="share">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IO.FileStream" />
-that provides access to the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <para>
@@ -1311,6 +1353,12 @@ that provides access to the specified file.</para>
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file. </param>
+        <param name="share">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileShare" /> value specifying the type of access other threads have to the file. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1320,6 +1368,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a <see cref="T:System.IO.FileStream" /> on the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> on the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open. </param>
         <param name="mode">
@@ -1348,9 +1400,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A read-only <see cref="T:System.IO.FileStream" /> containing the contents of the specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
@@ -1372,6 +1421,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing file for reading.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.IO.FileStream" /> on the specified path.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to be opened for reading. </param>
       </Docs>
@@ -1394,10 +1447,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.StreamReader" /> containing the contents of the
-   specified file.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
@@ -1419,6 +1468,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing UTF-8 encoded text file for reading.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.StreamReader" /> on the specified path.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to be opened for reading. </param>
       </Docs>
@@ -1441,10 +1494,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A writable <see cref="T:System.IO.FileStream" /> that writes to the file specified by
-<paramref name="path" />.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
@@ -1467,6 +1516,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens an existing file or creates a new file for writing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unshared <see cref="T:System.IO.FileStream" /> object on the specified path with <see cref="F:System.IO.FileAccess.Write" /> access.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to be opened for writing. </param>
       </Docs>
@@ -1487,7 +1540,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1497,6 +1549,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a binary file, reads the contents of the file into a byte array, and then closes the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the contents of the file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open for reading. </param>
       </Docs>
@@ -1516,7 +1572,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1527,6 +1582,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a text file, reads all lines of the file, and then closes the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing all lines of the file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open for reading. </param>
       </Docs>
@@ -1547,7 +1606,6 @@ that provides access to the specified file.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1558,6 +1616,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file, reads all lines of the file with the specified encoding, and then closes the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing all lines of the file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open for reading. </param>
         <param name="encoding">
@@ -1579,7 +1641,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1592,6 +1653,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a text file, reads all lines of the file, and then closes the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing all lines of the file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open for reading. </param>
       </Docs>
@@ -1612,7 +1677,6 @@ that provides access to the specified file.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1625,6 +1689,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file, reads all lines of the file with the specified encoding, and then closes the file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing all lines of the file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to open for reading. </param>
         <param name="encoding">
@@ -1645,7 +1713,6 @@ that provides access to the specified file.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.File.ReadLines(System.String)" /> and <see cref="M:System.IO.File.ReadAllLines(System.String)" /> methods differ as follows: When you use <see cref="M:System.IO.File.ReadLines(System.String)" />, you can start enumerating the collection of strings before the whole collection is returned; when you use <see cref="M:System.IO.File.ReadAllLines(System.String)" />, you must wait for the whole array of strings be returned before you can access the array. Therefore, when you are working with very large files, <see cref="M:System.IO.File.ReadLines(System.String)" /> can be more efficient. </para>
@@ -1667,6 +1734,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the lines of a file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the lines of the file, or the lines that are the result of a query.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to read.</param>
       </Docs>
@@ -1686,7 +1757,6 @@ that provides access to the specified file.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to specify an encoding to use read the file.</para>
@@ -1709,6 +1779,10 @@ that provides access to the specified file.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Read the lines of a file that has a specified encoding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the lines of the file, or the lines that are the result of a query.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file to read.</param>
         <param name="encoding">
@@ -2163,10 +2237,20 @@ that provides access to the specified file.</para>
         <Parameter Name="contents" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior of the <see cref="M:System.IO.File.WriteAllLines(System.String,System.Collections.Generic.IEnumerable{System.String})" /> method is to write out data by using UTF-8 encoding without a byte order mark (BOM). If it is necessary to include a UTF-8 identifier, such as a byte order mark, at the beginning of a file, use the <see cref="M:System.IO.File.WriteAllLines(System.String,System.Collections.Generic.IEnumerable{System.String},System.Text.Encoding)" /> method overload with <see cref="P:System.Text.Encoding.UTF8" /> encoding.</para>
+          <para>If the target file already exists, it is overwritten.</para>
+          <para>You can use this method to create the contents for a collection class that takes an <see cref="T:System.Collections.Generic.IEnumerable`1" /> in its constructor, such as a <see cref="M:System.Collections.Generic.List`1.#ctor(System.Collections.Generic.IEnumerable{`0})" />, <see cref="M:System.Collections.Generic.HashSet`1.#ctor" />, or a <see cref="M:System.Collections.Generic.SortedSet`1.#ctor" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new file, writes a collection of strings to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to write to.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to write to the file.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAllLines">
@@ -2218,11 +2302,29 @@ that provides access to the specified file.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the target file already exists, it is overwritten.</para>
+          <para>You can use this method to create a file that contains the following:</para>
+          <list type="bullet">
+            <item>
+              <para>The results of a <format type="text/html"><a href="73cafe73-37cf-46e7-bfa7-97c7eea7ced9">LINQ to Objects</a></format> query on the lines of a file, as obtained by using the <see cref="Overload:System.IO.File.ReadLines" /> method.</para>
+            </item>
+            <item>
+              <para>The contents of a collection that implements an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of strings.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new file by using the specified encoding, writes a collection of strings to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to write to.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to write to the file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAllLines">

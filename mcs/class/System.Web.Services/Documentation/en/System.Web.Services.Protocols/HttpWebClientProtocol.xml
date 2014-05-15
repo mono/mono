@@ -194,12 +194,15 @@
       </Parameters>
       <Docs>
         <param name="mapping">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> for each XML Web service method exposed by the specified type, and stores the mappings in the specified <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="type" /> can be assigned to a <see cref="T:System.Web.Services.Protocols.SoapHttpClientProtocol" />; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that exposes the XML Web service methods.</param>
       </Docs>
@@ -219,12 +222,15 @@
       </Parameters>
       <Docs>
         <param name="mapping">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> for each XML Web service method exposed by the specified types, and stores the mappings in the specified <see cref="T:System.Collections.ArrayList" />, as well as in a <see cref="T:System.Collections.Hashtable" /> that this method returns.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Hashtable" /> that contains the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> for each XML Web service method exposed by the specified types. The types contained in <paramref name="types" /> are used as keys.</para>
+        </returns>
         <param name="types">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Type" /> that contains the types that expose the XML Web service methods.</param>
       </Docs>
@@ -239,12 +245,15 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebRequest" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Net.WebRequest" /> for the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:System.Net.WebRequest" />.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> for creating the <see cref="T:System.Net.WebRequest" />. </param>
       </Docs>
@@ -263,12 +272,15 @@
         <Parameter Name="request" Type="System.Net.WebRequest" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebResponse" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response from a synchronous request to an XML Web service method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A response from a synchronous request to an XML Web service method.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebRequest" /> from which to get the response. </param>
       </Docs>
@@ -288,12 +300,15 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebResponse" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response from an asynchronous request to an XML Web service method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A response from an asynchronous request to an XML Web service method.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebRequest" /> from which to get the response. </param>
         <param name="result">

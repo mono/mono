@@ -541,7 +541,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling any Microsoft.Win32 method that requires OLE. <see cref="M:System.Windows.Forms.Application.OleRequired" /> first checks to see if OLE has been initialized on the current thread. If not, it initializes the thread for OLE.</para>
@@ -553,6 +552,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes OLE on the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Threading.ApartmentState" /> values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -967,7 +970,6 @@
         <Parameter Name="disableWakeEvent" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an application does not respond to a suspend request within 20 seconds, Windows determines that it is in a non-responsive state, and that the application can either be put to sleep or terminated. Once an application responds to a suspend request, however, it can take whatever time it needs to clean up resources and shut down active processes.</para>
@@ -976,6 +978,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Suspends or hibernates the system, or requests that the system be suspended or hibernated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the system is being suspended, otherwise, false.</para>
+        </returns>
         <param name="state">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.PowerState" /> indicating the power activity mode to which to transition. </param>
         <param name="force">

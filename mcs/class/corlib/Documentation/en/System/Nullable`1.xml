@@ -93,89 +93,6 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The following table defines the conditions under which the return value is <see langword="true" /> or <see langword="false" />:</para>
-          <list type="table">
-            <listheader>
-              <term>Returned Value</term>
-              <description>HasValue Condition</description>
-              <description>obj.HasValue Condition</description>
-            </listheader>
-            <item>
-              <term>
-                <see langword="false" />
-              </term>
-              <description>The current instance and <paramref name="obj" /> have different types.</description>
-              <description>The current instance and <paramref name="obj" /> have different types.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="true" />
-              </term>
-              <description>
-                <see langword="false" />
-              </description>
-              <description>
-                <paramref name="obj" /> is <see langword="null" />.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="false" />
-              </term>
-              <description>
-                <see langword="true" />
-              </description>
-              <description>
-                <paramref name="obj" /> is <see langword="null" />.</description>
-            </item>
-            <item>
-              <term>
-                <see langword="true" />
-              </term>
-              <description>
-                <see langword="false" />
-              </description>
-              <description>
-                <see langword="false" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <see langword="false" />
-              </term>
-              <description>
-                <see langword="false" />
-              </description>
-              <description>
-                <see langword="true" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <see langword="false" />
-              </term>
-              <description>
-                <see langword="true" />
-              </description>
-              <description>
-                <see langword="false" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <see langword="Value.Equals(" />
-                <paramref name="obj" />
-                <see langword=".Value)" />
-              </term>
-              <description>
-                <see langword="true" />
-              </description>
-              <description>
-                <see langword="true" />
-              </description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -185,6 +102,45 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current <see cref="T:System.Nullable`1" /> object is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="other" /> parameter is equal to the current <see cref="T:System.Nullable`1" /> object; otherwise, false. </para>
+          <para>This table describes how equality is defined for the compared values: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>true</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property is false, and the <paramref name="other" /> parameter is null. That is, two null values are equal by definition.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property is true, and the value returned by the <see cref="P:System.Nullable`1.Value" /> property is equal to the <paramref name="other" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>false</para>
+              </term>
+              <description>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property for the current <see cref="T:System.Nullable`1" /> structure is true, and the <paramref name="other" /> parameter is null.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property for the current <see cref="T:System.Nullable`1" /> structure is false, and the <paramref name="other" /> parameter is not null.</para>
+                <para>-or-</para>
+                <para>The <see cref="P:System.Nullable`1.HasValue" /> property for the current <see cref="T:System.Nullable`1" /> structure is true, and the value returned by the <see cref="P:System.Nullable`1.Value" /> property is not equal to the <paramref name="other" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An object.</param>
       </Docs>
@@ -202,9 +158,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="true" />, a  <see cref="T:System.Int32" /> containing the hash code for the value of the current instance is returned; otherwise, 0 is returned.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to generate the hash code is unspecified. </para>
           <para>
@@ -217,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the hash code of the object returned by the <see cref="P:System.Nullable`1.Value" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the object returned by the <see cref="P:System.Nullable`1.Value" /> property if the <see cref="P:System.Nullable`1.HasValue" /> property is true, or zero if the <see cref="P:System.Nullable`1.HasValue" /> property is false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValueOrDefault">
@@ -232,9 +189,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A value of type <see langword="T" />, which is either the value of the current instance, or if it has none, the default value for the type <see langword="T" /> (i.e., all-bits-zero).</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -244,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the current <see cref="T:System.Nullable`1" /> object, or the object's default value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Nullable`1.Value" /> property if the  <see cref="P:System.Nullable`1.HasValue" /> property is true; otherwise, the default value of the current <see cref="T:System.Nullable`1" /> object. The type of the default value is the type argument of the current <see cref="T:System.Nullable`1" /> object, and the value of the default value consists solely of binary zeroes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValueOrDefault">
@@ -378,9 +336,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>If <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is true, <see cref="P:System.Nullable&lt;T&gt;.Value.ToString" /><see langword="()" /> is returned; otherwise, <see cref="F:System.String.Empty" /> is returned.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -390,6 +345,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the text representation of the value of the current <see cref="T:System.Nullable`1" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text representation of the value of the current <see cref="T:System.Nullable`1" /> object if the <see cref="P:System.Nullable`1.HasValue" /> property is true, or an empty string ("") if the <see cref="P:System.Nullable`1.HasValue" /> property is false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

@@ -516,12 +516,15 @@
         <Parameter Name="w" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.Web.UI.HtmlTextWriter" /> to be used.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Web.UI.HtmlTextWriter" /> to be used.</para>
+        </returns>
         <param name="w">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.IO.TextWriter" /> to be created.</param>
@@ -668,7 +671,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Configuration.HttpCapabilitiesBase.GetClrVersions" />  method is supported only when the browser is Internet Explorer version 5.0 or later. If the common language runtime is not installed on the client, the property returns an array containing a single <see cref="T:System.Version" /> object with the values 0, 0,-1,-1.</para>
@@ -677,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all versions of the .NET Framework common language runtime that are installed on the client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Version" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetConfigCapabilities">
@@ -690,12 +696,15 @@
         <Parameter Name="request" Type="System.Web.HttpRequest" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally to return an instance of <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> representing the browser that generated the specified <see cref="T:System.Web.HttpRequest" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.Web.Configuration.HttpCapabilitiesBase" /> representing the browser that generated the specified <see cref="T:System.Web.HttpRequest" />.</para>
+        </returns>
         <param name="configKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the configuration section that configures browser capabilities.</param>
         <param name="request">
@@ -845,7 +854,6 @@
         <Parameter Name="browserName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Configuration.HttpCapabilitiesBase.IsBrowser(System.String)" /> method also returns true if the client browser definition inherits from the specified browser.</para>
@@ -854,6 +862,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the client browser is the same as the specified browser.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the client browser is the same as the specified browser; otherwise, false. The default is false.</para>
+        </returns>
         <param name="browserName">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified browser.</param>
       </Docs>
@@ -2369,12 +2381,15 @@
         <Parameter Name="filter2" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally to compare filters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1 if <paramref name="filter1" /> is a parent of <paramref name="filter2" />; -1 if <paramref name="filter2" /> is a parent of <paramref name="filter1" />; 0 if there is no parent-child relationship between <paramref name="filter1" /> and <paramref name="filter2" />.</para>
+        </returns>
         <param name="filter1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first filter to compare.</param>
         <param name="filter2">
@@ -2394,12 +2409,15 @@
         <Parameter Name="filterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally to evaluate a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the filter was successfully evaluated; otherwise, false.</para>
+        </returns>
         <param name="filterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The filter to evaluate.</param>
       </Docs>

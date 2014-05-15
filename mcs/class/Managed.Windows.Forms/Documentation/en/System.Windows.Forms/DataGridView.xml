@@ -314,7 +314,6 @@
         <Parameter Name="isLastVisibleColumn" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -324,6 +323,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adjusts the <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> for a column header cell of a <see cref="T:System.Windows.Forms.DataGridView" /> that is currently being painted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that represents the border style for the current column header.</para>
+        </returns>
         <param name="dataGridViewAdvancedBorderStyleInput">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that that represents the column header border style to modify.</param>
         <param name="dataGridViewAdvancedBorderStylePlaceholder">
@@ -773,7 +776,6 @@
         <Parameter Name="includeInvisibleCells" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -783,6 +785,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether all the <see cref="T:System.Windows.Forms.DataGridView" /> cells are currently selected.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all cells (or all visible cells) are selected or if there are no cells (or no visible cells); otherwise, false.</para>
+        </returns>
         <param name="includeInvisibleCells">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include the rows and columns with <see cref="P:System.Windows.Forms.DataGridViewBand.Visible" /> property values of false; otherwise, false. </param>
       </Docs>
@@ -1883,7 +1889,6 @@
         <Parameter Name="selectAll" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1895,6 +1900,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Puts the current cell in edit mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current cell is already in edit mode or successfully enters edit mode; otherwise, false.</para>
+        </returns>
         <param name="selectAll">
           <attribution license="cc4" from="Microsoft" modified="false" />true to select all the cell's contents; false to not select any contents.</param>
       </Docs>
@@ -1958,13 +1967,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Cancels edit mode for the currently selected cell and discards any changes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the cancel was successful; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3753,7 +3765,6 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3763,6 +3774,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Commits changes in the current cell to the data cache without ending edit mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the changes were committed; otherwise false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> values that specifies the context in which an error can occur. </param>
       </Docs>
@@ -3778,13 +3793,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridView.DataGridViewAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3798,13 +3816,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Windows.Forms.DataGridViewColumnCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Windows.Forms.DataGridViewColumnCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3823,7 +3844,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3833,6 +3853,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Windows.Forms.Control.ControlCollection" /> that can be cast to type <see cref="T:System.Windows.Forms.DataGridView.DataGridViewControlCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Windows.Forms.Control.ControlCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3846,13 +3870,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4312,13 +4339,16 @@
         <Parameter Name="includePartialColumns" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of columns displayed to the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of columns displayed to the user.</para>
+        </returns>
         <param name="includePartialColumns">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include partial columns in the displayed column count; otherwise, false. </param>
       </Docs>
@@ -4336,13 +4366,16 @@
         <Parameter Name="includePartialRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of rows displayed to the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows displayed to the user.</para>
+        </returns>
         <param name="includePartialRow">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include partial rows in the displayed row count; otherwise, false. </param>
       </Docs>
@@ -4559,7 +4592,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4571,6 +4603,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Commits and ends the edit operation on the current cell using the default error context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the edit operation is committed and ended; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4586,7 +4622,6 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4597,6 +4632,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Commits and ends the edit operation on the current cell using the specified error context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the edit operation is committed and ended; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewDataErrorContexts" /> values that specifies the context in which an error can occur. </param>
       </Docs>
@@ -4876,7 +4915,6 @@
         <Parameter Name="includeFilter" Type="System.Windows.Forms.DataGridViewElementStates" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4886,6 +4924,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of cells that satisfy the provided filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of cells that match the <paramref name="includeFilter" /> parameter.</para>
+        </returns>
         <param name="includeFilter">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values specifying the cells to count.</param>
       </Docs>
@@ -4905,7 +4947,6 @@
         <Parameter Name="cutOverflow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4915,6 +4956,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the rectangle that represents the display area for a cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that represents the display rectangle of the cell.</para>
+        </returns>
         <param name="columnIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The column index for the desired cell. </param>
         <param name="rowIndex">
@@ -4934,7 +4979,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4945,6 +4989,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the formatted values that represent the contents of the selected cells for copying to the <see cref="T:System.Windows.Forms.Clipboard" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataObject" /> that represents the contents of the selected cells.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -4961,13 +5009,16 @@
         <Parameter Name="cutOverflow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the rectangle that represents the display area for a column, as determined by the column index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that represents the display rectangle of the column.</para>
+        </returns>
         <param name="columnIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The column index for the desired cell. </param>
         <param name="cutOverflow">
@@ -4988,13 +5039,16 @@
         <Parameter Name="cutOverflow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the rectangle that represents the display area for a row, as determined by the row index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that represents the display rectangle of the row.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The row index for the desired cell. </param>
         <param name="cutOverflow">
@@ -5058,7 +5112,6 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5068,6 +5121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns location information, such as row and column indices, given x- and y-coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridView.HitTestInfo" /> that contains the location information. </para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate. </param>
         <param name="y">
@@ -5327,7 +5384,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5337,6 +5393,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a character is an input character that the <see cref="T:System.Windows.Forms.DataGridView" /> recognizes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character is recognized as an input character; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test.</param>
       </Docs>
@@ -9546,7 +9606,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -9556,6 +9615,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the A key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9573,7 +9636,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -9583,6 +9645,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes keys used for navigating in the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />Contains information about the key that was pressed.</param>
       </Docs>
@@ -9600,7 +9666,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -9610,6 +9675,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the DELETE key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9627,7 +9696,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -9638,6 +9706,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes keys, such as the TAB, ESCAPE, ENTER, and ARROW keys, used to control dialog boxes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9655,13 +9727,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the DOWN ARROW key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9679,13 +9754,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the END key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9703,13 +9781,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the ENTER key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9727,13 +9808,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the ESC key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false. </para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9751,13 +9835,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the F2 key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false. </para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9775,13 +9862,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the HOME key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />The key that was pressed.</param>
       </Docs>
@@ -9799,13 +9889,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the INSERT key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process.</param>
       </Docs>
@@ -9863,13 +9956,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the LEFT ARROW key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9887,13 +9983,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the PAGE DOWN key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9911,13 +10010,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the PAGE UP key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9935,13 +10037,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the RIGHT ARROW key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -9959,13 +10064,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the SPACEBAR.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process.</param>
       </Docs>
@@ -9983,13 +10091,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the TAB key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false. </para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -10007,13 +10118,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the UP ARROW key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -10031,13 +10145,16 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the 0 key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.Keys" /> values that represents the key or keys to process.</param>
       </Docs>
@@ -10104,7 +10221,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -10114,6 +10230,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Refreshes the value of the current cell with the underlying cell value when the cell is in edit mode, discarding any previous value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if successful; false if a <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event occurred.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -11558,7 +11678,6 @@ if (rowToDelete &gt; -1)
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -11569,6 +11688,10 @@ if (rowToDelete &gt; -1)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the currently active cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current cell was successfully set; otherwise, false.</para>
+        </returns>
         <param name="columnIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the column containing the cell.</param>
         <param name="rowIndex">

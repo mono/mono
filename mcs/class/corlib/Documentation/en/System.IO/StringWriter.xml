@@ -604,9 +604,10 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="formatProvider">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="sb" /> is <see langword="null" />.</exception>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object that controls formatting. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table lists examples of other typical or related I/O tasks.</para>
@@ -886,12 +887,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for the current writer and causes any buffered data to be written to the underlying device. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStringBuilder">
@@ -909,10 +913,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The underlying <see cref="T:System.Text.StringBuilder" />
-.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is either the StringBuilder that was passed to the constructor, or the StringBuilder that was automatically created.</para>
@@ -967,6 +967,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying <see cref="T:System.Text.StringBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying StringBuilder.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -985,11 +989,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The <see cref="T:System.String" /> containing the characters written to the
-   current <see cref="T:System.IO.StringWriter" /> instance.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table lists examples of other typical or related I/O tasks.</para>
@@ -1043,6 +1042,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string containing the characters written to the current StringWriter so far.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string containing the characters written to the current StringWriter.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1528,12 +1531,15 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character to the string asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the string.</param>
       </Docs>
@@ -1552,12 +1558,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string to the current string asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If <paramref name="value" /> is null, nothing is written to the text stream.</param>
       </Docs>
@@ -1578,12 +1587,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters to the string asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
         <param name="index">
@@ -1606,7 +1618,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
@@ -1615,6 +1626,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character followed by a line terminator asynchronously to the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the string.</param>
       </Docs>
@@ -1633,7 +1648,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
@@ -1642,6 +1656,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string followed by a line terminator asynchronously to the current string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If the value is null, only a line terminator is written.</param>
       </Docs>
@@ -1662,7 +1680,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="P:System.IO.TextWriter.NewLine" /> property.</para>
@@ -1671,6 +1688,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters followed by a line terminator asynchronously to the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from.</param>
         <param name="index">

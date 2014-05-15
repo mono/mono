@@ -66,12 +66,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the first annotation object of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the first annotation object that matches the specified type, or null if no annotation is of the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the annotation to retrieve.</param>
       </Docs>
@@ -95,13 +98,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Get the first annotation object of the specified type from this <see cref="T:System.Xml.Linq.XObject" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first annotation object that matches the specified type, or null if no annotation is of the specified type.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotation to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Annotations">
@@ -118,12 +125,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of annotations of the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Object" /> that contains the annotations that match the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the annotations to retrieve.</param>
       </Docs>
@@ -147,13 +157,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of annotations of the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that contains the annotations for this <see cref="T:System.Xml.Linq.XObject" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotations to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BaseUri">
@@ -334,12 +348,13 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the annotations of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of annotations to remove.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.IXmlLineInfo.HasLineInfo">
@@ -354,7 +369,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can call this method to determine whether the <see cref="T:System.Xml.Linq.XObject" /> contains valid line information.</para>
@@ -364,6 +378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether or not this <see cref="T:System.Xml.Linq.XObject" /> has line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Linq.XObject" /> has line information, otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.IXmlLineInfo.LineNumber">

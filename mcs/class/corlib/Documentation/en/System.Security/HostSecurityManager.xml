@@ -63,7 +63,6 @@
         <Parameter Name="context" Type="System.Security.Policy.TrustManagerContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -74,6 +73,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an application should be executed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains trust information about the application.</para>
+        </returns>
         <param name="applicationEvidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the application to be activated.</param>
         <param name="activatorEvidence">
@@ -161,7 +164,6 @@
         <Parameter Name="inputEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -175,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the application domain evidence for an assembly being loaded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The evidence to be used for the <see cref="T:System.AppDomain" />.</para>
+        </returns>
         <param name="inputEvidence">
           <attribution license="cc4" from="Microsoft" modified="false" />Additional evidence to add to the <see cref="T:System.AppDomain" /> evidence.</param>
       </Docs>
@@ -195,7 +201,6 @@
         <Parameter Name="inputEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -209,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the assembly evidence for an assembly being loaded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The evidence to be used for the assembly.</para>
+        </returns>
         <param name="loadedAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />The loaded assembly. </param>
         <param name="inputEvidence">
@@ -230,7 +239,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -240,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines what permissions to grant to code based on the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The permission set that can be granted by the security system.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy.</param>
       </Docs>

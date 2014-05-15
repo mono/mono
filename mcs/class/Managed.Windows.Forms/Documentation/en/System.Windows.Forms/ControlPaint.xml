@@ -54,12 +54,15 @@
         <Parameter Name="background" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a 16-bit color bitmap.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IntPtr" /> representing the handle to the bitmap.</para>
+        </returns>
         <param name="bitmap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Bitmap" /> to create.</param>
         <param name="background">
@@ -81,7 +84,6 @@
         <Parameter Name="monochromeMask" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You are responsible for de-allocating the HBITMAP. If the image uses transparency, the background will be filled with the specified color.</para>
@@ -90,6 +92,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a Win32 HBITMAP out of the image. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IntPtr" /> representing the handle to the bitmap.</para>
+        </returns>
         <param name="bitmap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Bitmap" /> to create.</param>
         <param name="monochromeMask">
@@ -110,7 +116,6 @@
         <Parameter Name="bitmap" Type="System.Drawing.Bitmap" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You are responsible for de-allocating the bitmap.</para>
@@ -119,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a color mask for the specified bitmap that indicates which color should be displayed as transparent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The handle to the <see cref="T:System.Drawing.Bitmap" /> mask.</para>
+        </returns>
         <param name="bitmap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Bitmap" /> to create the transparency mask for. </param>
       </Docs>
@@ -137,7 +146,6 @@
         <Parameter Name="baseColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to a <see cref="P:System.Drawing.SystemColors.ControlDark" /> color; otherwise, the color's luminosity value is decreased.</para>
@@ -146,6 +154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new dark color object for the control from the specified color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represents the dark color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be darkened. </param>
       </Docs>
@@ -165,7 +177,6 @@
         <Parameter Name="percOfDarkDark" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to a <see cref="P:System.Drawing.SystemColors.ControlDark" /> color; otherwise, the color's luminosity value is decreased.</para>
@@ -174,6 +185,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new dark color object for the control from the specified color and darkens it by the specified percentage.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represent the dark color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be darkened. </param>
         <param name="percOfDarkDark">
@@ -194,7 +209,6 @@
         <Parameter Name="baseColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to the <see cref="P:System.Drawing.SystemColors.ControlDarkDark" /> color; otherwise, the color's luminosity value is increased.</para>
@@ -203,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new dark color object for the control from the specified color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represents the dark color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be darkened. </param>
       </Docs>
@@ -1700,7 +1718,6 @@
         <Parameter Name="baseColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to a <see cref="P:System.Drawing.SystemColors.ControlLight" /> color; otherwise, the color's luminosity value is decreased.</para>
@@ -1709,6 +1726,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new light color object for the control from the specified color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represents the light color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be lightened. </param>
       </Docs>
@@ -1728,7 +1749,6 @@
         <Parameter Name="percOfLightLight" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to a <see cref="P:System.Drawing.SystemColors.ControlLight" /> color; otherwise, the color's luminosity value is decreased.</para>
@@ -1737,6 +1757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new light color object for the control from the specified color and lightens it by the specified percentage.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represents the light color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be lightened. </param>
         <param name="percOfLightLight">
@@ -1757,7 +1781,6 @@
         <Parameter Name="baseColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified <see cref="T:System.Drawing.Color" /> is one of the <see cref="T:System.Drawing.SystemColors" />, the color is converted to the <see cref="P:System.Drawing.SystemColors.ControlLightLight" /> color; otherwise, the color's luminosity value is increased.</para>
@@ -1766,6 +1789,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new light color object for the control from the specified color.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Color" /> that represents the light color on the control.</para>
+        </returns>
         <param name="baseColor">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> to be lightened. </param>
       </Docs>

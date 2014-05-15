@@ -352,14 +352,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>An empty copy of the DataTable. The new DataTable duplicates the Schema and constraints, but does not contain any of the Data from the old DataTable.
-</para>
-          <block subset="none" type="note">
-            <para>The clone will consist of the same derived classes, if any, as the original DataTable.
-  </para>
-          </block>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If these classes have been derived, the clone will also be of the same derived classes.</para>
@@ -369,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones the structure of the <see cref="T:System.Data.DataTable" />, including all <see cref="T:System.Data.DataTable" /> schemas and constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> with the same schema as the current <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -457,7 +453,6 @@
         <Parameter Name="filter" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="expression" /> parameter requires an aggregate function. For example, the following is a legal expression:</para>
@@ -476,6 +471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the given expression on the current rows that pass the filter criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" />, set to the result of the computation. If the expression evaluates to null, the return value will be <see cref="F:System.DBNull.Value" />.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression to compute. </param>
         <param name="filter">
@@ -536,19 +535,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A duplicate of the original DataTable including the Schema, the constraints and the Data.
-</para>
-          <block subset="none" type="note">
-            <para>The duplicate will be an exact copy of the original DataTable and will consist of the same derived classes, if any.
-  </para>
-          </block>
-        </returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies both the structure and data for this <see cref="T:System.Data.DataTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Data.DataTable" /> with the same structure (table schemas and constraints) and data as this <see cref="T:System.Data.DataTable" />.</para>
+          <para>If these classes have been derived, the copy will also be of the same derived classes.</para>
+          <para>
+            <see cref="M:System.Data.DataTable.Copy" /> creates a new <see cref="T:System.Data.DataTable" /> with the same structure and data as the original <see cref="T:System.Data.DataTable" />. To copy the structure to a new <see cref="T:System.Data.DataTable" />, but not the data, use <see cref="M:System.Data.DataTable.Clone" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -566,12 +564,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Data.DataTableReader" /> corresponding to the data within this <see cref="T:System.Data.DataTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTableReader" /> containing one result set, corresponding to the source <see cref="T:System.Data.DataTable" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateInstance">
@@ -582,12 +583,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataTable'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of <see cref="T:System.Data.DataTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new expression.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -775,7 +779,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataTable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Data.DataSet" /> containing a copy of all rows in the original <see cref="T:System.Data.DataSet" /> that have pending changes. Relationship constraints can cause additional unchanged rows to be added to the new <see cref="T:System.Data.DataSet" /> if the unchanged rows contain primary keys corresponding to foreign keys in the changed rows. The method returns null (Nothing in Visual Basic) if there are no rows in the original <see cref="T:System.Data.DataSet" /> with pending changes.</para>
@@ -784,6 +787,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a copy of the <see cref="T:System.Data.DataTable" /> that contains all changes made to it since it was loaded or <see cref="M:System.Data.DataTable.AcceptChanges" /> was last called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the changes from this <see cref="T:System.Data.DataTable" />, or null if no changes are found.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -800,7 +807,6 @@
         <Parameter Name="rowStates" Type="System.Data.DataRowState" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataTable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.DataTable.GetChanges" /> method is used to produce a second <see cref="T:System.Data.DataTable" /> object that contains only the changes introduced into the original. Use the <paramref name="rowStates" /> argument to specify the type of changes the new object should include.</para>
@@ -810,6 +816,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a copy of the <see cref="T:System.Data.DataTable" /> containing all changes made to it since it was last loaded, or since <see cref="M:System.Data.DataTable.AcceptChanges" /> was called, filtered by <see cref="T:System.Data.DataRowState" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A filtered copy of the <see cref="T:System.Data.DataTable" /> that can have actions performed on it, and later be merged back in the <see cref="T:System.Data.DataTable" /> using <see cref="M:System.Data.DataSet.Merge(System.Data.DataSet)" />. If no rows of the desired <see cref="T:System.Data.DataRowState" /> are found, the method returns null.</para>
+        </returns>
         <param name="rowStates">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.DataRowState" /> values. </param>
       </Docs>
@@ -831,12 +841,15 @@
         <Parameter Name="schemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> instance containing the Web Services Description Language (WSDL) that describes the <see cref="T:System.Data.DataTable" /> for Web Services.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> instance.</para>
+        </returns>
         <param name="schemaSet">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> instance.</param>
       </Docs>
@@ -849,7 +862,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the list of <see cref="T:System.Data.DataRow" /> objects that have <see cref="P:System.Data.DataRow.RowError" /> set. For example, errors can occur when calling <see cref="M:System.Data.Common.DataAdapter.Update(System.Data.DataSet)" /> with <see cref="P:System.Data.Common.DataAdapter.ContinueUpdateOnError" /> set to <system>true</system>. Do not invoke <see cref="M:System.Data.DataTable.AcceptChanges" /> on the <see cref="T:System.Data.DataTable" /> until you resolve all errors and resubmit the <see cref="T:System.Data.DataSet" /> for updating.</para>
@@ -858,6 +870,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Data.DataRow" /> objects that contain errors.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects that have errors.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -897,12 +913,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the row type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the type of the <see cref="T:System.Data.DataRow" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -920,12 +939,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> An <see cref="T:System.Xml.Schema.XmlSchema" /> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasErrors">
@@ -1708,7 +1730,6 @@
         <Parameter Name="fAcceptChanges" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.DataTable.LoadDataRow(System.Object[],System.Boolean)" /> method takes an array of values and finds the matching value(s) in the primary key column(s).</para>
@@ -1721,6 +1742,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds and updates a specific row. If no matching row is found, a new row is created using the given values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Data.DataRow" />.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of values used to create the new row. </param>
         <param name="fAcceptChanges">
@@ -1745,7 +1770,6 @@
         <Parameter Name="loadOption" Type="System.Data.LoadOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.DataTable.LoadDataRow(System.Object[],System.Boolean)" /> method takes an array of values and finds the matching value(s) in the primary key column(s).</para>
@@ -1758,6 +1782,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds and updates a specific row. If no matching row is found, a new row is created using the given values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Data.DataRow" />.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of values used to create the new row. </param>
         <param name="loadOption">
@@ -1951,7 +1979,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must use the <see cref="M:System.Data.DataTable.NewRow" /> method to create new <see cref="T:System.Data.DataRow" /> objects with the same schema as the <see cref="T:System.Data.DataTable" />. After creating a <see cref="T:System.Data.DataRow" />, you can add it to the <see cref="T:System.Data.DataRowCollection" />, through the <see cref="T:System.Data.DataTable" /> object's <see cref="P:System.Data.DataTable.Rows" /> property. When you use <see cref="M:System.Data.DataTable.NewRow" /> to create new rows, the rows must be added to or deleted from the data table before you call <see cref="M:System.Data.DataTable.Clear" />.</para>
@@ -1960,6 +1987,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Data.DataRow" /> with the same schema as the table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataRow" /> with the same schema as the <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1980,12 +2011,15 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Data.DataRow" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new array.</para>
+        </returns>
         <param name="size">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Int32" /> value that describes the size of the array.</param>
       </Docs>
@@ -2000,12 +2034,15 @@
         <Parameter Name="builder" Type="System.Data.DataRowBuilder" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new row from an existing row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataRow" /> derived class.</para>
+        </returns>
         <param name="builder">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataRowBuilder" /> object. </param>
       </Docs>
@@ -2398,7 +2435,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current <see cref="T:System.Data.DataTable" /> and its descendents are loaded with the data from the supplied <see cref="T:System.IO.Stream" />. The behavior of this method is identical to that of the <see cref="M:System.Data.DataSet.ReadXml(System.IO.Stream)" /> method, except that in this case, data is loaded only for the current table and its descendants.</para>
@@ -2417,6 +2453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads XML schema and data into the <see cref="T:System.Data.DataTable" /> using the specified <see cref="T:System.IO.Stream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that derives from <see cref="T:System.IO.Stream" /></param>
       </Docs>
@@ -2434,7 +2474,6 @@
         <Parameter Name="reader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current <see cref="T:System.Data.DataTable" /> and its descendents are loaded with the data from the supplied <see cref="T:System.IO.TextReader" />. The behavior of this method is identical to that of the <see cref="M:System.Data.DataSet.ReadXml(System.IO.TextReader)" /> method, except that in this case, data is loaded only for the current table and its descendants.</para>
@@ -2453,6 +2492,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads XML schema and data into the <see cref="T:System.Data.DataTable" /> using the specified <see cref="T:System.IO.TextReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextReader" /> that will be used to read the data.</param>
       </Docs>
@@ -2470,7 +2513,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current <see cref="T:System.Data.DataTable" /> and its descendents are loaded with the data from the file named in the supplied <see cref="T:System.String" />. The behavior of this method is identical to that of the <see cref="M:System.Data.DataSet.ReadXml(System.String)" /> method, except that in this case, data is loaded only for the current table and its descendants.</para>
@@ -2504,6 +2546,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads XML schema and data into the <see cref="T:System.Data.DataTable" /> from the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file from which to read the data. </param>
       </Docs>
@@ -2521,7 +2567,6 @@ public class A {
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current <see cref="T:System.Data.DataTable" /> and its descendents are loaded with the data from the file named in the supplied <see cref="T:System.Xml.XmlReader" />. The behavior of this method is identical to that of the <see cref="M:System.Data.DataTable.ReadXml(System.Xml.XmlReader)" /> method, except that in this case, data is loaded only for the current table and its descendants.</para>
@@ -2540,6 +2585,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads XML Schema and Data into the <see cref="T:System.Data.DataTable" /> using the specified <see cref="T:System.Xml.XmlReader" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.XmlReadMode" /> used to read the data.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> that will be used to read the data. </param>
       </Docs>
@@ -2897,7 +2946,6 @@ public class A {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To ensure the proper sort order, specify sort criteria with <see cref="M:System.Data.DataTable.Select(System.String,System.String)" /> or <see cref="M:System.Data.DataTable.Select(System.String,System.String,System.Data.DataViewRowState)" />.</para>
@@ -2906,6 +2954,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of all <see cref="T:System.Data.DataRow" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2922,7 +2974,6 @@ public class A {
         <Parameter Name="filterExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To create the <paramref name="filterExpression" /> argument, use the same rules that apply to the <see cref="T:System.Data.DataColumn" /> class's <see cref="P:System.Data.DataColumn.Expression" /> property value for creating filters.</para>
@@ -2933,6 +2984,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of all <see cref="T:System.Data.DataRow" /> objects that match the filter criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </returns>
         <param name="filterExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The criteria to use to filter the rows. For examples on how to filter rows, see <see cref="http://www.csharp-examples.net/dataview-rowfilter/">DataView RowFilter Syntax [C#]</see>.</param>
       </Docs>
@@ -2952,7 +3007,6 @@ public class A {
         <Parameter Name="sort" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To form the <paramref name="filterExpression" /> argument, use the same rules for creating the <see cref="T:System.Data.DataColumn" /> class's <see cref="P:System.Data.DataColumn.Expression" /> property value. The <paramref name="Sort" /> argument also uses the same rules for creating class's <see cref="P:System.Data.DataColumn.Expression" /> strings.</para>
@@ -2962,6 +3016,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of all <see cref="T:System.Data.DataRow" /> objects that match the filter criteria, in the specified sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects matching the filter expression.</para>
+        </returns>
         <param name="filterExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The criteria to use to filter the rows. For examples on how to filter rows, see <see cref="http://www.csharp-examples.net/dataview-rowfilter/">DataView RowFilter Syntax [C#]</see>.</param>
         <param name="sort">
@@ -2984,7 +3042,6 @@ public class A {
         <Parameter Name="recordStates" Type="System.Data.DataViewRowState" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To form the <paramref name="filterExpression" /> argument, use the same rules for creating the <see cref="T:System.Data.DataColumn" /> class's <see cref="P:System.Data.DataColumn.Expression" /> property value. The <paramref name="Sort" /> argument also uses the same rules for creating class's <see cref="P:System.Data.DataColumn.Expression" /> strings.</para>
@@ -2994,6 +3051,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of all <see cref="T:System.Data.DataRow" /> objects that match the filter in the order of the sort that match the specified state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </returns>
         <param name="filterExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The criteria to use to filter the rows. For examples on how to filter rows, see <see cref="http://www.csharp-examples.net/dataview-rowfilter/">DataView RowFilter Syntax [C#]</see>.</param>
         <param name="sort">
@@ -3072,7 +3133,6 @@ public class A {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataTable" /> instance is cast to an <see cref="T:System.ComponentModel.IListSource" /> interface.</para>
@@ -3081,6 +3141,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.IListSource.GetList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> that can be bound to a data source from the object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.Serialization.ISerializable.GetObjectData">
@@ -3119,7 +3183,6 @@ public class A {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataSet" /> instance is cast to an <see cref="T:System.Xml.Serialization.IXmlSerializable" /> interface.</para>
@@ -3128,6 +3191,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> An <see cref="T:System.Xml.Schema.XmlSchema" /> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -3280,7 +3347,6 @@ public class A {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="P:System.Data.DataTable.TableName" /> and <see cref="P:System.Data.DataTable.DisplayExpression" /> for the <see cref="T:System.Data.DataTable" />.</para>
@@ -3289,6 +3355,10 @@ public class A {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="P:System.Data.DataTable.TableName" /> and <see cref="P:System.Data.DataTable.DisplayExpression" />, if there is one as a concatenated string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of the <see cref="P:System.Data.DataTable.TableName" /> and the <see cref="P:System.Data.DataTable.DisplayExpression" /> values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

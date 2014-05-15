@@ -260,10 +260,6 @@
         <Parameter Name="ts" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents the value of the current instance plus
-   the value of <paramref name="ts" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The sum of the value of the current instance and the value of <paramref name="ts" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
         <example>
           <para>This example demonstrates the <see cref="M:System.TimeSpan.Add(System.TimeSpan)" /> method.</para>
@@ -291,6 +287,10 @@ public class TimeSpanAddExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.TimeSpan" /> object whose value is the sum of the specified <see cref="T:System.TimeSpan" /> object and this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that represents the value of this instance plus the value of <paramref name="ts" />.</para>
+        </returns>
         <param name="ts">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to add.</param>
       </Docs>
@@ -314,40 +314,54 @@ public class TimeSpanAddExample {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="t1" /> as compared to <paramref name="t2" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> Any
-      negative
-      number</term>
-              <description>
-                <paramref name="t1" /> &lt; <paramref name="t2" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <paramref name="t1" /> == <paramref name="t2" />.</description>
-            </item>
-            <item>
-              <term> Any
-      positive
-      number</term>
-              <description>
-                <paramref name="t1" /> &gt;
-<paramref name="t2" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.TimeSpan" /> values and returns an integer that indicates whether the first value is shorter than, equal to, or longer than the second value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the following values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is shorter than <paramref name="t2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is equal to <paramref name="t2" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="t1" /> is longer than <paramref name="t2" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
         <param name="t2">
@@ -372,34 +386,6 @@ public class TimeSpanAddExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> Any
-      negative
-      number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Any
-      positive
-      number</term>
-              <description>
-                <para>Current instance &gt; <paramref name="value" />, or
-   <paramref name="value" /> is a null reference.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="value" /> is not a <see cref="T:System.TimeSpan" /> and is not a null reference.</para>
@@ -413,6 +399,49 @@ public class TimeSpanAddExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an integer that indicates whether this instance is shorter than, equal to, or longer than the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the following values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>This instance is shorter than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>This instance is longer than <paramref name="value" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -433,31 +462,6 @@ public class TimeSpanAddExample {
         <Parameter Name="value" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="value" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> Any
-      negative
-      number</term>
-              <description>Current instance &lt; <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>Current instance == <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> Any
-      positive
-      number</term>
-              <description>Current instance &gt; <paramref name="value" />.   </description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -467,6 +471,46 @@ public class TimeSpanAddExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified <see cref="T:System.TimeSpan" /> object and returns an integer that indicates whether this instance is shorter than, equal to, or longer than the <see cref="T:System.TimeSpan" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer </para>
+              </term>
+              <description>
+                <para>This instance is shorter than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer </para>
+              </term>
+              <description>
+                <para>This instance is longer than <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance.</param>
       </Docs>
@@ -534,11 +578,6 @@ public class TimeSpanPropertiesExampleOne {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" />
-whose value is
-the absolute value of the current instance.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The value of the current instance is <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <example>
@@ -562,6 +601,10 @@ public class TimeSpanDurationExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.TimeSpan" /> object whose value is the absolute value of the current <see cref="T:System.TimeSpan" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object whose value is the absolute value of the current <see cref="T:System.TimeSpan" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -582,12 +625,6 @@ public class TimeSpanDurationExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> represents the
-   same type and value as the current instance. If <paramref name="value" /> is
-   a null reference or is not a <see cref="T:System.TimeSpan" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">This method
@@ -598,6 +635,10 @@ public class TimeSpanDurationExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is a <see cref="T:System.TimeSpan" /> object that represents the same time interval as the current <see cref="T:System.TimeSpan" /> structure; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance. </param>
       </Docs>
@@ -618,10 +659,6 @@ public class TimeSpanDurationExample {
         <Parameter Name="obj" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> represents the same value as the current instance; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -631,6 +668,10 @@ public class TimeSpanDurationExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified <see cref="T:System.TimeSpan" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> represents the same time interval as this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance. </param>
       </Docs>
@@ -653,16 +694,15 @@ public class TimeSpanDurationExample {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="t1" /> and <paramref name="t2" />
-represent the same value; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two specified instances of <see cref="T:System.TimeSpan" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the values of <paramref name="t1" /> and <paramref name="t2" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
         <param name="t2">
@@ -687,9 +727,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -702,6 +739,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified number of days, where the specification is accurate to the nearest millisecond.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of days, accurate to the nearest millisecond. </param>
       </Docs>
@@ -725,9 +766,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -741,6 +779,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified number of hours, where the specification is accurate to the nearest millisecond.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of hours accurate to the nearest millisecond. </param>
       </Docs>
@@ -764,9 +806,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -780,6 +819,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified number of milliseconds.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of milliseconds. </param>
       </Docs>
@@ -803,9 +846,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -819,6 +859,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified number of minutes, where the specification is accurate to the nearest millisecond.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of minutes, accurate to the nearest millisecond. </param>
       </Docs>
@@ -842,9 +886,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> that represents <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The <see cref="T:System.TimeSpan" /> represented by <paramref name="value" /> is greater than <see cref="F:System.TimeSpan.MaxValue" /> or less than <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -858,6 +899,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified number of seconds, where the specification is accurate to the nearest millisecond.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of seconds, accurate to the nearest millisecond. </param>
       </Docs>
@@ -881,9 +926,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> with a value of <paramref name="value" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method with the same behavior as the <see cref="M:System.TimeSpan.#ctor(System.Int64)" /> constructor. A single tick represents one hundred nanoseconds or one ten-millionth of a second. There are 10,000 ticks in a millisecond. </para>
@@ -892,6 +934,10 @@ represent the same value; otherwise, <see langword="false" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> that represents a specified time, where the specification is in units of ticks.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of ticks that represent a time. </param>
       </Docs>
@@ -912,10 +958,6 @@ represent the same value; otherwise, <see langword="false" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-value containing a hash code for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.TimeSpan" /> objects might have the same hash code even though they represent different time values.</para>
@@ -924,6 +966,10 @@ value containing a hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1142,15 +1188,16 @@ public class TimeSpanPropertiesExampleOne {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> with the same absolute value but with the opposite sign as the current instance.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The value of the current instance is <see cref="F:System.TimeSpan.MinValue" />.</exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.TimeSpan" /> object whose value is the negated value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object with the same numeric value as this instance, but with the opposite sign.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1172,10 +1219,6 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> whose value is the sum of the values of <paramref name="t1" /> and
-<paramref name="t2" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The sum of <paramref name="t1" /> and <paramref name="t2" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1187,6 +1230,10 @@ public class TimeSpanPropertiesExampleOne {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds two specified <see cref="T:System.TimeSpan" /> instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the values of <paramref name="t1" /> and <paramref name="t2" />.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to add. </param>
         <param name="t2">
@@ -1212,19 +1259,19 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="t1">To be added.</param>
-        <param name="t2">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if the values of <paramref name="t1" /> and
-<paramref name="t2" /> are equal; otherwise, <see langword="false" />.</para>
-          <see langword="" />
-        </returns>
         <remarks>To be added.</remarks>
+        <param name="t1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
+        <param name="t2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second time interval to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.TimeSpan" /> instances are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the values of <paramref name="t1" /> and <paramref name="t2" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
         <param name="t2">
@@ -1250,17 +1297,15 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the value of <paramref name="t1" /> is
-   greater than the value of <paramref name="t2" />; otherwise, <see langword="false" />.</para>
-          <see langword="" />
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified <see cref="T:System.TimeSpan" /> is greater than another specified <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="t1" /> is greater than the value of <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
         <param name="t2">
@@ -1286,18 +1331,15 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the value of <paramref name="t1" /> is
-   greater than or equal to the value of <paramref name="t2" />; otherwise,
-<see langword="false" />.</para>
-          <see langword="" />
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified <see cref="T:System.TimeSpan" /> is greater than or equal to another specified <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="t1" /> is greater than or equal to the value of <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare.</param>
         <param name="t2">
@@ -1323,16 +1365,15 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the values of <paramref name="t1" /> and
-<paramref name="t2" /> are unequal; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.TimeSpan" /> instances are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the values of <paramref name="t1" /> and <paramref name="t2" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare.</param>
         <param name="t2">
@@ -1358,16 +1399,15 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the value of <paramref name="t1" /> is 
- less than the value of <paramref name="t2" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified <see cref="T:System.TimeSpan" /> is less than another specified <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="t1" /> is less than the value of <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare.</param>
         <param name="t2">
@@ -1393,17 +1433,15 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the value of <paramref name="t1" /> is 
- less than or equal to the value of <paramref name="t2" />; otherwise,
-<see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified <see cref="T:System.TimeSpan" /> is less than or equal to another specified <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="t1" /> is less than or equal to the value of <paramref name="t2" />; otherwise, false.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
         <param name="t2">
@@ -1429,16 +1467,16 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> whose value is the result of the value of <paramref name="t1" />
-minus the value of <paramref name="t2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The value of <paramref name="t2" /> subtracted from <paramref name="t1" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a specified <see cref="T:System.TimeSpan" /> from another specified <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the result of the value of <paramref name="t1" /> minus the value of <paramref name="t2" />.</para>
+        </returns>
         <param name="t1">
           <attribution license="cc4" from="Microsoft" modified="false" />The minuend. </param>
         <param name="t2">
@@ -1463,10 +1501,6 @@ minus the value of <paramref name="t2" />.</para>
         <Parameter Name="t" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> with the same absolute value but the opposite sign as
-<paramref name="t" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">
           <paramref name="t" /> equals <see cref="F:System.TimeSpan.MinValue" />.</exception>
@@ -1474,6 +1508,10 @@ minus the value of <paramref name="t2" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.TimeSpan" /> whose value is the negated value of the specified instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that has the same numeric value as this instance, but the opposite sign.</para>
+        </returns>
         <param name="t">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to be negated. </param>
       </Docs>
@@ -1496,11 +1534,6 @@ minus the value of <paramref name="t2" />.</para>
         <Parameter Name="t" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see cref="T:System.TimeSpan" />
-            <paramref name="t" />.</para>
-        </returns>
         <remarks>
           <para>This method returns <see cref="T:System.TimeSpan" /><paramref name="t" />.</para>
         </remarks>
@@ -1508,6 +1541,10 @@ minus the value of <paramref name="t2" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified instance of <see cref="T:System.TimeSpan" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The time interval specified by <paramref name="t" />.</para>
+        </returns>
         <param name="t">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to return. </param>
       </Docs>
@@ -1530,9 +1567,6 @@ minus the value of <paramref name="t2" />.</para>
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.TimeSpan" /> value obtained from <paramref name="s" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1666,6 +1700,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="s" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert. </param>
       </Docs>
@@ -1686,7 +1724,6 @@ parses to TimeSpan -5.12:34:56.7890000
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="input" /> parameter contains a time interval specification in the form: </para>
@@ -1804,6 +1841,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent by using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="input" />, as specified by <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert.</param>
         <param name="formatProvider">
@@ -1826,7 +1867,6 @@ parses to TimeSpan -5.12:34:56.7890000
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeSpan.ParseExact(System.String,System.String,System.IFormatProvider)" /> method parses the string representation of a time interval, which must be in the format defined by the <paramref name="format" /> parameter, except that leading and trailing white-space characters are ignored. Because <paramref name="input" /> must conform to the format of <paramref name="format" /> exactly, you should always use exception handling when converting a string input by the user to a time interval. If you prefer not to use exception handling, you can call the <see cref="M:System.TimeSpan.TryParseExact(System.String,System.String,System.IFormatProvider,System.TimeSpan@)" /> method instead.</para>
@@ -1852,6 +1892,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent by using the specified format and culture-specific format information. The format of the string representation must match the specified format exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="input" />, as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert.</param>
         <param name="format">
@@ -1876,7 +1920,6 @@ parses to TimeSpan -5.12:34:56.7890000
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeSpan.ParseExact(System.String,System.String,System.IFormatProvider)" /> method parses the string representation of a time interval, which must be in one of the formats defined by the <paramref name="formats" /> parameter, except that leading and trailing white-space characters are ignored. Because <paramref name="input" /> must exactly conform to one of the formats specified in <paramref name="formats" />, you should always use exception handling when converting a string input by the user to a time interval. If you prefer not to use exception handling, you can call the <see cref="M:System.TimeSpan.TryParseExact(System.String,System.String[],System.IFormatProvider,System.TimeSpan@)" /> method instead.</para>
@@ -1902,6 +1945,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent by using the specified array of format strings and culture-specific format information. The format of the string representation must match one of the specified formats exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="input" />, as specified by <paramref name="formats" /> and <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert.</param>
         <param name="formats">
@@ -1927,7 +1974,6 @@ parses to TimeSpan -5.12:34:56.7890000
         <Parameter Name="styles" Type="System.Globalization.TimeSpanStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeSpan.ParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.TimeSpanStyles)" /> method parses the string representation of a time interval, which must be in the format defined by the <paramref name="format" /> parameter, except that leading and trailing white-space characters are ignored. Because <paramref name="input" /> must conform to the format of <paramref name="format" /> exactly, you should always use exception handling when converting a string input by the user to a time interval. If you prefer not to use exception handling, you can call the <see cref="M:System.TimeSpan.TryParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.TimeSpanStyles,System.TimeSpan@)" /> method instead.</para>
@@ -1954,6 +2000,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent by using the specified format, culture-specific format information, and styles. The format of the string representation must match the specified format exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="input" />, as specified by <paramref name="format" />, <paramref name="formatProvider" />, and <paramref name="styles" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert.</param>
         <param name="format">
@@ -1981,7 +2031,6 @@ parses to TimeSpan -5.12:34:56.7890000
         <Parameter Name="styles" Type="System.Globalization.TimeSpanStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeSpan.ParseExact(System.String,System.String[],System.IFormatProvider,System.Globalization.TimeSpanStyles)" /> method parses the string representation of a time interval, which must be in one of the formats defined by the <paramref name="formats" /> parameter, except that leading and trailing white-space characters are ignored. Because <paramref name="input" /> must exactly conform to one of the formats specified in <paramref name="formats" />, you should always use exception handling when converting a string input by the user to a time interval. If you prefer not to use exception handling, you can call the <see cref="M:System.TimeSpan.TryParseExact(System.String,System.String[],System.IFormatProvider,System.Globalization.TimeSpanStyles,System.TimeSpan@)" /> method instead.</para>
@@ -2008,6 +2057,10 @@ parses to TimeSpan -5.12:34:56.7890000
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a time interval to its <see cref="T:System.TimeSpan" /> equivalent by using the specified formats, culture-specific format information, and styles. The format of the string representation must match one of the specified formats exactly. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A time interval that corresponds to <paramref name="input" />, as specified by <paramref name="formats" />, <paramref name="formatProvider" />, and <paramref name="styles" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the time interval to convert.</param>
         <param name="formats">
@@ -2084,10 +2137,6 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="ts" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.TimeSpan" /> whose value is equal to the value of the current
-   instance minus the value of <paramref name="ts" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The difference between the value of the current instance and <paramref name="ts" /> is less than <see cref="F:System.TimeSpan.MinValue" /> or greater than <see cref="F:System.TimeSpan.MaxValue" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2098,6 +2147,10 @@ public class TimeSpanPropertiesExampleOne {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.TimeSpan" /> object whose value is the difference between the specified <see cref="T:System.TimeSpan" /> object and this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new time interval whose value is the result of the value of this instance minus the value of <paramref name="ts" />.</para>
+        </returns>
         <param name="ts">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to be subtracted. </param>
       </Docs>
@@ -2283,45 +2336,6 @@ public class TimeSpanPropertiesExampleOne {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance formatted as follows:</para>
-          <para>[-][d.]hh:mm:ss[.ff]</para>
-          <para>Items in square brackets ('[' and ']') are included
-   provisionally: '-' is included if and only if the current instance is negative;
-   "d." and ".ff" are included if and only if those components are non-zero. Colons
-   and periods (':' and '.') are literal characters. Other components are as follows.</para>
-          <list type="table">
-            <listheader>
-              <term>Component</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> "-"</term>
-              <description>Minus sign, indicating a negative time
-         interval.</description>
-            </item>
-            <item>
-              <term> "d"</term>
-              <description>Days.</description>
-            </item>
-            <item>
-              <term> "hh"</term>
-              <description>Hours, ranging from 0 to 23 inclusive.</description>
-            </item>
-            <item>
-              <term> "mm"</term>
-              <description>Minutes, ranging from 0 to 59 inclusive.</description>
-            </item>
-            <item>
-              <term> "ss"</term>
-              <description>Seconds, ranging from 0 to 59 inclusive.</description>
-            </item>
-            <item>
-              <term> "ff"</term>
-              <description>Fractional seconds.</description>
-            </item>
-          </list>
-        </returns>
         <example>
           <para>This example demonstrates the <see cref="M:System.TimeSpan.ToString" /> method.</para>
           <code lang="C#">using System;
@@ -2415,6 +2429,10 @@ public class TimeSpanToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.TimeSpan" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.TimeSpan" /> value. </para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2432,7 +2450,6 @@ public class TimeSpanToStringExample {
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="format" /> parameter can be any valid standard or custom format specifier for <see cref="T:System.TimeSpan" /> values. If <paramref name="format" /> is equal to <see cref="F:System.String.Empty" /> or is null, the return value of the current <see cref="T:System.TimeSpan" /> object is formatted with the common format specifier ("c"). If <paramref name="format" /> is any other value, the method throws a <see cref="T:System.FormatException" />. </para>
@@ -2454,6 +2471,10 @@ public class TimeSpanToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.TimeSpan" /> object to its equivalent string representation by using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.TimeSpan" /> value in the format specified by the <paramref name="format" /> parameter.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom <see cref="T:System.TimeSpan" /> format string.</param>
       </Docs>
@@ -2473,7 +2494,6 @@ public class TimeSpanToStringExample {
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="format" /> parameter can be any valid standard or custom format specifier for <see cref="T:System.TimeSpan" /> values. If <paramref name="format" /> is equal to <see cref="F:System.String.Empty" /> or is null, the return value of the current <see cref="T:System.TimeSpan" /> object is formatted with the common format specifier ("c"). If format is any other value, the method throws a <see cref="T:System.FormatException" />. </para>
@@ -2507,6 +2527,10 @@ public class TimeSpanToStringExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.TimeSpan" /> object to its equivalent string representation by using the specified format and culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.TimeSpan" /> value, as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom <see cref="T:System.TimeSpan" /> format string.</param>
         <param name="formatProvider">

@@ -448,7 +448,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.GetPostBackOptions" /> method creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior. The <see cref="T:System.Web.UI.PostBackOptions" /> object is then typically passed to the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackEventReference(System.Web.UI.PostBackOptions)" /> method, which is used to obtain a reference to a client-side script function that, when invoked, causes the server to postback to the page.</para>
@@ -458,6 +457,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.PostBackOptions" /> object that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.PostBackOptions" /> that represents the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control's postback behavior.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadPostData">
@@ -474,7 +477,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.ImageButton.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> member is used primarily by control developers when deriving a custom class from the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
@@ -484,6 +486,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes posted data for the <see cref="T:System.Web.UI.WebControls.ImageButton" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns false for all cases.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key value used to index an entry in the collection. </param>
         <param name="postCollection">
@@ -715,7 +721,6 @@ End Sub</code>
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ImageButton" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackDataHandler" /> interface.</para>
@@ -724,6 +729,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.IPostBackDataHandler.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control, used to index the <paramref name="postCollection" />.</param>
         <param name="postCollection">

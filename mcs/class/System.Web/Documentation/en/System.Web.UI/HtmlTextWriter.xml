@@ -517,7 +517,6 @@
         <Parameter Name="fEncode" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.HtmlTextWriter.EncodeAttributeValue(System.String,System.Boolean)" /> overload of the <see cref="M:System.Web.UI.HtmlTextWriter.EncodeAttributeValue(System.Web.UI.HtmlTextWriterAttribute,System.String)" /> method if the attribute is not an <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> enumeration value or is not known until run time.</para>
@@ -527,6 +526,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes the value of the specified markup attribute based on the requirements of the <see cref="T:System.Web.HttpRequest" /> object of the current context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the encoded attribute value, null if <paramref name="value" /> is empty, or the unencoded attribute value if <paramref name="fEncode" /> is false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the attribute value to encode. </param>
         <param name="fEncode">
@@ -548,7 +551,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.EncodeAttributeValue(System.Web.UI.HtmlTextWriterAttribute,System.String)" /> method removes double quotation marks ("), ampersands (&amp;), and less than signs (&lt;) so that invalid tags are not generated, regardless of the input. The actual encoding is performed by the <see cref="M:System.Web.HttpUtility.HtmlAttributeEncode(System.String)" /> method.</para>
@@ -557,6 +559,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes the value of the specified markup attribute based on the requirements of the <see cref="T:System.Web.HttpRequest" /> object of the current context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the encoded attribute value.</para>
+        </returns>
         <param name="attrKey">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> representing the markup attribute. </param>
         <param name="value">
@@ -577,7 +583,6 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>URL encoding of a character consists of a percent symbol (%), followed by the two-digit hexadecimal representation (case-insensitive) of the ISO-Latin code point for the character. The hexadecimal representation of a space is 20.</para>
@@ -586,6 +591,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs minimal URL encoding by converting spaces in the specified URL to the string "%20".</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the encoded URL.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the URL to encode. </param>
       </Docs>
@@ -871,7 +880,6 @@
         <Parameter Name="attrName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'HtmlTextWriterAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="attrName" /> is null or an empty string (""), or cannot be found in the table of attribute names, the value -1, typed to an <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> object, is returned.</para>
@@ -880,6 +888,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the corresponding <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> enumeration value for the specified attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> enumeration value for the specified attribute; otherwise, an invalid <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> value if the attribute is not a member of the enumeration.</para>
+        </returns>
         <param name="attrName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the attribute for which to obtain the <see cref="T:System.Web.UI.HtmlTextWriterAttribute" />. </param>
       </Docs>
@@ -898,7 +910,6 @@
         <Parameter Name="attrKey" Type="System.Web.UI.HtmlTextWriterAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.GetAttributeName(System.Web.UI.HtmlTextWriterAttribute)" /> method returns an empty string (""), if <paramref name="attrKey" /> is not a valid <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> value.</para>
@@ -907,6 +918,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the name of the markup attribute associated with the specified <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the name of the markup attribute.</para>
+        </returns>
         <param name="attrKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> to obtain the markup attribute name for. </param>
       </Docs>
@@ -925,7 +940,6 @@
         <Parameter Name="styleName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'HtmlTextWriterStyle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.GetStyleKey(System.String)" /> method returns the value -1 typed as a <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> value, if <paramref name="styleName" /> does not correspond to any <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value.</para>
@@ -934,6 +948,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value for the specified style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value corresponding to <paramref name="styleName" />.</para>
+        </returns>
         <param name="styleName">
           <attribution license="cc4" from="Microsoft" modified="false" />The style attribute for which to obtain the <see cref="T:System.Web.UI.HtmlTextWriterStyle" />. </param>
       </Docs>
@@ -952,7 +970,6 @@
         <Parameter Name="styleKey" Type="System.Web.UI.HtmlTextWriterStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="styleKey" /> is not a valid <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> object, the <see cref="M:System.Web.UI.HtmlTextWriter.GetStyleName(System.Web.UI.HtmlTextWriterStyle)" /> method returns an empty string ("").</para>
@@ -961,6 +978,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the markup style attribute name associated with the specified <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The style attribute name associated with the <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value specified in <paramref name="styleKey" />.</para>
+        </returns>
         <param name="styleKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> to obtain the style attribute name for. </param>
       </Docs>
@@ -979,7 +1000,6 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'HtmlTextWriterTag'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="tagName" /> is null, an empty string (""), or cannot be found in the table of markup tag names, the <see cref="M:System.Web.UI.HtmlTextWriter.GetTagKey(System.String)" /> method returns the <see cref="F:System.Web.UI.HtmlTextWriterTag.Unknown" /> field.</para>
@@ -988,6 +1008,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> enumeration value associated with the specified markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlTextWriterTag" /> enumeration value; otherwise, if <paramref name="tagName" /> is not associated with a specific <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value, <see cref="F:System.Web.UI.HtmlTextWriterTag.Unknown" />.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The markup element for which to obtain the <see cref="T:System.Web.UI.HtmlTextWriterTag" />. </param>
       </Docs>
@@ -1006,7 +1030,6 @@
         <Parameter Name="tagKey" Type="System.Web.UI.HtmlTextWriterTag" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="tagKey" /> is not a valid <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value, the <see cref="M:System.Web.UI.HtmlTextWriter.GetTagName(System.Web.UI.HtmlTextWriterTag)" /> method returns an empty string ("").</para>
@@ -1015,6 +1038,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the markup element associated with the specified <see cref="T:System.Web.UI.HtmlTextWriterTag" /> enumeration value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the markup element.</para>
+        </returns>
         <param name="tagKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterTag" /> to obtain the markup element for. </param>
       </Docs>
@@ -1081,7 +1108,6 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To obtain the value to be assigned to the <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> object, use the <see cref="M:System.Web.UI.HtmlTextWriter.IsAttributeDefined(System.Web.UI.HtmlTextWriterAttribute,System.String@)" /> overload instead of this one.</para>
@@ -1090,6 +1116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified markup attribute and its value are rendered during the next call to the <see cref="Overload:System.Web.UI.HtmlTextWriter.RenderBeginTag" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is rendered during the next call to the <see cref="Overload:System.Web.UI.HtmlTextWriter.RenderBeginTag" /> method; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterAttribute" /> associated with the markup attribute. </param>
       </Docs>
@@ -1130,7 +1160,6 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To get the value that will be rendered with the specified style attribute, use the <see cref="M:System.Web.UI.HtmlTextWriter.IsStyleAttributeDefined(System.Web.UI.HtmlTextWriterStyle,System.String@)" /> overload of the <see cref="M:System.Web.UI.HtmlTextWriter.IsStyleAttributeDefined(System.Web.UI.HtmlTextWriterStyle)" /> method.</para>
@@ -1139,6 +1168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified markup style attribute is rendered during the next call to the <see cref="Overload:System.Web.UI.HtmlTextWriter.RenderBeginTag" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute will be rendered during the next call to the <see cref="Overload:System.Web.UI.HtmlTextWriter.RenderBeginTag" /> method; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> associated with the attribute. </param>
       </Docs>
@@ -1182,7 +1215,6 @@
         <Parameter Name="attribute" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.HtmlTextWriter" /> class implementation of the <see cref="M:System.Web.UI.HtmlTextWriter.IsValidFormAttribute(System.String)" /> method returns true for all attributes. Override the <see cref="M:System.Web.UI.HtmlTextWriter.IsValidFormAttribute(System.String)" /> to limit the attributes that can be rendered in the opening tag of a &lt;form&gt; element.</para>
@@ -1191,6 +1223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks an attribute to ensure that it can be rendered in the opening tag of a &lt;form&gt; markup element. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always true.</para>
+        </returns>
         <param name="attribute">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the attribute to check. </param>
       </Docs>
@@ -1231,7 +1267,6 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.HtmlTextWriter" /> class implementation of the <see cref="M:System.Web.UI.HtmlTextWriter.OnAttributeRender(System.String,System.String,System.Web.UI.HtmlTextWriterAttribute)" /> method always returns true. The <see cref="M:System.Web.UI.HtmlTextWriter.OnAttributeRender(System.String,System.String,System.Web.UI.HtmlTextWriterAttribute)" /> overrides can determine whether an attribute will be rendered to the page. </para>
@@ -1240,6 +1275,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified markup attribute and its value can be rendered to the current markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always true.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name of the attribute to render. </param>
         <param name="value">
@@ -1264,7 +1303,6 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.HtmlTextWriter" /> class implementation of the <see cref="M:System.Web.UI.HtmlTextWriter.OnStyleAttributeRender(System.String,System.String,System.Web.UI.HtmlTextWriterStyle)" /> method always returns true. The <see cref="M:System.Web.UI.HtmlTextWriter.OnStyleAttributeRender(System.String,System.String,System.Web.UI.HtmlTextWriterStyle)" /> overrides can determine whether a style attribute will be rendered to the page. </para>
@@ -1273,6 +1311,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified markup style attribute and its value can be rendered to the current markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always true.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name of the style attribute to render. </param>
         <param name="value">
@@ -1296,7 +1338,6 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterTag" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.HtmlTextWriter" /> class implementation of the <see cref="M:System.Web.UI.HtmlTextWriter.OnTagRender(System.String,System.Web.UI.HtmlTextWriterTag)" /> method always returns true. The <see cref="M:System.Web.UI.HtmlTextWriter.OnTagRender(System.String,System.Web.UI.HtmlTextWriterTag)" /> overrides can determine whether an element will be rendered to the page. </para>
@@ -1305,6 +1346,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified markup element will be rendered to the requesting page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always true.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name of the element to render. </param>
         <param name="key">
@@ -1346,7 +1391,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Elements are added to the list of rendered markup elements by the <see cref="Overload:System.Web.UI.HtmlTextWriter.RenderBeginTag" /> method. The <see cref="M:System.Web.UI.HtmlTextWriter.RenderEndTag" /> method removes markup elements from the list by calling the <see cref="M:System.Web.UI.HtmlTextWriter.PopEndTag" /> method.</para>
@@ -1355,6 +1399,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the most recently saved markup element from the list of rendered elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the most recently rendered markup element.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1485,7 +1533,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.RenderAfterContent" /> method can be useful if you want to insert child elements into the current markup element.</para>
@@ -1494,6 +1541,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes any text or spacing that occurs after the content and before the closing tag of the markup element to the markup output stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the spacing or text to write after the content of the element. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1508,7 +1559,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.RenderAfterTag" /> method can be useful if you want to render additional closing tags after the element tag.</para>
@@ -1517,6 +1567,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes any spacing or text that occurs after the closing tag for a markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The spacing or text to write after the closing tag of the element. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1531,7 +1585,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.RenderBeforeContent" /> method can be useful if you want to insert child elements into the current markup element before the inner markup.</para>
@@ -1540,6 +1593,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes any text or spacing before the content and after the opening tag of a markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text or spacing to write prior to the content of the element. If not overridden, <see cref="M:System.Web.UI.HtmlTextWriter.RenderBeforeContent" /> returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1554,7 +1611,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.HtmlTextWriter.RenderBeforeTag" /> method can be useful if you want to render additional opening tags before the opening tag of the intended element.</para>
@@ -1563,6 +1619,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes any text or spacing that occurs before the opening tag of a markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text or spacing to write before the markup element opening tag. If not overridden, null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

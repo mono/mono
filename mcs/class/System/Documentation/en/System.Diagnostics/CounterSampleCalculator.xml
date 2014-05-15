@@ -39,7 +39,6 @@
         <Parameter Name="newSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Diagnostics.CounterSampleCalculator.ComputeCounterValue(System.Diagnostics.CounterSample)" /> method overload returns meaningful results only for performance counters of the following <see cref="T:System.Diagnostics.PerformanceCounterType" />:</para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the calculated value of a single raw counter sample.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A floating-point representation of the performance counter's calculated value.</para>
+        </returns>
         <param name="newSample">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterSample" /> that indicates the most recent sample the system has taken. </param>
       </Docs>
@@ -101,12 +104,15 @@
         <Parameter Name="newSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the calculated value of two raw counter samples.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A floating-point representation of the performance counter's calculated value.</para>
+        </returns>
         <param name="oldSample">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.CounterSample" /> that indicates a previous sample the system has taken. </param>
         <param name="newSample">

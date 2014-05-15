@@ -67,7 +67,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewHeaderCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -187,7 +190,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="T:System.Windows.Forms.DataGridViewHeaderCell" /> does not have a shortcut menu, the <see cref="T:System.Windows.Forms.DataGridViewHeaderCell" /> will inherit the shortcut menu from the <see cref="T:System.Windows.Forms.DataGridView" />. If the <see cref="T:System.Windows.Forms.DataGridView" /> also does not have a shortcut menu, then the <see cref="M:System.Windows.Forms.DataGridViewHeaderCell.GetInheritedContextMenuStrip(System.Int32)" /> method will return null.</para>
@@ -196,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the shortcut menu of the header cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ContextMenuStrip" /> if the <see cref="T:System.Windows.Forms.DataGridViewHeaderCell" /> or <see cref="T:System.Windows.Forms.DataGridView" /> has a shortcut menu assigned; otherwise, null.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />Ignored by this implementation.</param>
       </Docs>
@@ -210,13 +216,16 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the current state of the cell as inherited from the state of its row or column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values representing the current state of the cell.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell or -1 if the cell is not a row header cell or is not contained within a <see cref="T:System.Windows.Forms.DataGridView" /> control.</param>
       </Docs>
@@ -237,7 +246,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridViewHeaderCell.GetSize(System.Int32)" /> method returns the size necessary to fit in a row of column headers if the header cell is a column header, the size necessary to fit in a column of row headers if the header cell is a row header, or the size necessary to be a <see cref="T:System.Windows.Forms.DataGridViewTopLeftHeaderCell" /> if the cell is a top left header cell.</para>
@@ -247,6 +255,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the size of the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that represents the size of the header cell.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The row index of the header cell.</param>
       </Docs>
@@ -264,12 +276,15 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the cell. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
@@ -287,7 +302,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For information about enabling visual styles, see the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
@@ -299,6 +313,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse button is held down while the pointer is on a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user clicks with the left mouse button, visual styles are enabled, and the <see cref="P:System.Windows.Forms.DataGridView.EnableHeadersVisualStyles" /> property is true; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains information about the mouse position.</param>
       </Docs>
@@ -316,7 +334,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For information about enabling visual styles, see the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
@@ -328,6 +345,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse pointer moves over a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if visual styles are enabled, and the <see cref="P:System.Windows.Forms.DataGridView.EnableHeadersVisualStyles" /> property is true; otherwise, false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row that the mouse pointer entered.</param>
       </Docs>
@@ -345,7 +366,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For information about enabling visual styles, see the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
@@ -357,6 +377,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse pointer leaves the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Windows.Forms.DataGridViewHeaderCell.ButtonState" /> property value is not <see cref="F:System.Windows.Forms.ButtonState.Normal" />, visual styles are enabled, and the <see cref="P:System.Windows.Forms.DataGridView.EnableHeadersVisualStyles" /> property is true; otherwise, false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row that the mouse pointer left.</param>
       </Docs>
@@ -374,7 +398,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For information about enabling visual styles, see the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
@@ -386,6 +409,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse button is released while the pointer is on a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the left mouse button was released, visual styles are enabled, and the <see cref="P:System.Windows.Forms.DataGridView.EnableHeadersVisualStyles" /> property is true; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains information about the mouse position.</param>
       </Docs>

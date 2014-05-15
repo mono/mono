@@ -102,12 +102,15 @@
       </Parameters>
       <Docs>
         <param name="contextId">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of security context security token IDs that match a specified context ID.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic collection of security context tokens.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetContext">
@@ -127,12 +130,15 @@
       <Docs>
         <param name="contextId">To be added.</param>
         <param name="generation">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the security context security token ID that matches a specified context ID and generation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching security context token.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RemoveAllContexts">
@@ -234,12 +240,15 @@
       </Parameters>
       <Docs>
         <param name="token">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to add a token to the cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token was added successfully to the cache; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryResolveSecurityKeyCore">

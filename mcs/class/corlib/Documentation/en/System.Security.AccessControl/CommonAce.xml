@@ -136,13 +136,16 @@
         <Parameter Name="isCallback" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the maximum allowed length of an opaque data BLOB for callback access control entries (ACEs).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The allowed length of an opaque data BLOB.</para>
+        </returns>
         <param name="isCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />true to specify that the <see cref="T:System.Security.AccessControl.CommonAce" /> object is a callback ACE type.</param>
       </Docs>

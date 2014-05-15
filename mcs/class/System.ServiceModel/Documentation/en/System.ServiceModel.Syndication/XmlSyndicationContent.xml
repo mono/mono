@@ -151,12 +151,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the existing <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationContent" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Extension">
@@ -194,12 +197,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reader from the content of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> from the content of the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadContent&lt;TContent&gt;">
@@ -217,8 +223,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, a new instance of <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> is created and is used to deserialize the inner XML of the XML syndication content element into an instance of <paramref name="TContent" />.</para>
@@ -227,6 +231,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadContent&lt;TContent&gt;">
@@ -246,9 +256,7 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
         <param name="serializer">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, the instance of <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> passed in is used to deserialize the inner XML of XML syndication content element into an instance of <paramref name="TContent" />.</para>
@@ -257,6 +265,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> using the specified serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadContent&lt;TContent&gt;">
@@ -276,8 +290,6 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On the receive/deserialization side, if the XML syndication content element is an empty XML element, then default(<paramref name="TContent" />) is returned. If not, the instance of <see cref="T:System.Xml.Serialization.XmlSerializer" /> passed in is used to deserialize the inner XML of XML syndication content element into an instance of <paramref name="TContent" />.</para>
@@ -286,8 +298,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> using the specified serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type.</para>
+        </returns>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Type">

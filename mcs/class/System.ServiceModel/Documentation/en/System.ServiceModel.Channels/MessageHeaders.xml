@@ -401,12 +401,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds a message header in this collection by the specified LocalName and namespace URI of the header element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the message header in this collection if found or -1 if the header specified does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
         <param name="ns">
@@ -435,12 +438,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds a message header in this collection by the specified LocalName, namespace URI and actors of the header element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the message header in this collection if found, or -1 if the header specified does not exist.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
         <param name="ns">
@@ -483,12 +489,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for iterating through the collection. This method cannot be inherited.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHeader&lt;T&gt;">
@@ -508,8 +517,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
@@ -518,8 +525,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a message header at a specific position in this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the header to get.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetHeader&lt;T&gt;">
@@ -540,17 +553,21 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a message header at a specific position in this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the header to get.</param>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> that is used to serialize the header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetHeader&lt;T&gt;">
@@ -571,8 +588,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or the DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
@@ -581,10 +596,16 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds a message header in this collection by the specified LocalName and namespace URI of the header element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetHeader&lt;T&gt;">
@@ -606,19 +627,23 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a message header in this collection by the specified LocalName, namespace URI and serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> that is used to serialize the header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetHeader&lt;T&gt;">
@@ -646,8 +671,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method only uses the <see cref="T:System.Runtime.Serialization.DataContractSerializer" />. It does not try to detect from the type whether it should use the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> or DataContractSerializer. To use the XML serializer, call <see cref="M:System.ServiceModel.Channels.MessageHeaders.GetHeader``1(System.String,System.String,System.Runtime.Serialization.XmlObjectSerializer)" /> or obtain the reader at the contents and call directly into the serializer.</para>
@@ -656,12 +679,18 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a message header in this collection by the specified LocalName, namespace URI and actors of the header element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message header with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName of the header XML element.</param>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the header XML element.</param>
         <param name="actors">
           <attribution license="cc4" from="Microsoft" modified="false" />The targeted recipient of the message header.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message header.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetReaderAtHeader">
@@ -679,12 +708,15 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a XML dictionary reader that consumes the message header at the specified location of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that consumes the message header at the specified location of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HaveMandatoryHeadersBeenUnderstood">
@@ -699,7 +731,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the message receiver cannot interpret the message headers marked with MustUnderstand, the message is not processed and an exception is thrown. </para>
@@ -708,6 +739,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies whether all the message headers marked with MustUnderstand have been properly interpreted and processed. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the recipients specified by <paramref name="actors" /> have properly interpreted and processed all the message headers marked with MustUnderstand; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HaveMandatoryHeadersBeenUnderstood">
@@ -730,7 +765,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the message receiver cannot interpret the message headers marked with MustUnderstand, the message is not processed and an exception is thrown. </para>
@@ -739,6 +773,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies whether the specified recipients have properly interpreted and processed all the message headers marked with MustUnderstand. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the recipients specified by <paramref name="actors" /> have properly interpreted and processed all the message headers marked with MustUnderstand; otherwise, false.</para>
+        </returns>
         <param name="actors">
           <attribution license="cc4" from="Microsoft" modified="false" />The targeted recipient of the message header.</param>
       </Docs>
@@ -956,12 +994,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for iterating through the collection. This method cannot be inherited.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="To">

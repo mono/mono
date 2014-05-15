@@ -202,12 +202,15 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the ObjectAccessRule class that represents a new access control rule for the associated security object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a new access control rule for the specified user, with the specified access rights, access control, and flags.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />Represents a user account.</param>
         <param name="accessMask">
@@ -298,12 +301,15 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class representing the specified audit rule for the specified user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified audit rule for the specified user.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />Represents a user account. </param>
         <param name="accessMask">

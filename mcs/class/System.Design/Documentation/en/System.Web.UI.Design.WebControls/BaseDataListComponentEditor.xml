@@ -56,7 +56,6 @@
         <Parameter Name="parent" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Web.UI.Design.WebControls.BaseDataListComponentEditor.EditComponent" /> method gets a <see cref="T:System.Type" /> array of page control types by using the <see cref="M:System.Windows.Forms.Design.WindowsFormsComponentEditor.GetComponentEditorPages" /> method. It creates a <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" /> object, and then calls its <see cref="M:System.Windows.Forms.Design.ComponentEditorForm.ShowForm" /> method to display the component editor.</para>
@@ -65,6 +64,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Edits the specified component by using the specified context descriptor and parent window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true the component was successfully edited; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information. </param>
         <param name="obj">
@@ -85,7 +88,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The initial page is specified when the <see cref="T:System.Web.UI.Design.WebControls.BaseDataListComponentEditor" /> object is created. </para>
@@ -94,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the initial page to display in the component editor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the initial page in the array.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

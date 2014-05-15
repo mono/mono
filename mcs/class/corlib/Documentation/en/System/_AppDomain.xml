@@ -201,7 +201,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> method.</para>
@@ -210,6 +209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -234,7 +237,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String,System.Object[])" /> method overload.</para>
@@ -244,6 +246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String,System.Object[])" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -276,7 +282,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> method overload. </para>
@@ -286,6 +291,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstance(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance specified by <paramref name="typeName" />. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="typeName">
@@ -323,7 +332,6 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> method overload.</para>
@@ -332,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method.</param>
         <param name="typeName">
@@ -356,7 +368,6 @@
         <Parameter Name="activationAttributes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String,System.Object[])" /> method overload.</para>
@@ -366,6 +377,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String,System.Object[])" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method. </param>
         <param name="typeName">
@@ -398,7 +413,6 @@
         <Parameter Name="securityAttributes" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> method overload.</para>
@@ -408,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.CreateInstanceFrom(System.String,System.String,System.Boolean,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo,System.Object[],System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a wrapper for the new instance, or null if <paramref name="typeName" /> is not found. The return value needs to be unwrapped to access the real object.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, including the path, of a file that contains an assembly that defines the requested type. The assembly is loaded using the <see cref="M:System.Reflection.Assembly.LoadFrom(System.String)" />  method.</param>
         <param name="typeName">
@@ -445,7 +463,6 @@
         <Parameter Name="access" Type="System.Reflection.Emit.AssemblyBuilderAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess)" /> method overload.</para>
@@ -454,6 +471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -478,7 +499,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.Policy.Evidence)" /> method overload.</para>
@@ -487,6 +507,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -513,7 +537,6 @@
         <Parameter Name="dir" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String)" /> method overload.</para>
@@ -522,6 +545,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -549,7 +576,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence)" /> method overload.</para>
@@ -558,6 +584,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -588,7 +618,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
@@ -597,6 +626,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -630,7 +663,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
@@ -639,6 +671,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -674,7 +710,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
@@ -683,6 +718,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -719,7 +758,6 @@
         <Parameter Name="refusedPermissions" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
@@ -728,6 +766,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -767,7 +809,6 @@
         <Parameter Name="isSynchronized" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Emit.AssemblyBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet,System.Boolean)" /> method overload.</para>
@@ -776,6 +817,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.DefineDynamicAssembly(System.Reflection.AssemblyName,System.Reflection.Emit.AssemblyBuilderAccess,System.String,System.Security.Policy.Evidence,System.Security.PermissionSet,System.Security.PermissionSet,System.Security.PermissionSet,System.Boolean)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the dynamic assembly created.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
         <param name="access">
@@ -886,7 +931,6 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
@@ -895,6 +939,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the inherited <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare to the current <see cref="T:System.Object" />. </param>
       </Docs>
@@ -939,7 +987,6 @@
         <Parameter Name="assemblyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.ExecuteAssembly(System.String)" /> method overload.</para>
@@ -948,6 +995,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.ExecuteAssembly(System.String)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
       </Docs>
@@ -969,7 +1020,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.ExecuteAssembly(System.String,System.Security.Policy.Evidence)" /> method overload.</para>
@@ -978,6 +1028,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.ExecuteAssembly(System.String,System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
         <param name="assemblySecurity">
@@ -1002,7 +1056,6 @@
         <Parameter Name="args" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.ExecuteAssembly(System.String,System.Security.Policy.Evidence,System.String[])" /> method overload.</para>
@@ -1011,6 +1064,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.ExecuteAssembly(System.String,System.Security.Policy.Evidence,System.String[])" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by the entry point of the assembly.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the file that contains the assembly to execute. </param>
         <param name="assemblySecurity">
@@ -1057,7 +1114,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.GetAssemblies" /> method.</para>
@@ -1066,6 +1122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.GetAssemblies" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of assemblies in this application domain.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -1084,7 +1144,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.GetData(System.String)" /> method.</para>
@@ -1093,6 +1152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.GetData(System.String)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="name" /> property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a predefined application domain property, or the name of an application domain property you have defined. </param>
       </Docs>
@@ -1111,7 +1174,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.Object.GetHashCode" /> method.</para>
@@ -1120,6 +1182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the inherited <see cref="M:System.Object.GetHashCode" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIDsOfNames">
@@ -1165,7 +1231,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.MarshalByRefObject.GetLifetimeService" /> method.</para>
@@ -1174,6 +1239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the inherited <see cref="M:System.MarshalByRefObject.GetLifetimeService" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -1190,7 +1259,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.GetType" /> method.</para>
@@ -1199,6 +1267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.GetType" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> representing the type of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTypeInfo">
@@ -1270,7 +1342,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.InitializeLifetimeService" /> method.</para>
@@ -1279,6 +1350,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.InitializeLifetimeService" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -1332,7 +1407,6 @@
         <Parameter Name="rawAssembly" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.Byte[])" /> method overload.</para>
@@ -1341,6 +1415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.Byte[])" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
       </Docs>
@@ -1361,7 +1439,6 @@
         <Parameter Name="assemblyRef" Type="System.Reflection.AssemblyName" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload.</para>
@@ -1370,6 +1447,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyRef">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the assembly to load. </param>
       </Docs>
@@ -1390,7 +1471,6 @@
         <Parameter Name="assemblyString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.String)" /> method overload.</para>
@@ -1399,6 +1479,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.String)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyString">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
       </Docs>
@@ -1420,7 +1504,6 @@
         <Parameter Name="rawSymbolStore" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.Byte[],System.Byte[])" /> method overload.</para>
@@ -1429,6 +1512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.Byte[],System.Byte[])" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
         <param name="rawSymbolStore">
@@ -1452,7 +1539,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName,System.Security.Policy.Evidence)" /> method overload.</para>
@@ -1461,6 +1547,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName,System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyRef">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the assembly to load. </param>
         <param name="assemblySecurity">
@@ -1484,7 +1574,6 @@
         <Parameter Name="assemblySecurity" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.String,System.Security.Policy.Evidence)" /> method overload.</para>
@@ -1493,6 +1582,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.String,System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="assemblyString">
           <attribution license="cc4" from="Microsoft" modified="false" />The display name of the assembly. See <see cref="P:System.Reflection.Assembly.FullName" />.</param>
         <param name="assemblySecurity">
@@ -1517,7 +1610,6 @@
         <Parameter Name="securityEvidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.Load(System.Byte[],System.Byte[],System.Security.Policy.Evidence)" /> method overload.</para>
@@ -1526,6 +1618,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.Load(System.Byte[],System.Byte[],System.Security.Policy.Evidence)" /> method overload.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded assembly.</para>
+        </returns>
         <param name="rawAssembly">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type byte that is a COFF-based image containing an emitted assembly. </param>
         <param name="rawSymbolStore">
@@ -1815,7 +1911,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.AppDomain.ToString" /> method.</para>
@@ -1824,6 +1919,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.AppDomain.ToString" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string formed by concatenating the literal string "Name:", the friendly name of the application domain, and either string representations of the context policies or the string "There are no context policies." </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeResolve">

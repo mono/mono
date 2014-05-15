@@ -99,7 +99,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object that is returned by the <see cref="M:System.Diagnostics.EventLogEntryCollection.GetEnumerator" /> method is a wrapper for the <see cref="T:System.Diagnostics.EventLogEntryCollection" /> class that implements the <see cref="T:System.Collections.IEnumerator" /> enumerator.</para>
@@ -111,6 +110,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Supports a simple iteration over the <see cref="T:System.Diagnostics.EventLogEntryCollection" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be used to iterate over the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">

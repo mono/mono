@@ -452,7 +452,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -462,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class with the properties of the current <see cref="T:System.Web.UI.WebControls.TreeNode" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Web.UI.WebControls.TreeNode" /> with the properties of the current <see cref="T:System.Web.UI.WebControls.TreeNode" /> instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1021,7 +1024,6 @@ if (TreeView1.Nodes[0].Expanded)
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1031,6 +1033,10 @@ if (TreeView1.Nodes[0].Expanded)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the current view state of the node. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the saved state of the node. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1226,7 +1232,6 @@ if (TreeView1.Nodes[0].Expanded)
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.TreeNode.System.ICloneable.Clone" /> method is used by the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class to make a copy of itself.</para>
@@ -1235,6 +1240,10 @@ if (TreeView1.Nodes[0].Expanded)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a copy of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -1290,12 +1299,15 @@ if (TreeView1.Nodes[0].Expanded)
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the view state changes to a <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the view state changes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">

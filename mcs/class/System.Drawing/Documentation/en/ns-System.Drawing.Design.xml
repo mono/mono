@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Drawing.Design">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Drawing.Design" /> namespace contains classes that extend design-time user interface (UI) logic and drawing. </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The classes in this namespace can be used to create custom toolbox items, type-specific value editors that can edit and graphically represent values of their supported types, and type converters that can convert values between certain types. This namespace provides the basic frameworks for developing extensions to the design-time UI.</para>
+      <block subset="none" type="note">
+        <para>Classes within the <see cref="N:System.Drawing.Design" /> namespace are not supported for use within a Windows or ASP.NET service. Attempting to use these classes from within one of these application types may produce unexpected problems, such as diminished service performance and run-time exceptions.</para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

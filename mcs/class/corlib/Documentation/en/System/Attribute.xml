@@ -171,21 +171,21 @@ class AuthorInfo
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="obj" />
-represents the same type and value as the current instance. If <paramref name="obj" /> is a null reference or is not an instance of
-<see cref="T:System.Attribute" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <block subset="none" type="note">
             <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
           </block>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance or null. </param>
       </Docs>
@@ -209,11 +209,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -230,6 +225,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a specified assembly. Parameters specify the assembly and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -257,11 +256,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -280,6 +274,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
         <param name="attributeType">
@@ -306,11 +304,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">If multiple instances of <paramref name="attributeType" /> can be
@@ -326,6 +319,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -352,11 +349,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The single instance of <see cref="T:System.Attribute" /> of type <paramref name="attributeType" /> that is applied to <paramref name="element." /> Returns <see langword="null " /> if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -370,6 +362,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -396,7 +392,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -407,6 +402,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -433,7 +432,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -444,6 +442,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
         <param name="attributeType">
@@ -470,12 +472,15 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -502,7 +507,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
@@ -511,6 +515,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a custom attribute applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the single custom attribute of type <paramref name="attributeType" /> that is applied to <paramref name="element" />, or null if there is no such attribute.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -536,15 +544,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." />
-   The
-   array includes any inherited custom attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
         <remarks>
@@ -557,6 +556,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to an assembly. A parameter specifies the assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
       </Docs>
@@ -581,14 +584,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." /> The array includes custom attributes that are inherited by
-<paramref name="element" />, if any. Returns 
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">
@@ -604,6 +599,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a member of a type. A parameter specifies the member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
       </Docs>
@@ -627,14 +626,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." />
-   The array includes any inherited custom attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
@@ -642,6 +633,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a module. A parameter specifies the module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
       </Docs>
@@ -665,14 +660,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="element" Type="System.Reflection.ParameterInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Attribute" /> array containing
-   all custom attributes that are applied to <paramref name="element." /> The array includes any inherited custom
-   attributes. Returns
-   an empty array if no custom attributes were found in the metadata for
-<paramref name="element" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> is <see langword="null" />.</exception>
         <remarks>
@@ -683,6 +670,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a method parameter. A parameter specifies the method parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
       </Docs>
@@ -706,7 +697,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -717,6 +707,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="inherit">
@@ -741,12 +735,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances 
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -761,6 +749,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -787,7 +779,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
@@ -799,6 +790,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
         <param name="inherit">
@@ -823,13 +818,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of type <paramref name="type" /> containing the instances that are applied to <paramref name="element." /> The array includes instances
-   of <paramref name="type" /> that are inherited by
-<paramref name="element" />, if any. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -847,6 +835,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="type" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
         <param name="type">
@@ -872,7 +864,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
@@ -881,6 +872,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="inherit">
@@ -905,12 +900,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="type" /> is <see langword="null" />.</exception>
@@ -920,6 +909,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -945,7 +938,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
@@ -954,6 +946,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, and whether to search ancestors of the method parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="inherit">
@@ -978,12 +974,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> An array of type <paramref name="attributeType" /> containing the instances that are applied to <paramref name="element." /> The array includes any inherited instances
-   of <paramref name="attributeType" />. Returns an empty array if the
-   specified attribute was not found.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -996,6 +986,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -1022,7 +1016,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1033,6 +1026,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -1059,7 +1056,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
@@ -1071,6 +1067,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="type" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, or property member of a class. </param>
         <param name="type">
@@ -1097,7 +1097,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value contains the custom attributes for ancestors of <paramref name="element" /> if <paramref name="inherit" /> is true.</para>
@@ -1106,6 +1105,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -1132,7 +1135,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="element" /> represents a parameter in a method of a derived type, the return value includes the inheritable custom attributes applied to the same parameter in the overridden base methods.</para>
@@ -1141,6 +1143,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the custom attributes applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Attribute" /> array that contains the custom attributes of type <paramref name="attributeType" /> applied to <paramref name="element" />, or an empty array if no such custom attributes exist.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -1164,9 +1170,6 @@ represents the same type and value as the current instance. If <paramref name="o
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>
       The algorithm used to generate the hash code is
@@ -1182,6 +1185,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1199,7 +1206,6 @@ represents the same type and value as the current instance. If <paramref name="o
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of this class returns false, and must be implemented in the derived class to be useful to that class.</para>
@@ -1209,6 +1215,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, indicates whether the value of this instance is the default value for the derived class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance is the default attribute for the class; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -1229,12 +1239,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type 
-<paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, 
-<see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1249,6 +1253,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to an assembly. Parameters specify the assembly, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -1276,12 +1284,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> either directly or through inheritance; otherwise, 
-<see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1299,6 +1301,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to a member of a type. Parameters specify the member, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, type, or property member of a class. </param>
         <param name="attributeType">
@@ -1325,12 +1331,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> 
-; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1343,6 +1343,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes of a specified type are applied to a module. Parameters specify the module, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -1369,12 +1373,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if a custom attribute of type
-<paramref name="attributeType" /> is applied to <paramref name="element" /> either directly or through 
-   inheritance; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="element" /> or <paramref name="attributeType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1387,6 +1385,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to a method parameter. Parameters specify the method parameter, and the type of the custom attribute to search for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -1413,7 +1415,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1424,6 +1425,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to an assembly. Parameters specify the assembly, the type of the custom attribute to search for, and an ignored search option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Assembly" /> class that describes a reusable collection of modules. </param>
         <param name="attributeType">
@@ -1450,7 +1455,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1461,6 +1465,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to a member of a type. Parameters specify the member, the type of the custom attribute to search for, and whether to search ancestors of the member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.MemberInfo" /> class that describes a constructor, event, field, method, type, or property member of a class. </param>
         <param name="attributeType">
@@ -1487,7 +1495,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter and does not search the ancestors of <paramref name="element" /> for custom attributes.</para>
@@ -1496,6 +1503,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to a module. Parameters specify the module, the type of the custom attribute to search for, and an ignored search option. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.Module" /> class that describes a portable executable file. </param>
         <param name="attributeType">
@@ -1522,12 +1533,15 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any custom attributes are applied to a method parameter. Parameters specify the method parameter, the type of the custom attribute to search for, and whether to search ancestors of the method parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a custom attribute of type <paramref name="attributeType" /> is applied to <paramref name="element" />; otherwise, false.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />An object derived from the <see cref="T:System.Reflection.ParameterInfo" /> class that describes a parameter of a member of a class. </param>
         <param name="attributeType">
@@ -1552,7 +1566,6 @@ represents the same type and value as the current instance. If <paramref name="o
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines if one <see cref="T:System.Attribute" /> equals another. Its default implementation is the same as <see cref="M:System.Attribute.Equals(System.Object)" />, which performs a value and reference comparison. Override this method to implement support for attribute values, such as flags or bit fields, that consist of components that are meaningful in themselves.</para>
@@ -1562,6 +1575,10 @@ represents the same type and value as the current instance. If <paramref name="o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a value that indicates whether this instance equals a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance equals <paramref name="obj" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance of <see cref="T:System.Attribute" />. </param>
       </Docs>

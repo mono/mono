@@ -227,7 +227,6 @@
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.IAsyncResult" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not call this method.</para>
@@ -236,6 +235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates a request for Active Server Page (ASP) resources. This method is provided for compatibility with legacy ASP applications.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> with information about the current request. </param>
         <param name="cb">
@@ -349,12 +352,15 @@
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins processing an asynchronous page request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the request.</param>
         <param name="callback">
@@ -664,7 +670,6 @@
         <Parameter Name="tw" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.HtmlTextWriter" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.CreateHtmlTextWriter(System.IO.TextWriter)" /> method creates a <see cref="T:System.IO.TextWriter" /> through the <see cref="P:System.Web.HttpRequest.Browser" /> property of the <see cref="P:System.Web.HttpContext.Request" /> object associated with the page request. You can add a reference to an <see cref="T:System.Web.UI.HtmlTextWriter" /> in the browserCaps configuration section. Override the <see cref="M:System.Web.UI.Page.CreateHtmlTextWriter(System.IO.TextWriter)" /> method to perform custom lookup.</para>
@@ -673,6 +678,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Web.UI.HtmlTextWriter" /> object to render the page's content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.HtmlTextWriter" /> or <see cref="T:System.Web.UI.Html32TextWriter" />.</para>
+        </returns>
         <param name="tw">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> used to create the <see cref="T:System.Web.UI.HtmlTextWriter" />.</param>
       </Docs>
@@ -700,7 +709,6 @@
         <Parameter Name="writerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used internally in page adapters.</para>
@@ -709,6 +717,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object to render the page's content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.HtmlTextWriter" /> that renders the content of the page.</para>
+        </returns>
         <param name="tw">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> used to create the <see cref="T:System.Web.UI.HtmlTextWriter" />. </param>
         <param name="writerType">
@@ -782,7 +794,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.DeterminePostBackMode" /> method returns a <see cref="T:System.Collections.Specialized.NameValueCollection" /> object that contains the data posted back to the page. The presence of the page hidden fields VIEWSTATE and EVENTTARGET is used to help determine whether a postback event has occurred. The <see cref="P:System.Web.UI.Page.IsPostBack" /> property is set when the <see cref="M:System.Web.UI.Page.DeterminePostBackMode" /> method is called.</para>
@@ -791,6 +802,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Collections.Specialized.NameValueCollection" /> of data posted back to the page using either a POST or a GET command. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> object that contains the form data. If the postback used the POST command, the form information is returned from the <see cref="P:System.Web.UI.Page.Context" /> object. If the postback used the GET command, the query string information is returned. If the page is being requested for the first time, null is returned.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -992,7 +1007,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.FindControl(System.String)" /> method can be used to access a control whose <see cref="P:System.Web.UI.Control.ID" /> is not available at design time. The method searches only the page's immediate, or top-level, container; it does not recursively search for controls in naming containers contained on the page. To access controls in a subordinate naming container, call the FindControl method of that container.</para>
@@ -1001,6 +1015,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the page naming container for a server control with the specified identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
       </Docs>
@@ -1059,12 +1077,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the data item at the top of the data-binding context stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object at the top of the data binding context stack.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPostBackClientEvent">
@@ -1078,7 +1099,6 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="T:System.Web.UI.ClientScriptManager" /> class for alternatives to this deprecated member.</para>
@@ -1087,6 +1107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reference that can be used in a client event to post back to the server for the specified control and with the specified event arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents the client event.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control that receives the client event postback. </param>
         <param name="argument">
@@ -1116,7 +1140,6 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="M:System.Web.UI.ClientScriptManager.GetPostBackClientHyperlink(System.Web.UI.Control,System.String)" /> method for an alternative to this deprecated member.</para>
@@ -1125,6 +1148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reference, with javascript: appended to the beginning of it, that can be used in a client event to post back to the server for the specified control and with the specified event arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing a JavaScript call to the postback function that includes the target control's ID and event arguments.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback. </param>
         <param name="argument">
@@ -1153,7 +1180,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.GetPostBackEventReference" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead.</para>
@@ -1162,6 +1188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified <see cref="T:System.Web.UI.Control" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback on the server. </param>
       </Docs>
@@ -1189,7 +1219,6 @@
         <Parameter Name="argument" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has been deprecated. Use the <see cref="Overload:System.Web.UI.ClientScriptManager.GetPostBackEventReference" /> method in the <see cref="T:System.Web.UI.ClientScriptManager" /> class instead. </para>
@@ -1198,6 +1227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that can be used in a client event to cause postback to the server. The reference string is defined by the specified control that handles the postback and a string argument of additional event information. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that, when treated as script on the client, initiates the postback.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The server control to process the postback. </param>
         <param name="argument">
@@ -1224,7 +1257,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not override this method.</para>
@@ -1233,6 +1265,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a hash code that is generated by <see cref="T:System.Web.UI.Page" /> objects that are generated at run time. This hash code is unique to the <see cref="T:System.Web.UI.Page" /> object's control hierarchy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code generated at run time. The default is 0.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1257,7 +1293,6 @@
         <Parameter Name="validationGroup" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.GetValidators(System.String)" /> method returns all the validation objects associated with a specific validation group. You can return the default validation group (all validation controls associated with controls without the ValidationGroup property set) by setting the <paramref name="validationGroup" /> parameter to null. </para>
@@ -1267,6 +1302,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of control validators for a specified validation group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ValidatorCollection" /> that contains the control validators for the specified validation group.</para>
+        </returns>
         <param name="validationGroup">
           <attribution license="cc4" from="Microsoft" modified="false" />The validation group to return, or null to return the default validation group.</param>
       </Docs>
@@ -1285,7 +1324,6 @@
       </Parameters>
       <Docs>
         <param name="list">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.GetWrappedFileDependencies(System.String[])" /> method gets a list of files, such as user control files, that make up the current page. If any of these pages are modified, the entire page is compiled the next time it is requested. Do not override this method.</para>
@@ -1294,6 +1332,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of physical file names that correspond to a list of virtual file locations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing a list of physical file locations.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Header">
@@ -1589,7 +1631,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling <see cref="M:System.Web.UI.Page.RegisterClientScriptBlock(System.String,System.String)" /> to avoid unnecessarily assembling the client-side script. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -1599,6 +1640,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client script block with the specified key is registered with the page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the script block is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The string key of the client script to search for. </param>
       </Docs>
@@ -1709,7 +1754,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method before calling <see cref="M:System.Web.UI.Page.RegisterStartupScript(System.String,System.String)" /> to avoid unnecessarily assembling the client-side script. This is particularly important if the script requires a large amount of server resources to create.</para>
@@ -1719,6 +1763,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the client startup script is registered with the <see cref="T:System.Web.UI.Page" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the startup script is registered; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The string key of the startup script to search for. </param>
       </Docs>
@@ -1852,7 +1900,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Page.LoadPageStateFromPersistenceMedium" /> method uses the <see cref="M:System.Web.UI.PageStatePersister.Load" /> method of the <see cref="T:System.Web.UI.PageStatePersister" /> object referenced by the <see cref="P:System.Web.UI.Page.PageStatePersister" /> property to load any saved view-state information for the <see cref="T:System.Web.UI.Page" /> object.</para>
@@ -1864,6 +1911,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads any saved view-state information to the <see cref="T:System.Web.UI.Page" /> object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The saved view state.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1916,7 +1967,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1927,6 +1977,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the physical path that a virtual path, either absolute or relative, or an application-relative path maps to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path associated with the virtual path or application-relative path.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that represents the virtual path. </param>
       </Docs>
@@ -2908,7 +2962,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control state is an object composed of critical view-state data that Web server controls need to function; it is contained in a separate object from normal view state. </para>
@@ -2918,6 +2971,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Web.UI.Control" /> object is registered to participate in control state management.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Web.UI.Control" /> requires control state; otherwise, false</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to check for a control state requirement.</param>
       </Docs>

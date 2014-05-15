@@ -369,7 +369,6 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For successful deserialization, the current position in the stream must be at the beginning of the object graph.</para>
@@ -381,6 +380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the specified stream into an object graph.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top (root) of the object graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize the object graph. </param>
       </Docs>
@@ -402,7 +405,6 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Messaging.HeaderHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Headers are used only for specific remoting applications.</para>
@@ -415,6 +417,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the specified stream into an object graph. The provided <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> handles any headers in that stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object or the top object (root) of the object graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize the object graph. </param>
         <param name="handler">
@@ -439,7 +445,6 @@
         <Parameter Name="methodCallMessage" Type="System.Runtime.Remoting.Messaging.IMethodCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Details about the caller object are not sent to the remote object during the method call. Instead, these details are obtained from the original method call that is passed to the current method in the <paramref name="methodCallMessage" /> parameter.</para>
@@ -449,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes a response to a remote method call from the provided <see cref="T:System.IO.Stream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized response to the remote method call.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize the object graph. </param>
         <param name="handler">
@@ -611,7 +620,6 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Messaging.HeaderHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Headers are used only for specific remoting applications.</para>
@@ -625,6 +633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the specified stream into an object graph. The provided <see cref="T:System.Runtime.Remoting.Messaging.HeaderHandler" /> handles any headers in that stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object or the top object (root) of the object graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize the object graph. </param>
         <param name="handler">
@@ -654,7 +666,6 @@
         <Parameter Name="methodCallMessage" Type="System.Runtime.Remoting.Messaging.IMethodCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Details about the caller object are not sent to the remote object during the method call. Instead, these details are obtained from the original method call that is passed to the current method in the <paramref name="methodCallMessage" /> parameter.</para>
@@ -668,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes a response to a remote method call from the provided <see cref="T:System.IO.Stream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized response to the remote method call.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to deserialize the object graph. </param>
         <param name="handler">

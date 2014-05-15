@@ -200,7 +200,6 @@
         <Parameter Name="dataValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BoundColumn.FormatDataValue(System.Object)" /> method to convert the specified value to the format indicated by the <see cref="P:System.Web.UI.WebControls.BoundColumn.DataFormatString" /> property.</para>
@@ -212,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to the format indicated by the <see cref="P:System.Web.UI.WebControls.BoundColumn.DataFormatString" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified value converted to the format indicated by the <see cref="P:System.Web.UI.WebControls.BoundColumn.DataFormatString" /> property.</para>
+        </returns>
         <param name="dataValue">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to format. </param>
       </Docs>

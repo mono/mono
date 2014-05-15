@@ -67,13 +67,16 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified row is contained in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="dataGridViewRow" /> is in the collection; otherwise, false.</para>
+        </returns>
         <param name="dataGridViewRow">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> to locate in the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" />.</param>
       </Docs>
@@ -190,7 +193,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You cannot change the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" /> class directly. To add a row to the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" />, use the <see cref="P:System.Windows.Forms.DataGridViewBand.Selected" /> property.</para>
@@ -200,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="M:System.Collections.IList.Add(System.Object)" /> method. Always throws <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which <paramref name="value" /> was inserted.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The item to be added to the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" />.</param>
       </Docs>
@@ -239,7 +245,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -248,6 +253,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified value is contained in the collection. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is in the collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to locate in the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" />.</param>
       </Docs>
@@ -265,7 +274,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.DataGridViewSelectedRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -274,6 +282,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the specified element. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <paramref name="value" /> parameter if it is found in the collection; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The element to locate in the collection.</param>
       </Docs>

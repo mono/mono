@@ -98,13 +98,16 @@
         <Parameter Name="skinID" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a lookup key object for a particular control type and skin ID. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be used as a lookup key in a dictionary-style collection, which contains the control type and skin ID information.</para>
+        </returns>
         <param name="controlType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of control to which a control skin applies, which is passed typically from the <see cref="P:System.Web.UI.ControlBuilder.ControlType" />.</param>
         <param name="skinID">
@@ -124,7 +127,6 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -134,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses the <see cref="M:System.Web.UI.DataBinder.Eval(System.Object,System.String)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> property that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate a data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value. For details, see <see cref="T:System.Web.UI.DataBinder" />.</param>
       </Docs>
@@ -152,7 +158,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -162,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses the <see cref="M:System.Web.UI.DataBinder.Eval(System.Object,System.String,System.String)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> property that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate a data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value. For details, see <see cref="T:System.Web.UI.DataBinder" />.</param>
         <param name="format">
@@ -225,13 +234,16 @@
         <Parameter Name="deviceFilterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a device filter applies to the <see cref="T:System.Web.UI.Page" /> control that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="deviceFilterName" /> applies to the page; otherwise; false.</para>
+        </returns>
         <param name="deviceFilterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The string name of the device filter to check. </param>
       </Docs>
@@ -249,7 +261,6 @@
         <Parameter Name="xPathExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -259,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding <paramref name="xPathExpression" />.</para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
       </Docs>
@@ -277,7 +292,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -287,6 +301,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified format string to display the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
         <param name="format">
@@ -307,7 +325,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -317,6 +334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding <paramref name="xPathExpression" />.</para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
         <param name="resolver">
@@ -338,7 +359,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -348,6 +368,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses the <see cref="M:System.Web.UI.TemplateControl.XPath(System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method of the <see cref="P:System.Web.UI.PageTheme.Page" /> control that the instance of the <see cref="T:System.Web.UI.PageTheme" /> class is associated with to evaluate an XPath data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
         <param name="format">
@@ -369,7 +393,6 @@
         <Parameter Name="xPathExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -379,6 +402,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes.</para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />.</param>
       </Docs>
@@ -397,7 +424,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -407,6 +433,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of nodes. </para>
+        </returns>
         <param name="xPathExpression">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression to evaluate. For details, see <see cref="T:System.Web.UI.XPathBinder" />. </param>
         <param name="resolver">

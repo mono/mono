@@ -301,7 +301,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -311,6 +310,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the object for changes since it was last saved.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the object has changed; otherwise, an S_FALSE HRESULT value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEqual">
@@ -328,7 +331,6 @@
         <Parameter Name="pmkOtherMoniker" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -338,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current moniker with a specified moniker and indicates whether they are identical.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the monikers are identical; otherwise, an S_FALSE HRESULT value.  </para>
+        </returns>
         <param name="pmkOtherMoniker">
           <attribution license="cc4" from="Microsoft" modified="false" />A reference to the moniker to use for comparison. </param>
       </Docs>
@@ -359,7 +365,6 @@
         <Parameter Name="pmkNewlyRunning" Type="System.Runtime.InteropServices.ComTypes.IMoniker" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -369,6 +374,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the object that is identified by the current moniker is currently loaded and running.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the moniker is running; an S_FALSE HRESULT value if the moniker is not running; or an E_UNEXPECTED HRESULT value.</para>
+        </returns>
         <param name="pbc">
           <attribution license="cc4" from="Microsoft" modified="false" />A reference to the bind context to use in this binding operation. </param>
         <param name="pmkToLeft">

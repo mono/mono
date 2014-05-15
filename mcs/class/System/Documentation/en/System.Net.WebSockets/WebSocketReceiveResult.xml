@@ -59,13 +59,21 @@
         <Parameter Name="closeStatusDescription" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="count">To be added.</param>
-        <param name="messageType">To be added.</param>
-        <param name="endOfMessage">To be added.</param>
-        <param name="closeStatus">To be added.</param>
-        <param name="closeStatusDescription">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Net.WebSockets.WebSocketReceiveResult" /> class.</para>
+        </summary>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes received.</param>
+        <param name="messageType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of message that was received.</param>
+        <param name="endOfMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether this is the final message.</param>
+        <param name="closeStatus">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the <see cref="T:System.Net.WebSockets.WebSocketCloseStatus" /> of the connection.</param>
+        <param name="closeStatusDescription">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of <paramref name="closeStatus" />.</param>
       </Docs>
     </Member>
     <Member MemberName="CloseStatus">

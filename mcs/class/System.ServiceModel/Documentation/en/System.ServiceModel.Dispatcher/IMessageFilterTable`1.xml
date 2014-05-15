@@ -183,11 +183,22 @@
         <Parameter Name="results" Type="System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when more than one filter is expected to match the message, the matching filters are required, and the body of the message does not have to be inspected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of a filter in the table is satisfied by the specified message, and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="message" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to test.</param>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilters">
@@ -206,10 +217,20 @@
       </Parameters>
       <Docs>
         <param name="buffer">To be added.</param>
-        <param name="results">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when more than one filter is expected to match the buffered message, the matching filter is required, and the body of the message may have to be inspected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the match criterion of a filter in the table is satisfied by the specified buffered message, and adds the matching filters to a collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the match criterion of at least one filter in the table is satisfied by <paramref name="messageBuffer" />; false if no filter is satisfied.</para>
+        </returns>
+        <param name="results">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference parameter that stores the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> objects that match in <see cref="T:System.Collections.Generic.ICollection`1" />&lt;Filter&gt;.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingValue">

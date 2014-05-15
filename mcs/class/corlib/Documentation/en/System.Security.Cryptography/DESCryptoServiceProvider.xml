@@ -80,7 +80,6 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to decrypt data.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method decrypts an encrypted message that was created using the <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.CreateEncryptor(System.Byte[],System.Byte[])" /> overload with the same parameters.</para>
@@ -89,6 +88,10 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) decryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.DES" /> decryptor object.</para>
+        </returns>
         <param name="rgbKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
         <param name="rgbIV">
@@ -112,7 +115,6 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
         <Parameter Name="rgbIV" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Security.Cryptography.ICryptoTransform" /> that is ready to be used to encrypt data.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Security.Cryptography.DESCryptoServiceProvider.CreateDecryptor(System.Byte[],System.Byte[])" /> overload with the same parameters to decrypt the result of this method.</para>
@@ -121,6 +123,10 @@ DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric Data Encryption Standard (<see cref="T:System.Security.Cryptography.DES" />) encryptor object with the specified key (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.Key" />) and initialization vector (<see cref="P:System.Security.Cryptography.SymmetricAlgorithm.IV" />).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric <see cref="T:System.Security.Cryptography.DES" /> encryptor object.</para>
+        </returns>
         <param name="rgbKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The secret key to use for the symmetric algorithm. </param>
         <param name="rgbIV">

@@ -36,11 +36,20 @@
         <Parameter Name="policy" Type="System.Collections.Generic.ICollection&lt;System.Xml.XmlElement&gt;" />
       </Parameters>
       <Docs>
-        <param name="wsdlDocuments">To be added.</param>
-        <param name="xmlSchemas">To be added.</param>
-        <param name="policy">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ServiceModel.Description.IWsdlImportExtension.BeforeImport(System.Web.Services.Description.ServiceDescriptionCollection,System.Xml.Schema.XmlSchemaSet,System.Collections.Generic.ICollection{System.Xml.XmlElement})" /> methods of all registered <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> objects is called before anything is imported from the supplied metadata.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called prior to importing metadata documents.</para>
+        </summary>
+        <param name="wsdlDocuments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The service descriptions to modify.</param>
+        <param name="xmlSchemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The schema collection to be used when importing.</param>
+        <param name="policy">
+          <attribution license="cc4" from="Microsoft" modified="false" />The policy assertions used when importing.</param>
       </Docs>
     </Member>
     <Member MemberName="ImportContract">

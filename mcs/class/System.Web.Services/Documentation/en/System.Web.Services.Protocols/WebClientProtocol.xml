@@ -150,12 +150,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an instance of a client protocol handler from the cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a client protocol handler from the cache.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the client protocol handler to be returned from the cache.</param>
       </Docs>
@@ -174,7 +177,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebRequest" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be overridden to customize the <see cref="T:System.Net.WebRequest" /> object before the XML Web service request is made. For example you could add a custom header to the request.</para>
@@ -183,6 +185,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Net.WebRequest" /> instance for the specified <paramref name="uri" />. This protected method is called by the XML Web service client infrastructure to get a new <see cref="T:System.Net.WebRequest" /> transport object to transmit the XML Web service request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.WebRequest" /> instance.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> to use when creating the <see cref="T:System.Net.WebRequest" />. </param>
       </Docs>
@@ -201,12 +207,15 @@
         <Parameter Name="request" Type="System.Net.WebRequest" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebResponse" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response from a synchronous request to an XML Web service method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A response from a synchronous request to an XML Web service method.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebRequest" /> to get the response from. </param>
       </Docs>
@@ -226,12 +235,15 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Net.WebResponse" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response from an asynchronous request to an XML Web service method. This protected method is called by the XML Web service client infrastructure to get the response from an asynchronous XML Web service request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A response from an asynchronous request to an XML Web service method.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.WebRequest" /> to get the response from. </param>
         <param name="result">

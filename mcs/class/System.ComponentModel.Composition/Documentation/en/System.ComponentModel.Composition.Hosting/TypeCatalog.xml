@@ -41,9 +41,13 @@
         <Parameter Name="types" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="types">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> class with the specified types.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -84,10 +88,15 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="types">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> class with the specified types and source for parts.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> object.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element used by diagnostics to identify the source for parts.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -102,10 +111,15 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <param name="types">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> class with the specified types in the specified reflection context.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used to interpret the types.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -121,11 +135,17 @@
         <Parameter Name="definitionOrigin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="types">To be added.</param>
-        <param name="reflectionContext">To be added.</param>
-        <param name="definitionOrigin">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> class with the specified types in the specified reflection context and source for parts.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> object.</param>
+        <param name="reflectionContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context used to interpret the types.</param>
+        <param name="definitionOrigin">
+          <attribution license="cc4" from="Microsoft" modified="false" />An element used by diagnostics to identify the source for parts.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -163,12 +183,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the catalog.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the catalog.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.DisplayName">
@@ -227,12 +250,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the type catalog.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the type catalog.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

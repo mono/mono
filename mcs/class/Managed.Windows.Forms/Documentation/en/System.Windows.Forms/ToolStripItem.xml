@@ -814,13 +814,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1079,7 +1082,6 @@
         <Parameter Name="allowedEffects" Type="System.Windows.Forms.DragDropEffects" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the drag operation needs to interact with applications in another process, the <paramref name="data" /> parameter must either be a base managed class (such as <see cref="T:System.String" />, <see cref="T:System.Drawing.Bitmap" />, or <see cref="T:System.Drawing.Imaging.Metafile" />), an object that implements <see cref="T:System.Runtime.Serialization.ISerializable" />, or an object that implements <see cref="T:System.Windows.Forms.IDataObject" />.</para>
@@ -1088,6 +1090,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins a drag-and-drop operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DragDropEffects" /> values.</para>
+        </returns>
         <param name="data">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be dragged. </param>
         <param name="allowedEffects">
@@ -1464,7 +1470,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1475,6 +1480,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Windows.Forms.ToolStrip" /> that is the container of the current <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ToolStrip" /> that is the container of the current <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1490,13 +1499,16 @@
         <Parameter Name="constrainingSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the size of a rectangular area into which a control can be fit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> ordered pair, representing the width and height of a rectangle.</para>
+        </returns>
         <param name="constrainingSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control. </param>
       </Docs>
@@ -1938,7 +1950,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during window message preprocessing to determine whether the given input character should be preprocessed or sent directly to the <see cref="T:System.Windows.Forms.ToolStripItem" />. If the <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> method returns true, the specified character is sent directly to the <see cref="T:System.Windows.Forms.ToolStripItem" />. However, if the method returns false, the character is preprocessed and only sent to the <see cref="T:System.Windows.Forms.ToolStripItem" /> if it is not consumed by the preprocessing phase. The preprocessing of a character includes checking whether the character is a mnemonic of another control.</para>
@@ -1947,6 +1958,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a character is an input character that the item recognizes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character should be sent directly to the item and not preprocessed; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test. </param>
       </Docs>
@@ -1964,7 +1979,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> method during window-message preprocessing to determine whether the specified key is a regular input key that should be sent directly to the <see cref="T:System.Windows.Forms.ToolStripItem" /> or a special key (such as PAGE UP, PAGE DOWN, ENTER, ESC, TAB, or arrow keys) that should be preprocessed. In the latter case, the key is sent to the <see cref="T:System.Windows.Forms.ToolStripItem" /> only if it is not consumed by the preprocessing phase.</para>
@@ -1973,6 +1987,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values. </param>
       </Docs>
@@ -3681,7 +3699,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during message preprocessing to handle the ENTER and SPACEBAR keys in order to raise the <see cref="E:System.Windows.Forms.ToolStripItem.Click" /> event. This method is called only if the <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> method indicates that the item is not processing the key. </para>
@@ -3690,6 +3707,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the item; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
@@ -3707,7 +3728,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called to give an item the opportunity to process a mnemonic character. The method should determine whether the item is in a state to process mnemonics and if whether the given character represents a mnemonic. If so, the method should perform the action associated with the mnemonic and return true. If not, the method should return false. </para>
@@ -3717,6 +3737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a mnemonic character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true in all cases.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>

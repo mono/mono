@@ -790,9 +790,6 @@ instance. </para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.InvalidOperationException">
           <para>The stream is being used by a previous call to <see cref="M:System.Net.HttpWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> .</para>
           <para>-or-</para>
@@ -825,6 +822,10 @@ instance. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a <see cref="T:System.IO.Stream" /> object to use to write data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -850,10 +851,6 @@ instance. </para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> that contains information about the asynchronous
-   operation.</para>
-        </returns>
         <exception cref="T:System.InvalidOperationException">
           <see cref="M:System.Net.HttpWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> or <see cref="M:System.Net.HttpWebRequest.GetResponse" /> was previously called on this instance.</exception>
         <exception cref="T:System.Net.ProtocolViolationException">The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance has not been set.</exception>
@@ -877,6 +874,10 @@ instance. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request to an Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request for a response.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate </param>
         <param name="state">
@@ -1323,9 +1324,6 @@ received. The default value is <see langword="null" />
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.Stream" /> to write request data to.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1358,6 +1356,10 @@ received. The default value is <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for a <see cref="T:System.IO.Stream" /> object to use to write data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> to use to write request data.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The pending request for a stream. </param>
       </Docs>
@@ -1402,10 +1404,6 @@ received. The default value is <see langword="null" />
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.WebResponse" /> that contains a response to the Internet request
-   referenced by <paramref name="asyncResult" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1435,6 +1433,10 @@ received. The default value is <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request to an Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains the response from the Internet resource.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The pending request for a response. </param>
       </Docs>
@@ -1550,10 +1552,6 @@ received. The default value is <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.Stream" /> for writing
-   data to an Internet resource requested by the current instance.</para>
-        </returns>
         <exception cref="T:System.Net.ProtocolViolationException">
           <para>The <see cref="P:System.Net.HttpWebRequest.Method" /> property of the current instance is "GET" or "HEAD". </para>
           <para> -or- </para>
@@ -1588,6 +1586,10 @@ received. The default value is <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.IO.Stream" /> object to use to write request data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> to use to write request data.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1606,10 +1608,6 @@ received. The default value is <see langword="null" />
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.WebResponse" /> containing the response from the Internet resource requested by the current
-   instance.</para>
-        </returns>
         <exception cref="T:System.Net.ProtocolViolationException">The <see cref="P:System.Net.HttpWebRequest.ContentLength" /> property of the current instance is not set. </exception>
         <exception cref="T:System.Net.WebException">
           <para>
@@ -1647,6 +1645,10 @@ received. The default value is <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response from an Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains the response from the Internet resource.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

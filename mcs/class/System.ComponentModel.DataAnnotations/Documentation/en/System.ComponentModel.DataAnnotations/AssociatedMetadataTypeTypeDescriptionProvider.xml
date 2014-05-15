@@ -79,12 +79,15 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a type descriptor for the specified type and object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The descriptor that provides metadata for the type.</para>
+        </returns>
         <param name="objectType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to retrieve the type descriptor for.</param>
         <param name="instance">

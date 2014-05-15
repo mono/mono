@@ -1,6 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Diagnostics">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Diagnostics" /> namespace provides classes that allow you to interact with system processes, event logs, and performance counters.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> component provides functionality to write to event logs, read event log entries, and create and delete event logs and event sources on the network. The <see cref="T:System.Diagnostics.EntryWrittenEventHandler" /> provides a way to interact with event logs asynchronously. Supporting classes provide access to more detailed control, including: permission restrictions, the ability to specify event log types (which controls the type of default data that is written with an event log entry), and iterate through collections of event log entries. For more information about these tasks, see the <see cref="T:System.Diagnostics.EventLogPermission" />, <see cref="T:System.Diagnostics.EventLogEntryType" />, and <see cref="T:System.Diagnostics.EventLogEntryCollection" /> classes.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Diagnostics.Process" /> class provides functionality to monitor system processes across the network, and to start and stop local system processes. In addition to retrieving lists of running processes (by specifying either the computer, the process name, or the process id) or viewing information about the process that currently has access to the processor, you can get detailed knowledge of process threads and modules both through the <see cref="T:System.Diagnostics.Process" /> class itself, and by interacting with the <see cref="T:System.Diagnostics.ProcessThread" /> and <see cref="T:System.Diagnostics.ProcessModule" /> classes. The <see cref="T:System.Diagnostics.ProcessStartInfo" /> class enables you to specify a variety of elements with which to start a new process, such as input, output, and error streams, working directories, and command line verbs and arguments. These give you fine control over the behavior of your processes. Other related classes let you specify window styles, process and thread priorities, and interact with collections of threads and modules.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Diagnostics.PerformanceCounter" /> class enables you to monitor system performance, while the <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> class provides a way to create new custom counters and categories. You can write to local custom counters and read from both local and remote counters (system as well as custom). You can sample counters using the <see cref="T:System.Diagnostics.PerformanceCounter" /> class, and calculate results from successive performance counter samples using the <see cref="T:System.Diagnostics.CounterSample" /> class. The <see cref="T:System.Diagnostics.CounterCreationData" /> class enables you to create multiple counters in a category and specify their types. Other classes associated with the performance counter component provide access to collections of counters, counter permission, and counter types.</para>
+        </item>
+      </list>
+      <para>The <see cref="N:System.Diagnostics" /> namespace also provides classes that allow you to debug your application and to trace the execution of your code. For more information, see the <see cref="T:System.Diagnostics.Trace" /> and <see cref="T:System.Diagnostics.Debug" /> classes.</para>
+    </remarks>
   </Docs>
 </Namespace>

@@ -49,10 +49,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IntPtr" /> containing the address of the of the <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> object as a
-<see cref="T:System.IntPtr" /> .</para>
-        </returns>
         <exception cref="T:System.InvalidOperationException">The handle type is not <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> .</exception>
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
@@ -65,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the address of an object in a <see cref="F:System.Runtime.InteropServices.GCHandleType.Pinned" /> handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The address of the of the Pinned object as an <see cref="T:System.IntPtr" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -85,10 +85,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance that protects the
-   object from garbage collection.</para>
-        </returns>
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
         </permission>
@@ -101,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a <see cref="F:System.Runtime.InteropServices.GCHandleType.Normal" /> handle for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> that protects the object from garbage collection. This <see cref="T:System.Runtime.InteropServices.GCHandle" /> must be released with <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> when it is no longer needed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that uses the <see cref="T:System.Runtime.InteropServices.GCHandle" />. </param>
       </Docs>
@@ -124,11 +124,6 @@
         <Parameter Name="type" Type="System.Runtime.InteropServices.GCHandleType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <returns>
-          <para> A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance
-   that protects the object.</para>
-        </returns>
         <remarks>
           <para> If the <paramref name="value" /> parameter is
 <see langword="null" /> , this method returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block subset="none" type="note">The target of 
@@ -138,10 +133,16 @@
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
         </permission>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.GCHandleType" /> values, indicating the type of <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a handle of the specified type for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> of the specified type. This <see cref="T:System.Runtime.InteropServices.GCHandle" /> must be released with <see cref="M:System.Runtime.InteropServices.GCHandle.Free" /> when it is no longer needed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that uses the <see cref="T:System.Runtime.InteropServices.GCHandle" />. </param>
         <param name="type">
@@ -164,7 +165,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -174,6 +174,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Runtime.InteropServices.GCHandle" /> object is equal to the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Runtime.InteropServices.GCHandle" /> object is equal to the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</param>
       </Docs>
@@ -223,13 +227,16 @@
         <Parameter Name="value" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Runtime.InteropServices.GCHandle" /> object created from a handle to a managed object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> object that corresponds to the value parameter.  </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> handle to a managed object to create a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object from.</param>
       </Docs>
@@ -247,7 +254,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -257,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an identifier for the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An identifier for the current <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsAllocated">
@@ -306,13 +316,16 @@
         <Parameter Name="b" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two <see cref="T:System.Runtime.InteropServices.GCHandle" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="a" /> and <paramref name="b" /> parameters are equal; otherwise, false.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="b" /> parameter. </param>
         <param name="b">
@@ -404,13 +417,16 @@ from its integer representation.</para>
         <Parameter Name="b" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two <see cref="T:System.Runtime.InteropServices.GCHandle" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="a" /> and <paramref name="b" /> parameters are not equal; otherwise, false.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to compare with the <paramref name="b" /> parameter. </param>
         <param name="b">
@@ -461,13 +477,16 @@ from its integer representation.</para>
         <Parameter Name="value" Type="System.Runtime.InteropServices.GCHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the internal integer representation of a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IntPtr" /> object that represents a <see cref="T:System.Runtime.InteropServices.GCHandle" /> object. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.GCHandle" /> object to retrieve an internal integer representation from.</param>
       </Docs>

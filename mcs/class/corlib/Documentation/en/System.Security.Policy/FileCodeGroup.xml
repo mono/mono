@@ -103,7 +103,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method makes a deep copy of the code group, so that copies of all objects the code group contains are also made.</para>
@@ -112,6 +111,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Makes a deep copy of the current code group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An equivalent copy of the current code group, including its membership conditions and child code groups.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateXml">
@@ -153,12 +156,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified code group is equivalent to the current code group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code group is equivalent to the current code group; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The code group to compare with the current code group. </param>
       </Docs>
@@ -177,12 +183,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code of the current code group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current code group.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MergeLogic">
@@ -266,7 +275,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given evidence for an assembly to be loaded, this method evaluates the code group by first checking the membership condition against the specified evidence. If there is a match, this method returns a policy statement for the code group, including evaluation of child code groups.</para>
@@ -278,6 +286,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves policy for the code group and its descendants for a set of evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A policy statement consisting of the permissions granted by the code group with optional attributes, or null if the code group does not apply (the membership condition does not match the specified evidence).</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the assembly. </param>
       </Docs>
@@ -298,7 +310,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given evidence for an assembly to be loaded, this method evaluates the code group by first checking the membership condition against the specified evidence. If there is a match, this method returns a root code group. The code group that is returned contains child code groups, which in turn can have child code groups as necessary to reflect the complete set of code groups that were matched by the evidence provided.</para>
@@ -309,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves matching code groups.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeGroup" /> that is the root of the tree of matching code groups.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence for the assembly. </param>
       </Docs>

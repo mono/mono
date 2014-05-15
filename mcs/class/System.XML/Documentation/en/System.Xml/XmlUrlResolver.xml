@@ -191,11 +191,6 @@ resolver.Credentials = myCache;</code>
         <Parameter Name="ofObjectToReturn" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" qualify="true" /> containing the
-   resource, or <see langword="null" />
-   if <paramref name="ofObjectToReturn" /> is <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="absoluteUri" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
@@ -214,6 +209,10 @@ resolver.Credentials = myCache;</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Maps a URI to an object containing the actual resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object or null if a type other than stream is specified.</para>
+        </returns>
         <param name="absoluteUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlResolver.ResolveUri(System.Uri,System.String)" />.</param>
         <param name="role">
@@ -247,12 +246,15 @@ resolver.Credentials = myCache;</code>
         <Parameter Name="ofObjectToReturn" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously maps a URI to an object containing the actual resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object or null if a type other than stream is specified.</para>
+        </returns>
         <param name="absoluteUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI returned from <see cref="M:System.Xml.XmlResolver.ResolveUri(System.Uri,System.String)" />.</param>
         <param name="role">
@@ -296,9 +298,6 @@ resolver.Credentials = myCache;</code>
         <Parameter Name="relativeUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Uri" qualify="true" /> containing the absolute URI, or <see langword="null" /> if <paramref name="relativeUri" /> can not be resolved.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <paramref name="relativeUri" /> is <see langword="null" />.</exception>
@@ -310,6 +309,10 @@ resolver.Credentials = myCache;</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves the absolute URI from the base and relative URIs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Uri" /> representing the absolute URI, or null if the relative URI cannot be resolved.</para>
+        </returns>
         <param name="baseUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The base URI used to resolve the relative URI.</param>
         <param name="relativeUri">

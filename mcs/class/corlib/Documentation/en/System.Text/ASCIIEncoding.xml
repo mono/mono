@@ -97,11 +97,6 @@
         <Parameter Name="chars" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the number of bytes required to encode <paramref name="chars" /> as
-   ASCII-encoded characters.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="chars " />is <see langword="null" />. </exception>
         <remarks>
@@ -112,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding the characters in the specified <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode.</param>
       </Docs>
@@ -141,7 +140,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -151,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode.</param>
         <param name="count">
@@ -176,11 +178,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing
-   the number of bytes required to encode the range in <paramref name="chars" /> from<paramref name=" index" /> to <paramref name=" index " /> + <paramref name="count" /> -1 as ASCII-encoded
-   characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="chars " /> is <see langword="null" />. </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -201,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters from the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode.</param>
         <param name="index">
@@ -236,7 +237,6 @@
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -252,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters starting at the specified character pointer into a sequence of bytes that are stored starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written at the location indicated by <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode.</param>
         <param name="charCount">
@@ -283,11 +287,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> whose value equals
-   the number of bytes encoded into <paramref name="bytes" /> as
-   ASCII-encoded characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>(<paramref name="bytes" />.Length - <paramref name="byteIndex" />) &lt; <paramref name="charCount" />.</para>
         </exception>
@@ -327,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified character array into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode.</param>
         <param name="charIndex">
@@ -361,15 +364,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="charIndex">To be added.</param>
-        <param name="charCount">To be added.</param>
-        <param name="bytes">To be added.</param>
-        <param name="byteIndex">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> whose
-   value equals the number of bytes encoded into <paramref name="bytes" /> as ASCII-encoded
-   characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>(<paramref name="bytes" />.Length - <paramref name="byteIndex" />) &lt; <paramref name="charCount" />.</para>
         </exception>
@@ -395,6 +389,14 @@
           <para>
             <paramref name="byteIndex " /> &gt;= <paramref name="bytes" />.Length.</para>
         </exception>
+        <param name="charIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first character to encode.</param>
+        <param name="charCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode.</param>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to contain the resulting sequence of bytes.</param>
+        <param name="byteIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to start writing the resulting sequence of bytes.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.ASCIIEncoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.ASCIIEncoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.ASCIIEncoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.ASCIIEncoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.ASCIIEncoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>
@@ -409,6 +411,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified <see cref="T:System.String" /> into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode.</param>
         <param name="charIndex">
@@ -446,7 +452,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -456,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode.</param>
         <param name="count">
@@ -481,18 +490,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> whose value
-   equals the number of characters a call to <see cref="M:System.Text.ASCIIEncoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the
-   specified range of <paramref name="bytes" />.</para>
-          <para>
-            <block subset="none" type="note">This value does not
-   take into account the state in which the current instance was left following the
-   last call to <see cref="M:System.Text.ASCIIEncoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" />. This
-   contrasts with <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" qualify="true" /> , which
-   maintains state information across calls.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="bytes" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -512,6 +509,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes from the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode.</param>
         <param name="index">
@@ -547,7 +548,6 @@
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -563,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes starting at the specified byte pointer into a set of characters that are stored starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written at the location indicated by <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode.</param>
         <param name="byteCount">
@@ -594,11 +598,6 @@
         <Parameter Name="charIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> whose
-   value equals the number of characters decoded into <paramref name="chars" /> as
-   ASCII-encoded characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>(<paramref name="chars" />.Length - <paramref name="charIndex" />) &lt; <paramref name="byteCount" />.</para>
         </exception>
@@ -638,6 +637,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes from the specified byte array into the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode.</param>
         <param name="byteIndex">
@@ -669,7 +672,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -679,6 +681,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a decoder that converts an ASCII encoded sequence of bytes into a sequence of Unicode characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Decoder" /> that converts an ASCII encoded sequence of bytes into a sequence of Unicode characters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEncoder">
@@ -699,7 +705,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -709,6 +714,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains an encoder that converts a sequence of Unicode characters into an ASCII encoded sequence of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Text.Encoder" /> that converts a sequence of Unicode characters into an ASCII encoded sequence of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMaxByteCount">
@@ -728,11 +737,6 @@
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the maximum number of bytes required to encode <paramref name="charCount" />
-characters as ASCII-encoded characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="charCount " />&lt; 0.</exception>
         <remarks>
@@ -751,6 +755,10 @@ characters as ASCII-encoded characters.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of bytes produced by encoding the specified number of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of bytes produced by encoding the specified number of characters.</para>
+        </returns>
         <param name="charCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode.</param>
       </Docs>
@@ -773,11 +781,6 @@ characters as ASCII-encoded characters.</para>
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the maximum number of characters that would be produced by
-decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="byteCount" /> &lt; 0.</exception>
         <remarks>
@@ -795,6 +798,10 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of characters produced by decoding the specified number of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of characters produced by decoding the specified number of bytes.</para>
+        </returns>
         <param name="byteCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode.</param>
       </Docs>
@@ -851,13 +858,6 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.String" /> object containing
-   the decoded representation of the range in <paramref name="bytes" /> from
-<paramref name="byteIndex" /> to <paramref name="byteIndex" /> + <paramref name="byteCount" /> -1 as 
-   ASCII-encoded characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="bytes" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -869,6 +869,8 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
           <para> -or-</para>
           <para>(<paramref name="bytes" />.Length - <paramref name="byteIndex" />) &lt; <paramref name="byteCount" />. </para>
         </exception>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Data to be converted, such as data read from a stream, can be available only in sequential blocks. In this case, or if the amount of data is so large that it needs to be divided into smaller blocks, the application should use the <see cref="T:System.Text.Decoder" /> or the <see cref="T:System.Text.Encoder" /> provided by the <see cref="M:System.Text.ASCIIEncoding.GetDecoder" /> method or the <see cref="M:System.Text.ASCIIEncoding.GetEncoder" /> method, respectively.</para>
@@ -882,6 +884,10 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a range of bytes from a byte array into a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the results of decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode.</param>
         <param name="byteIndex">

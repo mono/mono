@@ -91,12 +91,15 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.Channels.Message" /> and the specified maximum buffer size for the message buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified <see cref="T:System.ServiceModel.Channels.Message" /> to be used to create the <see cref="T:System.ServiceModel.Channels.MessageFault" /> object.</param>
         <param name="maxBufferSize">
@@ -118,12 +121,15 @@
         <Parameter Name="reason" Type="System.ServiceModel.FaultReason" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" /> and <see cref="T:System.ServiceModel.FaultReason" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -145,12 +151,15 @@
         <Parameter Name="reason" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" /> and fault reason.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -173,12 +182,15 @@
         <Parameter Name="detail" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, and detail object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -205,12 +217,15 @@
       </Parameters>
       <Docs>
         <param name="formatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, and  <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -238,12 +253,15 @@
       </Parameters>
       <Docs>
         <param name="formatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />, and actor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -274,12 +292,15 @@
       </Parameters>
       <Docs>
         <param name="formatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.ServiceModel.Channels.MessageFault" /> object that uses the specified <see cref="T:System.ServiceModel.FaultCode" />, <see cref="T:System.ServiceModel.FaultReason" />, detail object, <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />, actor, and node values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageFault" /> object with initial values from the passed in parameters.</para>
+        </returns>
         <param name="code">
           <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the fault message.</param>
         <param name="reason">
@@ -307,13 +328,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the detail object of the message fault.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detail object of the message fault.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the detail object.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetDetail&lt;T&gt;">
@@ -333,14 +358,18 @@
         <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <param name="formatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the detail object that uses the specified <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detail object contained in the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the detail object.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetReaderAtDetailContents">
@@ -355,12 +384,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasDetail">
@@ -413,12 +445,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When called in a derived class, returns an <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDictionaryReader" /> object that is positioned on the detail object of the <see cref="T:System.ServiceModel.Channels.MessageFault" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnWriteDetail">

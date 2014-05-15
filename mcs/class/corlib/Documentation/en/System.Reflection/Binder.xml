@@ -80,12 +80,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Reflection.FieldInfo" /> 
-instance that reflects the field that matches the specified criteria. It is not
-required that this instance be contained in <paramref name="match" />. If a suitable field is not found,
-returns <see langword="null" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="bindingAttr" /> does not include <see cref="F:System.Reflection.BindingFlags.SetField" />, the default binder implementation provided by <see cref="P:System.Type.DefaultBinder" /> simply returns the first element of <paramref name="match" />. No selection is done. </para>
@@ -95,6 +89,10 @@ returns <see langword="null" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a field from the given set of fields, based on the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching field. </para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values. </param>
         <param name="match">
@@ -192,11 +190,6 @@ returns <see langword="null" />
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new object of the type specified by <paramref name="type       " />. The contents of
-      this object are equal to those of <paramref name="value" />
-      .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reflection models the accessibility rules of the common type system. For example, if the caller is in the same assembly, the caller does not need special permissions for internal members. Otherwise, the caller needs <see cref="T:System.Security.Permissions.ReflectionPermission" />. This is consistent with lookup of members that are protected, private, and so on.</para>
@@ -323,6 +316,10 @@ returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the type of the given Object to the given Type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the given value as the new type. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to change into a new Type. </param>
         <param name="type">
@@ -420,14 +417,6 @@ returns <see langword="null" />
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Reflection.MethodBase" />
-instance that reflects the method that
-is matched to the specified criteria. It is not required that this instance
-be contained in <paramref name="match" /> . If a suitable method is
-not found, returns <see langword="null" />
-.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should return null if no method matches the criteria. This method controls the selection provided by the GetConstructor and GetMethod methods on Type.</para>
@@ -436,6 +425,10 @@ not found, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a method from the given set of methods, based on the argument type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching method, if found; otherwise, null.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values. </param>
         <param name="match">
@@ -468,13 +461,6 @@ not found, returns <see langword="null" />
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Reflection.PropertyInfo" /> instance that reflects the property that
-   matches the specified criteria. It is not required that this instance be
-   contained in <paramref name="match" /> . If a
-   suitable property is not found, returns <see langword="null" />
-   .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method controls the selection provided by the GetProperty method on Type.</para>
@@ -483,6 +469,10 @@ not found, returns <see langword="null" />
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a property from the given set of properties, based on the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching property.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values. </param>
         <param name="match">

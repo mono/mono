@@ -967,10 +967,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance with property
-   values equal to the property values of the original <see cref="T:System.Globalization.DateTimeFormatInfo" /> instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The clone is writable even if the original <see cref="T:System.Globalization.DateTimeFormatInfo" /> object is read-only. Therefore, the properties of the clone can be modified with user-defined patterns.</para>
@@ -980,6 +976,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Globalization.DateTimeFormatInfo" /> object copied from the original <see cref="T:System.Globalization.DateTimeFormatInfo" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1163,7 +1163,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="dayofweek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the default invariant <see cref="T:System.Globalization.DateTimeFormatInfo" /> object, this method returns a string from the <see cref="T:System.Globalization.GregorianCalendar" />: </para>
@@ -1241,6 +1240,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the culture-specific abbreviated name of the specified day of the week based on the culture associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The culture-specific abbreviated name of the day of the week represented by <paramref name="dayofweek" />.</para>
+        </returns>
         <param name="dayofweek">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DayOfWeek" /> value. </param>
       </Docs>
@@ -1261,7 +1264,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The era name is the name a calendar uses to refer to a period of time reckoned from a fixed point or event. For example, "A.D." or "C.E." is the current era in the Gregorian calendar.</para>
@@ -1272,6 +1274,12 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string containing the abbreviated name of the specified era, if an abbreviation exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the abbreviated name of the specified era, if an abbreviation exists.</para>
+          <para>-or- </para>
+          <para>A string containing the full name of the era, if an abbreviation does not exist.</para>
+        </returns>
         <param name="era">
           <attribution license="cc4" from="Microsoft" modified="false" />The integer representing the era. </param>
       </Docs>
@@ -1293,11 +1301,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="month" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the abbreviated name of the month represented by
-<paramref name="month" />. For cultures with 12-month calendars, the empty string is
-   returned as the name of the 13th month.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="month" /> is less than 1 or greater than 13.</exception>
         <remarks>
@@ -1427,6 +1430,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the culture-specific abbreviated name of the specified month based on the culture associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The culture-specific abbreviated name of the month represented by <paramref name="month" />.</para>
+        </returns>
         <param name="month">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 through 13 representing the name of the month to retrieve. </param>
       </Docs>
@@ -1446,7 +1453,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns an array that contains all custom format strings that correspond to standard format strings. See <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format> for a list of the standard format strings.</para>
@@ -1481,6 +1487,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the standard patterns in which date and time values can be formatted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the standard patterns in which date and time values can be formatted.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAllDateTimePatterns">
@@ -1499,7 +1509,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="format" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns an array containing the custom format strings that correspond to a particular standard format string. See <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard Date and Time Format Strings</a></format> for a list of the standard format strings.</para>
@@ -1534,6 +1543,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the patterns in which date and time values can be formatted using the specified standard format string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array containing the standard patterns in which date and time values can be formatted using the specified format string.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard format string. </param>
       </Docs>
@@ -1554,7 +1567,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="dayofweek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the default invariant <see cref="T:System.Globalization.DateTimeFormatInfo" /> object, this method returns a string from the <see cref="T:System.Globalization.GregorianCalendar" /> object.</para>
@@ -1632,6 +1644,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the culture-specific full name of the specified day of the week based on the culture associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The culture-specific full name of the day of the week represented by <paramref name="dayofweek" />.</para>
+        </returns>
         <param name="dayofweek">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DayOfWeek" /> value. </param>
       </Docs>
@@ -1653,9 +1669,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="eraName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> representing the era. If <paramref name="eraName" /> is invalid, returns -1.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="eraName" /> is a null reference.</exception>
         <remarks>
@@ -1671,6 +1684,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the integer representing the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer representing the era, if <paramref name="eraName" /> is valid; otherwise, -1.</para>
+        </returns>
         <param name="eraName">
           <attribution license="cc4" from="Microsoft" modified="false" />The string containing the name of the era. </param>
       </Docs>
@@ -1693,9 +1710,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the name of the era.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="era" /> does not represent a valid era in calendar for the current thread.</exception>
         <remarks>
@@ -1707,6 +1721,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string containing the name of the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the name of the era.</para>
+        </returns>
         <param name="era">
           <attribution license="cc4" from="Microsoft" modified="false" />The integer representing the era. </param>
       </Docs>
@@ -1729,9 +1747,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="formatType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance, if <paramref name="formatType" /> is of type <see cref="T:System.Globalization.DateTimeFormatInfo" />; otherwise, a null reference.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Format(String, IFormatProvider) method supported by the base data types invoke this method when the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object is passed as the <see cref="T:System.IFormatProvider" /> parameter. This method implements <see cref="M:System.IFormatProvider.GetFormat(System.Type)" />.</para>
@@ -1740,6 +1755,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object of the specified type that provides a date and time  formatting service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current  object, if <paramref name="formatType" /> is the same as the type of the current <see cref="T:System.Globalization.DateTimeFormatInfo" />; otherwise, null.</para>
+        </returns>
         <param name="formatType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the required formatting service. </param>
       </Docs>
@@ -1761,7 +1780,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> method of <paramref name="formatProvider" /> using an <see cref="T:System.Globalization.DateTimeFormatInfo" /> object as the <paramref name="Type" /> parameter. If <paramref name="formatProvider" /> is null or if <see cref="M:System.IFormatProvider.GetFormat(System.Type)" /> returns null, this method returns <see cref="P:System.Globalization.DateTimeFormatInfo.CurrentInfo" />.</para>
@@ -1781,6 +1799,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Globalization.DateTimeFormatInfo" /> object associated with the specified <see cref="T:System.IFormatProvider" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.DateTimeFormatInfo" /> object associated with <see cref="T:System.IFormatProvider" />.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IFormatProvider" /> that gets the <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</param>
       </Docs>
@@ -1802,11 +1824,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="month" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the full name of the month represented by
-<paramref name="month" />. For cultures with 12-month calendars the empty string is
-   returned as the name of the 13th month.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="month" /> is less than 1 or greater than 13.</exception>
         <remarks>
@@ -1936,6 +1953,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the culture-specific full name of the specified month based on the culture associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The culture-specific full name of the month represented by <paramref name="month" />.</para>
+        </returns>
         <param name="month">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 through 13 representing the name of the month to retrieve. </param>
       </Docs>
@@ -1961,13 +1982,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="dayOfWeek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the shortest abbreviated day name for a specified day of the week associated with the current <see cref="T:System.Globalization.DateTimeFormatInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The abbreviated name of the week that corresponds to the <paramref name="dayOfWeek" /> parameter.</para>
+        </returns>
         <param name="dayOfWeek">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.DayOfWeek" /> values.</param>
       </Docs>
@@ -2274,9 +2298,6 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <Parameter Name="dtfi" Type="System.Globalization.DateTimeFormatInfo" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A read-only instance of <see cref="T:System.Globalization.DateTimeFormatInfo" /> that is a copy of <paramref name="dtfi" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="dtfi" /> is a null reference.</exception>
         <remarks>
@@ -2287,6 +2308,10 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> wrapper.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Globalization.DateTimeFormatInfo" /> wrapper.</para>
+        </returns>
         <param name="dtfi">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.DateTimeFormatInfo" /> object to wrap. </param>
       </Docs>

@@ -46,7 +46,6 @@
         <Parameter Name="searchPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -56,6 +55,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the interface of the symbol reader for the current file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.SymbolStore.ISymbolReader" /> interface that reads the debugging symbols.</para>
+        </returns>
         <param name="importer">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> that refers to the metadata import interface. </param>
         <param name="filename">

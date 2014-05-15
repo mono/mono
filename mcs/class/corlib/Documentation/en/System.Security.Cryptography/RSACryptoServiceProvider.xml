@@ -202,7 +202,6 @@
         <Parameter Name="fOAEP" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the decrypted data.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.Encrypt(System.Byte[],System.Boolean)" /> to encrypt data for decryption with this method.</para>
@@ -211,6 +210,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts data with the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decrypted data, which is the original plain text before encryption.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be decrypted. </param>
         <param name="fOAEP">
@@ -233,7 +236,6 @@
         <Parameter Name="rgb" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the decrypted data. </returns>
         <remarks>
           <para>Note: This method is implemented in Mono but isn't supported in the Microsoft .NET framework. There are good reason for this:</para>
           <list type="bullet">
@@ -252,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported in the current version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decrypted data, which is the original plain text before encryption.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be decrypted. </param>
       </Docs>
@@ -302,7 +308,6 @@
         <Parameter Name="fOAEP" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the encrypted data.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table describes the padding supported by different versions of Microsoft Windows and the maximum length of <paramref name="rgb" /> allowed by the different combinations of operating systems and padding.</para>
@@ -360,6 +365,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts data with the <see cref="T:System.Security.Cryptography.RSA" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encrypted data.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be encrypted. </param>
         <param name="fOAEP">
@@ -382,7 +391,6 @@
         <Parameter Name="rgb" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes containing the encrypted data.</returns>
         <remarks>
           <para>Note: This method is implemented in Mono but isn't supported in the Microsoft .NET framework. There are good reason for this:</para>
           <list type="bullet">
@@ -401,6 +409,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported in the current version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encrypted data.</para>
+        </returns>
         <param name="rgb">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be encrypted. </param>
       </Docs>
@@ -425,7 +437,6 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -435,6 +446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports a blob containing the key information associated with an <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" /> object.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the key information associated with an <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" /> object.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include the private key; otherwise, false.</param>
       </Docs>
@@ -455,12 +470,15 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a RSAParameters structure contaning each parameters of the key.</returns>
         <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.RSAParameters" /> parameters <see cref="M:System.Security.Cryptography.RSAParameters.D" />, <see cref="M:System.Security.Cryptography.RSAParameters.P" />, <see cref="M:System.Security.Cryptography.RSAParameters.Q" />, <see cref="M:System.Security.Cryptography.RSAParameters.DP" />, <see cref="M:System.Security.Cryptography.RSAParameters.DQ" /> and <see cref="M:System.Security.Cryptography.RSAParameters.InverseQ" />) if you export it from the instance.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports the <see cref="T:System.Security.Cryptography.RSAParameters" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters for <see cref="T:System.Security.Cryptography.RSA" />.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>
@@ -688,7 +706,6 @@
         <Parameter Name="halg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.VerifyData(System.Byte[],System.Object,System.Byte[])" /> method.</para>
@@ -698,6 +715,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value of the specified byte array using the specified hash algorithm, and signs the resulting hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.RSA" /> signature for the specified data.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
         <param name="halg">
@@ -721,7 +742,6 @@
         <Parameter Name="halg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="halg" /> parameter can accept a <see cref="T:System.String" />, a <see cref="T:System.Security.Cryptography.HashAlgorithm" />, or a <see cref="T:System.Type" />.</para>
@@ -730,6 +750,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value of the specified input stream using the specified hash algorithm, and signs the resulting hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.RSA" /> signature for the specified data.</para>
+        </returns>
         <param name="inputStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
         <param name="halg">
@@ -755,7 +779,6 @@
         <Parameter Name="halg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.VerifyData(System.Byte[],System.Object,System.Byte[])" /> method.</para>
@@ -774,6 +797,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value of a subset of the specified byte array using the specified hash algorithm, and signs the resulting hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.RSA" /> signature for the specified data.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input data for which to compute the hash. </param>
         <param name="offset">
@@ -801,7 +828,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The signature value of the processed buffer.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a digital signature that is verified using the <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.VerifyHash(System.Byte[],System.String,System.Byte[])" /> method.</para>
@@ -811,6 +837,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the signature for the specified hash value by encrypting it with the private key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.Cryptography.RSA" /> signature for the specified hash value.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the data to be signed. </param>
         <param name="str">
@@ -859,7 +889,6 @@
         <Parameter Name="signature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method verifies the <see cref="T:System.Security.Cryptography.RSA" /> digital signature produced by the <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.SignData(System.IO.Stream,System.Object)" /> method. The signature is verified by obtaining the hash value from the signature using the public key it was signed with, and comparing that value to the hash value of the provided data.</para>
@@ -869,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that a digital signature is valid by determining the hash value in the signature using the provided public key and comparing it to the hash value of the provided data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature is valid; otherwise, false.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The data that was signed. </param>
         <param name="halg">
@@ -895,7 +928,6 @@
         <Parameter Name="rgbSignature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>True if the signature can be verified, false otherwise.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method verifies the <see cref="T:System.Security.Cryptography.RSA" /> digital signature produced by the <see cref="M:System.Security.Cryptography.RSACryptoServiceProvider.SignHash(System.Byte[],System.String)" /> method. The signature is verified by obtaining the hash value from the signature using the public key it was signed with, and comparing that value to the hash value of the provided data.</para>
@@ -905,6 +937,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that a digital signature is valid by determining the hash value in the signature using the provided public key and comparing it to the provided hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature is valid; otherwise, false.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash value of the signed data. </param>
         <param name="str">

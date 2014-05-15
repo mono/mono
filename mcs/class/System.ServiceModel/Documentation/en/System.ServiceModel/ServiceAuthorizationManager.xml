@@ -66,7 +66,6 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In general, applications should override <see cref="M:System.ServiceModel.ServiceAuthorizationManager.CheckAccessCore(System.ServiceModel.OperationContext)" /> instead of this method. </para>
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks authorization for the given operation context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if access is granted; otherwise; otherwise false. The default is true.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CheckAccess">
@@ -116,7 +119,6 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -130,6 +132,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks authorization for the given operation context based on default policy evaluation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if access is granted; otherwise, false. The default is true.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAuthorizationPolicies">
@@ -147,7 +153,6 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The indigo1 implementation provides a default set of authorization policies. These include the primary token that contains the credentials of the requester and all supporting tokens, transport tokens, and external policies if specified. </para>
@@ -157,6 +162,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the set of policies that participate in policy evaluation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1" /> of type <see cref="T:System.IdentityModel.Policy.IAuthorizationPolicy" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

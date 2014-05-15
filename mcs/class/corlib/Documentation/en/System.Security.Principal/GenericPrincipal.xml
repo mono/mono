@@ -97,12 +97,15 @@
         <Parameter Name="role" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if the identity is part of the specified role, false otherwise.</returns>
         <remarks>Roles are case sensitive.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.Security.Principal.GenericPrincipal" /> belongs to the specified role.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Security.Principal.GenericPrincipal" /> is a member of the specified role; otherwise, false.</para>
+        </returns>
         <param name="role">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the role for which to check membership. </param>
       </Docs>

@@ -89,13 +89,26 @@
         <Parameter Name="knownTypes" Type="System.Collections.Generic.IList&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Both the <see cref="T:System.Runtime.Serialization.NetDataContractSerializer" /> and the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> inherit from the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a class that inherits from <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> for serialization and deserialization processes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a class that inherits from the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> class. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to create the serializer for.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the generated type.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the generated type.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IList`1" /> of <see cref="T:System.Type" /> that contains known types.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateSerializer">
@@ -115,13 +128,26 @@
         <Parameter Name="knownTypes" Type="System.Collections.Generic.IList&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Both the <see cref="T:System.Runtime.Serialization.DataContractSerializer" /> and the <see cref="T:System.Runtime.Serialization.NetDataContractSerializer" /> inherit from the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a class that inherits from <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> for serialization and deserialization processes with an <see cref="T:System.Xml.XmlDictionaryString" /> that contains the namespace.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a class that inherits from the <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> class. </para>
+        </returns>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to serialize or deserialize.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the serialized type.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the namespace of the serialized type.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IList`1" /> of <see cref="T:System.Type" /> that contains known types.</param>
       </Docs>
     </Member>
     <Member MemberName="DataContractFormatAttribute">

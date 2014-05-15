@@ -44,7 +44,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to check whether a specific component is currently selected. This process is generally quicker than getting and parsing the entire list of selected components.</para>
@@ -53,6 +52,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified component is currently selected.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component is part of the user's current selection; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to test. </param>
       </Docs>
@@ -71,12 +74,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of components that are currently selected.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that represents the current set of components that are selected.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PrimarySelection">

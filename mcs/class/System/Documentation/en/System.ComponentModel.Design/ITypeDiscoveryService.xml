@@ -35,7 +35,6 @@
         <Parameter Name="excludeGlobalTypes" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="baseType" /> is null, all types are returned. Otherwise, only types derived from the specified base type are returned. If <paramref name="excludeGlobalTypes" /> is false, types from all referenced assemblies are checked. Otherwise, only types from non-Global Assembly Cache (GAC) referenced assemblies are checked. For more information, see <format type="text/html"><a href="8A18E5C2-D41D-49EF-ABCB-7C27E2469433">Working with Assemblies and the Global Assembly Cache</a></format>.</para>
@@ -44,6 +43,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the list of available types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of types that match the criteria specified by <paramref name="baseType" /> and <paramref name="excludeGlobalTypes" />.</para>
+        </returns>
         <param name="baseType">
           <attribution license="cc4" from="Microsoft" modified="false" />The base type to match. Can be null.</param>
         <param name="excludeGlobalTypes">

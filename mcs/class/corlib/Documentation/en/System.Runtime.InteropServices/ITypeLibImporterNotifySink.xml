@@ -83,7 +83,6 @@
         <Parameter Name="typeLib" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Assembly'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a reference to another type library is found during the conversion of a type library, the caller is asked to return the correct assembly for that type library.</para>
@@ -92,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asks the user to resolve a reference to another type library.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly corresponding to <paramref name="typeLib" />.</para>
+        </returns>
         <param name="typeLib">
           <attribution license="cc4" from="Microsoft" modified="false" />The object implementing the ITypeLib interface that needs to be resolved. </param>
       </Docs>

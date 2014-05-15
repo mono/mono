@@ -93,7 +93,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -106,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an escaped identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for. </param>
       </Docs>
@@ -126,7 +129,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -139,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a valid identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to create a valid identifier for. </param>
       </Docs>
@@ -2090,12 +2096,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added: an object of type 'CodeDom.CodeTypeReference'</param>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the specified data type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Indent">
@@ -2243,12 +2252,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified value is a valid identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value is a valid identifier; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to test for conflicts with valid identifiers. </param>
       </Docs>
@@ -2269,7 +2281,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method checks the specified string to ensure that it does not contain certain characters that can be used to escape an identifier field. The <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method calls this method to perform string validation. Calling the <see cref="M:System.CodeDom.Compiler.CodeGenerator.ValidateIdentifiers(System.CodeDom.CodeObject)" /> method and passing a <see cref="T:System.CodeDom.CodeCompileUnit" /> before generating code from it can prevent the use of certain character sequences to include hidden code within an identifier field.</para>
@@ -2278,6 +2289,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified string is a valid identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified string is a valid identifier; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to test for validity. </param>
       </Docs>
@@ -2718,7 +2733,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a modified version of the specified string that has been formatted with escape code characters. For example, /" might be used to represent ". These escape codes are used to replace elements of the specified string that might otherwise conflict with language syntax.</para>
@@ -2727,6 +2741,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string by formatting it with escape codes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted string.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert. </param>
       </Docs>
@@ -2748,12 +2766,15 @@
       </Parameters>
       <Docs>
         <param name="supports">To be added: an object of type 'GeneratorSupport'</param>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified code generation support is provided.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code generation support is provided; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.CreateEscapedIdentifier">
@@ -2772,12 +2793,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an escaped identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for.</param>
       </Docs>
@@ -2798,12 +2822,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a valid identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to generate a valid identifier for.</param>
       </Docs>
@@ -2964,12 +2991,15 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the data type reference.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to return.</param>
       </Docs>
@@ -2990,12 +3020,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the specified value is a valid identifier for the current language.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to test.</param>
       </Docs>
@@ -3017,12 +3050,15 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the generator provides support for the language features represented by the specified <see cref="T:System.CodeDom.Compiler.GeneratorSupport" />  object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified capabilities are supported; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.CodeDom.Compiler.ICodeGenerator.ValidateIdentifier">

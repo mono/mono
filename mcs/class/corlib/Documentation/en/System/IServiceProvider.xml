@@ -40,12 +40,17 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the service object of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service object of type <paramref name="serviceType" />.</para>
+          <para>-or- </para>
+          <para>null if there is no service object of type <paramref name="serviceType" />.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies the type of service object to get. </param>
       </Docs>

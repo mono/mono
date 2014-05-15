@@ -187,12 +187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A newly created copy of type <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

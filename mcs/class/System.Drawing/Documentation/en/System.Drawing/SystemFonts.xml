@@ -133,7 +133,6 @@
         <Parameter Name="systemFontName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -143,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a font object that corresponds to the specified system font name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Font" /> if the specified name matches a value in <see cref="T:System.Drawing.SystemFonts" />; otherwise, null.</para>
+        </returns>
         <param name="systemFontName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the system font you need a font object for.</param>
       </Docs>

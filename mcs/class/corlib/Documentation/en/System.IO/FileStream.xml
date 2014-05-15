@@ -914,9 +914,6 @@ class Directory {
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> that references the asynchronous read.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The sum of <paramref name="offset and" /><paramref name="numBytes" /> is greater than the length of <paramref name="array" />.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
@@ -943,6 +940,10 @@ class Directory {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation. (Consider using <see cref="M:System.IO.FileStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that references the asynchronous read.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into. </param>
         <param name="offset">
@@ -977,9 +978,6 @@ class Directory {
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> that references the asynchronous write.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The sum of <paramref name="offset and " /><paramref name="numBytes" /> is greater than the length of <paramref name="array" />.</exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
@@ -1003,6 +1001,10 @@ class Directory {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation. (Consider using <see cref="M:System.IO.FileStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that references the asynchronous write.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer containing data to write to the current stream.</param>
         <param name="offset">
@@ -1208,11 +1210,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the number of
-   bytes read from the stream. Returns 0 only if the end of the file has
-   been reached, otherwise, this method blocks until at least one byte is available.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1232,6 +1229,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for the pending asynchronous read operation to complete. (Consider using <see cref="M:System.IO.FileStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read from the stream, between 0 and the number of bytes you requested. Streams only return 0 at the end of the stream, otherwise, they should block until at least 1 byte is available.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The reference to the pending asynchronous request to wait for. </param>
       </Docs>
@@ -1383,7 +1384,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you call the <see cref="M:System.IO.FileStream.FlushAsync(System.Threading.CancellationToken)" /> method, the operating system I/O buffer is also flushed.</para>
@@ -1393,6 +1393,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for this stream, causes any buffered data to be written to the underlying device, and monitors cancellation requests. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation. </para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The token to monitor for cancellation requests.</param>
       </Docs>
@@ -1410,7 +1414,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1422,6 +1425,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control list (ACL) entries for the file described by the current <see cref="T:System.IO.FileStream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that encapsulates the access control settings for the file described by the current <see cref="T:System.IO.FileStream" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Handle">
@@ -1632,10 +1639,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the total number of bytes
-   read into the buffer, or zero if the end of the stream is reached.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1658,6 +1661,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a block of bytes from the stream and writes the data in a given buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes read into the buffer. This might be less than the number of bytes requested if that number of bytes are not currently available, or zero if the end of the stream is reached.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1<paramref name=")" /> replaced by the bytes read from the current source. </param>
         <param name="offset">
@@ -1684,7 +1691,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.FileStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> method enables you to perform resource-intensive file operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -1695,6 +1701,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads a sequence of bytes from the current stream, advances the position within the stream by the number of bytes read, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write the data into.</param>
         <param name="offset">
@@ -1720,10 +1730,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The byte cast to a <see cref="T:System.Int32" />, or -1 if the end of
-   the stream has been reached.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current stream is closed.</exception>
         <exception cref="T:System.NotSupportedException">The current stream does not support reading.</exception>
         <remarks>
@@ -1737,6 +1743,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from the file and advances the read position one byte.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte, cast to an <see cref="T:System.Int32" />, or -1 if the end of the stream has been reached.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1782,9 +1792,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> containing the new position in the stream.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
         <exception cref="T:System.NotSupportedException">The stream does not support seeking.</exception>
         <exception cref="T:System.ArgumentException">Attempted seeking before the beginning of the stream or to more than one byte past the end of the stream.</exception>
@@ -1802,6 +1809,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current position of this stream to the given value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position in the stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The point relative to <paramref name="origin" /> from which to begin seeking. </param>
         <param name="origin">
@@ -1981,7 +1992,6 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.FileStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> method enables you to perform resource-intensive file operations without blocking the main thread. This performance consideration is particularly important in a win8_appname_long app or desktop_appname app where a time-consuming stream operation can block the UI thread and make your app appear as if it is not working. The async methods are used in conjunction with the async and await keywords in Visual Basic and C#.</para>
@@ -1992,6 +2002,10 @@ the stream. To prevent data loss, always call <see langword="Close" /> on the hi
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes a sequence of bytes to the current stream, advances the current position within this stream by the number of bytes written, and monitors cancellation requests. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from. </param>
         <param name="offset">

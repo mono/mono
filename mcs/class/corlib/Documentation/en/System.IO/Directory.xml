@@ -85,7 +85,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>A <see cref="T:System.IO.DirectoryInfo" /> representing the created directory.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Any and all directories specified in <paramref name="path" /> are created, unless they already exist or unless some part of <paramref name="path" /> is invalid. If the directory already exists, this method does not create a new directory, but it returns a <see cref="T:System.IO.DirectoryInfo" /> object for the existing directory. </para>
@@ -98,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates all directories and subdirectories in the specified path unless they already exist.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the directory at the specified path. This object is returned regardless of whether a directory at the specified path already exists.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The directory to create. </param>
       </Docs>
@@ -118,7 +121,6 @@
         <Parameter Name="directorySecurity" Type="System.Security.AccessControl.DirectorySecurity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -132,6 +134,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates all the directories in the specified path, unless the already exist, applying the specified Windows security.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the directory at the specified path. This object is returned regardless of whether a directory at the specified path already exists.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The directory to create.</param>
         <param name="directorySecurity">
@@ -245,7 +251,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can specify relative or absolute path information in the <paramref name="path" /> parameter. Relative path information is interpreted as relative to the current working directory, which you can determine by using the <see cref="M:System.IO.Directory.GetCurrentDirectory" /> method. The returned directory names are prefixed with the value you provided in the <paramref name="path" /> parameter. For example, if you provide a relative path in the <paramref name="path" /> parameter, the returned directory names will contain a relative path.</para>
@@ -256,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory names in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the directories in the directory specified by <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -275,7 +284,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -319,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory names that match a search pattern in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the directories in the directory specified by <paramref name="path" /> and that match the specified search pattern.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -341,7 +353,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -385,6 +396,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of directory names that match a search pattern in a specified path, and optionally searches subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the directories in the directory specified by <paramref name="path" /> and that match the specified search pattern and option.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -407,7 +422,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can specify relative path information with the <paramref name="path" /> parameter. Relative path information is interpreted as relative to the current working directory, which you can determine by using the <see cref="M:System.IO.Directory.GetCurrentDirectory" /> method. </para>
@@ -418,6 +432,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the files in the directory specified by <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -437,7 +455,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -481,6 +498,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names that match a search pattern in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the files in the directory specified by <paramref name="path" /> and that match the specified search pattern.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -503,7 +524,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -547,6 +567,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names that match a search pattern in a specified path, and optionally searches subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of the full names (including paths) for the files in the directory specified by <paramref name="path" /> and that match the specified search pattern and option.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -569,7 +593,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can specify relative path information with the <paramref name="path" /> parameter. Relative path information is interpreted as relative to the current working directory, which you can determine by using the <see cref="M:System.IO.Directory.GetCurrentDirectory" /> method.</para>
@@ -580,6 +603,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names and directory names in a specified path. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file-system entries in the directory specified by <paramref name="path" />.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -599,7 +626,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -643,6 +669,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names and directory names that  match a search pattern in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file-system entries in the directory specified by <paramref name="path" /> and that match the specified search pattern.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive. </param>
         <param name="searchPattern">
@@ -665,7 +695,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -709,6 +738,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of file names and directory names that match a search pattern in a specified path, and optionally searches subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of file-system entries in the directory specified by <paramref name="path" /> and that match the specified search pattern and option.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -734,13 +767,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if the caller
-   has the required permissions and <paramref name="path" /> contains the name of an existing directory; otherwise, <see langword="false" />. If <paramref name="path" /> is <see langword="null" />, a zero-length string, or contains the
-   name of
-   a file, returns <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-defined invalid characters.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
@@ -759,6 +785,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the given path refers to an existing directory on disk.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="path" /> refers to an existing directory; false if the directory does not exist or an error occurs when trying to determine if the specified file exists.</para>
+          <para>true if <paramref name="path" /> refers to an existing directory; otherwise, false.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to test. </param>
       </Docs>
@@ -779,7 +810,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -791,6 +821,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the access control list (ACL) entries for a specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to a directory containing a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that describes the file's access control list (ACL) information.</param>
       </Docs>
@@ -811,7 +845,6 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -823,6 +856,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that encapsulates the specified type of access control list (ACL) entries for a specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that encapsulates the access control rules for the file described by the <paramref name="path" /> parameter.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to a directory containing a <see cref="T:System.Security.AccessControl.DirectorySecurity" /> object that describes the file's access control list (ACL) information.</param>
         <param name="includeSections">
@@ -846,12 +883,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set to
-   the creation date and time for the specified directory. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -876,6 +907,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the creation date and time of a directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the creation date and time for the specified directory. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of the directory. </param>
       </Docs>
@@ -897,7 +932,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -910,6 +944,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the creation date and time, in Coordinated Universal Time (UTC) format, of a directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the creation date and time for the specified directory. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of the directory. </param>
       </Docs>
@@ -929,11 +967,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the path of the current working directory.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.String.Empty" />.</para>
-        </returns>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to access path information for the current directory. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.PathDiscovery" qualify="true" /></permission>
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
@@ -946,6 +979,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the current working directory of the application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the path of the current working directory, and does not end with a backslash (\).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -966,10 +1003,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> array containing the names
-   of subdirectories in <paramref name="path" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="path " />is <see langword="null" />. </exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permission.</exception>
@@ -995,6 +1028,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of subdirectories (including their paths) in the specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) of subdirectories in the specified path, or an empty array if no directories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -1018,11 +1055,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see langword="String" /> array
-   containing the names of subdirectories of <paramref name="path" /> that match
-<paramref name="searchPattern" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="path " />or<paramref name=" searchPattern " />is <see langword="null" />. </exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have permission to access the requested information.</exception>
@@ -1083,6 +1115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of subdirectories (including their paths) that match the specified search pattern in the specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) of the subdirectories that match the search pattern in the specified directory, or an empty array if no directories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1107,7 +1143,6 @@
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1152,6 +1187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of the subdirectories (including their paths) that match the specified search pattern in the specified directory, and optionally searches subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) of the subdirectories that match the specified criteria, or an empty array if no directories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1177,12 +1216,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing
-   the root information for the specified path.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.String.Empty" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="path" /> is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters. </para>
@@ -1235,6 +1268,10 @@ class GetDirectoryTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the volume information, root information, or both for the specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the volume information, root information, or both for the specified path.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of a file or directory. </param>
       </Docs>
@@ -1257,12 +1294,6 @@ class GetDirectoryTest {
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> array
-   containing the names of the files in the specified directory.</para>
-          <para>Platforms that do not support this feature
-   return <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="path " />is null.</para>
@@ -1292,6 +1323,10 @@ class GetDirectoryTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of files (including their paths) in the specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) for the files in the specified directory, or an empty array if no files are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -1315,11 +1350,6 @@ class GetDirectoryTest {
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-array containing the names of files in the specified directory that match the
-specified search pattern.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="searchPattern " />or <paramref name="path" /> is <see langword="null" /> .</exception>
         <exception cref="T:System.ArgumentException">
@@ -1397,6 +1427,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of files (including their paths) that match the specified search pattern in the specified directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) for the files in the specified directory that match the specified search pattern, or an empty array if no files are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1421,7 +1455,6 @@ specified search pattern.</para>
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1484,6 +1517,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of files (including their paths) that match the specified search pattern in the specified directory, using a value to determine whether to search subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the full names (including paths) for the files in the specified directory that match the specified search pattern and option, or an empty array if no files are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1509,9 +1546,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> array containing the names of file system entries in the specified directory.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="path" /> is <see langword="null" /> .</exception>
         <exception cref="T:System.ArgumentException">
@@ -1537,6 +1571,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the names of all files and subdirectories in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the names of files and subdirectories in the specified directory, or an empty array if no files or subdirectories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
       </Docs>
@@ -1560,11 +1598,6 @@ specified search pattern.</para>
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see langword="String" /> array
-   containing
-   file and directory names matching the specified search criteria.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="searchPattern " />or <paramref name="path" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1638,6 +1671,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of file names and directory names that that match a search pattern in a specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file names and directory names that match the specified search criteria, or an empty array if no files or directories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1661,7 +1698,6 @@ specified search pattern.</para>
         <Parameter Name="searchOption" Type="System.IO.SearchOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of the returned file and directory names is not guaranteed; use the <see cref="Overload:System.Array.Sort" /> method if a specific sort order is required.</para>
@@ -1717,6 +1753,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the file names and directory names that match a search pattern in a specified path, and optionally searches subdirectories.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file the file names and directory names that match the specified search criteria, or an empty array if no files or directories are found.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative or absolute path to the directory to search. This string is not case-sensitive.</param>
         <param name="searchPattern">
@@ -1742,12 +1782,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set to
-   the date and time the specified file or directory was last accessed. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -1772,6 +1806,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time the specified file or directory was last accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the date and time the specified file or directory was last accessed. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain access date and time information. </param>
       </Docs>
@@ -1793,7 +1831,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1806,6 +1843,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time, in Coordinated Universal Time (UTC) format, that the specified file or directory was last accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the date and time the specified file or directory was last accessed. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain access date and time information. </param>
       </Docs>
@@ -1827,12 +1868,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.DateTime" /> structure set to
-   the date and time the specified file or directory was last written to. This value is expressed in local time.</para>
-          <para>Platforms that do not
-   support this feature return <see cref="F:System.DateTime.MinValue" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="path " />is a zero-length string, contains only white space, or contains one or more implementation-specific invalid characters.</exception>
         <exception cref="T:System.ArgumentNullException">
@@ -1856,6 +1891,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time the specified file or directory was last written to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the date and time the specified file or directory was last written to. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain modification date and time information. </param>
       </Docs>
@@ -1877,7 +1916,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1890,6 +1928,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time, in Coordinated Universal Time (UTC) format, that the specified file or directory was last written to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that is set to the date and time the specified file or directory was last written to. This value is expressed in UTC time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The file or directory for which to obtain modification date and time information. </param>
       </Docs>
@@ -1908,7 +1950,6 @@ specified search pattern.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>GetLogicalDrives returns all of the accessible drives on a particular machine, including the floppy drive and any optical drives.</para>
@@ -1918,6 +1959,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the names of the logical drives on this computer in the form "&lt;drive letter&gt;:\".</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The logical drives on this computer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetParent">
@@ -1936,7 +1981,6 @@ specified search pattern.</para>
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1949,6 +1993,10 @@ specified search pattern.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the parent directory of the specified path, including both absolute and relative paths.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parent directory, or null if <paramref name="path" /> is the root directory, including the root of a UNC server or share name.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path for which to retrieve the parent directory. </param>
       </Docs>

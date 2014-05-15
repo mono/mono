@@ -55,7 +55,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Messaging.LogicalCallContext.Clone" /> method produces a deep copy of the current <see cref="T:System.Runtime.Remoting.Messaging.LogicalCallContext" />.</para>
@@ -64,6 +63,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FreeNamedDataSlot">
@@ -107,12 +110,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an object associated with the specified name from the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object in the logical call context associated with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the item in the call context. </param>
       </Docs>

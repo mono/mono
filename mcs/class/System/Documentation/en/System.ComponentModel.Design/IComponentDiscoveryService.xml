@@ -36,7 +36,6 @@
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.IComponentDiscoveryService.GetComponentTypes(System.ComponentModel.Design.IDesignerHost,System.Type)" /> method retrieves the list of available component types, which are types implementing the <see cref="T:System.ComponentModel.IComponent" /> interface. If the <paramref name="baseType" /> parameter is null, all components are retrieved; otherwise, only component types derived from <paramref name="baseType" /> are returned.</para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the list of available component types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list of available component types.</para>
+        </returns>
         <param name="designerHost">
           <attribution license="cc4" from="Microsoft" modified="false" />The designer host providing design-time services. Can be null.</param>
         <param name="baseType">

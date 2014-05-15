@@ -126,12 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a collection that contains the binding elements for the binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the binding elements that makes up the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MessageEncoding">
@@ -219,12 +222,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the reliable session has changed from its default value and should be serialized.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reliable session should be serialized; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeSecurity">
@@ -239,12 +245,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the security has changed from its default value and should be serialized.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the security should be serialized; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WebSocketSettings">

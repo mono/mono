@@ -77,10 +77,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Net.DnsPermission" /> instance containing the same values as the current instance.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of a <see cref="T:System.Net.DnsPermission" /> instance provides the same access to DNS servers as the original permission instance.</para>
@@ -89,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an identical copy of the current permission instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Net.DnsPermission" /> class that is an identical copy of the current instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -148,14 +148,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.DnsPermission" /> instance that represents the intersection of the
-   current instance and <paramref name="target" />. If the intersection is
-   empty, returns <see langword="null" />. If the
-   current instance is unrestricted, returns a copy of <paramref name="target" />. If
-<paramref name="target" /> is unrestricted, returns a copy of 
-   the current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <remarks>
@@ -166,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a permission instance that is the intersection of the current permission instance and the specified permission instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.DnsPermission" /> instance that represents the intersection of the current <see cref="T:System.Net.DnsPermission" /> instance with the specified <see cref="T:System.Net.DnsPermission" /> instance, or null if the intersection is empty. If both the current instance and <paramref name="target" /> are unrestricted, this method returns a new <see cref="T:System.Net.DnsPermission" /> instance that is unrestricted; otherwise, it returns null.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.DnsPermission" /> instance to intersect with the current instance. </param>
       </Docs>
@@ -188,15 +184,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a
-   subset of <paramref name="target" /> ; otherwise,<see langword=" false" />. If the current
-   instance is unrestricted, and <paramref name="target" /> is not, returns
-<see langword="false" />. If <paramref name="target" /> is unrestricted, returns 
-<see langword="true" />. If <paramref name="target" /> is <see langword="null" /> , returns 
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current <see cref="T:System.Net.DnsPermission" /> instance is a subset of the specified <see cref="T:System.Net.DnsPermission" /> instance if the current <see cref="T:System.Net.DnsPermission" /> instance specifies a set of operations that is wholly contained by the specified <see cref="T:System.Net.DnsPermission" /> instance.</para>
@@ -206,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current permission instance is a subset of the specified permission instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false if the current instance is unrestricted and <paramref name="target" /> is either null or unrestricted; otherwise, true.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The second <see cref="T:System.Net.DnsPermission" /> instance to be tested for the subset relationship. </param>
       </Docs>
@@ -225,12 +216,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the overall permission state of the object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.DnsPermission" /> instance was created with <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -248,10 +242,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the
-   current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.DnsPermission.ToXml" /> method creates a <see cref="T:System.Security.SecurityElement" /> instance to XML-encode a representation of the <see cref="T:System.Net.DnsPermission" /> instance, including state information.</para>
@@ -261,6 +251,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of a <see cref="T:System.Net.DnsPermission" /> instance and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> instance that contains an XML-encoded representation of the security object, including state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -281,12 +275,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.DnsPermission" /> instance that represents the union of the 
-   current instance and
-<paramref name="target" />. If the current instance or <paramref name="target" /> is unrestricted, 
-   returns a <see cref="T:System.Net.DnsPermission" /> instance that is unrestricted.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " />is <see langword="null" />.</exception>
         <remarks>
@@ -297,6 +285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a permission instance that is the union of the current permission instance and the specified permission instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.DnsPermission" /> instance that represents the union of the current <see cref="T:System.Net.DnsPermission" /> instance with the specified <see cref="T:System.Net.DnsPermission" /> instance. If <paramref name="target" /> is null, this method returns a copy of the current instance. If the current instance or <paramref name="target" /> is unrestricted, this method returns a <see cref="T:System.Net.DnsPermission" /> instance that is unrestricted; otherwise, it returns a <see cref="T:System.Net.DnsPermission" /> instance that is restricted.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.DnsPermission" /> instance to combine with the current instance. </param>
       </Docs>

@@ -119,12 +119,15 @@
         <Parameter Name="cb" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes of the specified size.</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns pseudo-random key bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array filled with pseudo-random key bytes.</para>
+        </returns>
         <param name="cb">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of pseudo-random key bytes to generate. </param>
       </Docs>

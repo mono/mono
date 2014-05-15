@@ -48,7 +48,6 @@
         <Parameter Name="trust" Type="System.Security.Policy.ApplicationTrust" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -58,6 +57,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an element to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
         <param name="trust">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.ApplicationTrust" /> object to add.</param>
       </Docs>
@@ -215,7 +218,6 @@
         <Parameter Name="versionMatch" Type="System.Security.Policy.ApplicationVersionMatch" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -225,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the application trusts in the collection that match the specified application identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Policy.ApplicationTrustCollection" /> containing all matching <see cref="T:System.Security.Policy.ApplicationTrust" /> objects.</para>
+        </returns>
         <param name="applicationIdentity">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ApplicationIdentity" /> object describing the application to find.</param>
         <param name="versionMatch">
@@ -244,7 +250,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -260,6 +265,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that can be used to iterate over the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Policy.ApplicationTrustEnumerator" /> that can be used to iterate over the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -509,13 +518,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

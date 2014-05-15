@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Text.RegularExpressions">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Text.RegularExpressions" /> namespace contains classes that provide access to the .NET Framework regular expression engine. The namespace provides regular expression functionality that may be used from any platform or language that runs within the Microsoft .NET Framework. In addition to the types contained in this namespace, the <see cref="T:System.Configuration.RegexStringValidator" /> class enables you to determine whether a particular string conforms to a regular expression pattern.</para>
+    </summary>
   </Docs>
 </Namespace>

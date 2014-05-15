@@ -100,12 +100,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether this instance is equal to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is not null and if the object names are equivalent; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
@@ -152,12 +155,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hashcode for this instance of <see cref="T:System.Runtime.Remoting.Contexts.ContextAttribute" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hashcode for this instance of <see cref="T:System.Runtime.Remoting.Contexts.ContextAttribute" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPropertiesForNewContext">
@@ -205,12 +211,15 @@
         <Parameter Name="ctorMsg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the context parameter meets the context attribute's requirements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the passed in context is okay; otherwise, false.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />The context in which to check. </param>
         <param name="ctorMsg">
@@ -233,7 +242,6 @@
         <Parameter Name="newCtx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Once all the context properties have been added to the new context, they are all queried as to whether they are okay in the new context. The context property could look at the other context properties in the <see cref="P:System.Runtime.Remoting.Contexts.Context.ContextProperties" /> property of the new context and determine whether it is compatible with these other context properties.</para>
@@ -245,6 +253,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the context property is compatible with the new context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the context property is okay with the new context; otherwise, false.</para>
+        </returns>
         <param name="newCtx">
           <attribution license="cc4" from="Microsoft" modified="false" />The new context in which the property has been created. </param>
       </Docs>

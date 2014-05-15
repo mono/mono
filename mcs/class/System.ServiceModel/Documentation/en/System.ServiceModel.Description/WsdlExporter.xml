@@ -123,10 +123,17 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="endpoints">To be added.</param>
         <param name="name">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" /> method to create metadata about a set of endpoints from a specified service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates metadata about a group of endpoints from a specified service.</para>
+        </summary>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects about which to generate metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="GeneratedWsdlDocuments">
@@ -185,7 +192,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlExporter.GetGeneratedMetadata" /> property to get a collection of all the metadata generated as a result of any number of calls to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />. </para>
@@ -195,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerable collection of generated <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerable collection of generated <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects that represents the metadata generated as a result of calls to <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportContract(System.ServiceModel.Description.ContractDescription)" />, <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoint(System.ServiceModel.Description.ServiceEndpoint)" />, or <see cref="M:System.ServiceModel.Description.WsdlExporter.ExportEndpoints(System.Collections.Generic.IEnumerable{System.ServiceModel.Description.ServiceEndpoint},System.Xml.XmlQualifiedName)" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

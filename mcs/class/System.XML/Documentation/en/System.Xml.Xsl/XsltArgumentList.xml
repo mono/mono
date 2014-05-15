@@ -248,12 +248,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The object associated with the namespace, or <see langword="null" /> if no extension object was associated with the namespace.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object associated with the given namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI object or null if one was not found.</para>
+        </returns>
         <param name="namespaceUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the object. </param>
       </Docs>
@@ -275,12 +278,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The value associated with the parameter, or <see langword="null" /> if no value is associated with the parameter.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameter associated with the namespace qualified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter object or null if one was not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. <see cref="T:System.Xml.Xsl.XsltArgumentList" /> does not check to ensure the name passed is a valid local name; however, the name cannot be null. </param>
         <param name="namespaceUri">
@@ -303,12 +309,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The object formerly associated with the namespace, or <see langword="null" /> if no extension object was associated with the namespace.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the object with the namespace URI from the <see cref="T:System.Xml.Xsl.XsltArgumentList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object with the namespace URI or null if one was not found.</para>
+        </returns>
         <param name="namespaceUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the object to remove. </param>
       </Docs>
@@ -330,12 +339,15 @@
         <Parameter Name="namespaceUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The value formerly associated with the parameter, or <see langword="null" /> if no value was associated with the parameter.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the parameter from the <see cref="T:System.Xml.Xsl.XsltArgumentList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter object or null if one was not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter to remove. <see cref="T:System.Xml.Xsl.XsltArgumentList" /> does not check to ensure the name passed is a valid local name; however, the name cannot be null. </param>
         <param name="namespaceUri">

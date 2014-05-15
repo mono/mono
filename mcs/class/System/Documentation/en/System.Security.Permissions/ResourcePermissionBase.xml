@@ -158,7 +158,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of the permission object represents the same access to resources as the original permission object.</para>
@@ -167,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an identical copy of the current permission object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -213,7 +216,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ResourcePermissionBaseEntry []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Security.Permissions.ResourcePermissionBase.AddPermissionAccess(System.Security.Permissions.ResourcePermissionBaseEntry)" /> and <see cref="M:System.Security.Permissions.ResourcePermissionBase.RemovePermissionAccess(System.Security.Permissions.ResourcePermissionBaseEntry)" /> to add and remove permission entries to this permission.</para>
@@ -222,6 +224,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of the <see cref="T:System.Security.Permissions.ResourcePermissionBaseEntry" /> objects added to this permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Security.Permissions.ResourcePermissionBaseEntry" /> objects that were added to this permission.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Intersect">
@@ -240,7 +246,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The intersection of two permission objects is a permission that describes the set of operations they both hold in common. Specifically, it represents the minimum permissions required for a demand to pass both permissions.</para>
@@ -249,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a permission object that is the intersection of the current permission object and a target permission object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission object that represents the intersection of the current object and the specified target. This object is null if the intersection is empty.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission object of the same type as the current permission object. </param>
       </Docs>
@@ -269,7 +278,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current permission object is a subset of the specified permission object if the current permission object specifies a set of operations that is wholly contained by the specified permission object. For example, a permission that represents access to C:\Example.txt is a subset of a permission that represents access to C:\. If this method returns true, the current permission object represents no more access to the protected resource than does the specified permission object.</para>
@@ -279,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current permission object is a subset of the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission object is a subset of the specified permission object; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission object that is to be tested for the subset relationship. </param>
       </Docs>
@@ -297,7 +309,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An unrestricted permission object represents access to any and all resources protected by the permission.</para>
@@ -306,6 +317,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the permission is unrestricted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if permission is unrestricted; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Local">
@@ -413,12 +428,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an XML encoding of the security object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Union">
@@ -437,7 +455,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The result of a call to <see cref="M:System.Security.Permissions.ResourcePermissionBase.Union(System.Security.IPermission)" /> is a permission that represents all the operations represented by both the current permission object and the specified permission object. Any demand that passes either permission passes their union.</para>
@@ -446,6 +463,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a permission object that combines the current permission object and the target permission object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission object that represents the union of the current permission object and the specified permission object.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission object to combine with the current permission object. It must be of the same type as the current permission object. </param>
       </Docs>

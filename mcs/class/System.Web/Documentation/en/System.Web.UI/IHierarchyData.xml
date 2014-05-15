@@ -26,7 +26,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -36,6 +35,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumeration object that represents all the child nodes of the current hierarchical node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> collection of child nodes of the current hierarchical node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -49,7 +52,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -59,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Web.UI.IHierarchyData" /> object that represents the parent node of the current hierarchical node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchyData" /> object that represents the parent node of the current hierarchical node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

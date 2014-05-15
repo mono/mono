@@ -358,7 +358,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'StackFrame'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Stack frames are numbered starting at 0, which is the last stack frame pushed.</para>
@@ -367,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified stack frame.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified stack frame.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the stack frame requested. </param>
       </Docs>
@@ -389,7 +392,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -401,6 +403,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a copy of all stack frames in the current stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.StackFrame" /> representing the function calls in the stack trace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="METHODS_TO_SKIP">
@@ -442,12 +448,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds a readable representation of the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A readable representation of the stack trace.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

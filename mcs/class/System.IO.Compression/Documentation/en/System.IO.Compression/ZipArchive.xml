@@ -188,7 +188,6 @@
         <Parameter Name="entryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="entryName" /> string should reflect the relative path of the entry you want to create within the zip archive. There is no restriction on the string you provide. However, if it is not formatted as a relative path, the entry is created, but you may get an exception when you extract the contents of the zip archive. If an entry with the specified path and name already exists in the archive, a second entry is created with the same path and name.</para>
@@ -198,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty entry that has the specified path and entry name in the zip archive.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty entry in the zip archive.</para>
+        </returns>
         <param name="entryName">
           <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
       </Docs>
@@ -217,7 +220,6 @@
         <Parameter Name="compressionLevel" Type="System.IO.Compression.CompressionLevel" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="entryName" /> string should reflect the relative path of the entry you want to create within the zip archive. There is no restriction on the string you provide. However, if it is not formatted as a relative path, the entry is created, but you may get an exception when you extract the contents of the zip archive. If an entry with the specified name already exists in the archive, a second entry is created with the same name.</para>
@@ -227,6 +229,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty entry that has the specified entry name and compression level in the zip archive.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty entry in the zip archive.</para>
+        </returns>
         <param name="entryName">
           <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that specifies the name of the entry to be created.</param>
         <param name="compressionLevel">
@@ -331,7 +337,6 @@
         <Parameter Name="entryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If multiple entries that have the specified name exist in the archive, the first one is returned. The name of the entry is compared to <paramref name="entryName" /> using ordinal comparison. </para>
@@ -340,6 +345,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a wrapper for the specified entry in the zip archive.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A wrapper for the specified entry in the archive; null if the entry does not exist in the archive.</para>
+        </returns>
         <param name="entryName">
           <attribution license="cc4" from="Microsoft" modified="false" />A path, relative to the root of the archive, that identifies the entry to retrieve.</param>
       </Docs>

@@ -73,12 +73,15 @@
         <Parameter Name="assembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all switch attributes for the specified assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the switch attributes for the assembly.</para>
+        </returns>
         <param name="assembly">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to check for switch attributes.</param>
       </Docs>

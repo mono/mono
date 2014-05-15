@@ -491,11 +491,6 @@ ArithmeticException Handler: System.DivideByZeroException: Attempted to divide b
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>Returns the first Exception thrown in a chain of
-      Exceptions. If the <see cref="P:System.Exception.InnerException" /> property
-      of the current Exception is <see langword="null" /> , returns the current Exception.</para>
-        </returns>
         <example>
           <para>The following example shows an implementation of the
       <see cref="M:System.Exception.GetBaseException" /> method.</para>
@@ -520,6 +515,10 @@ ArithmeticException Handler: System.DivideByZeroException: Attempted to divide b
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the <see cref="T:System.Exception" /> that is the root cause of one or more subsequent exceptions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first exception thrown in a chain of exceptions. If the <see cref="P:System.Exception.InnerException" /> property of the current exception is a null reference (Nothing in Visual Basic), this property returns the current exception.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -567,7 +566,6 @@ ArithmeticException Handler: System.DivideByZeroException: Attempted to divide b
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -577,6 +575,10 @@ ArithmeticException Handler: System.DivideByZeroException: Attempted to divide b
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the runtime type of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the exact runtime type of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HelpLink">
@@ -866,10 +868,6 @@ Inner Exception is MyAppException: ExceptExample inner exception
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current Exception.</para>
-        </returns>
         <example>
           <para>The following example causes an Exception and displays
       the result of calling <see cref="M:System.Exception.ToString" /> on that Exception.</para>
@@ -907,6 +905,10 @@ Error: System.ArgumentException: Object must be of type String.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a string representation of the current exception.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the current exception.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

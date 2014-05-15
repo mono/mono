@@ -87,7 +87,6 @@
         <Parameter Name="codeGen" Type="System.CodeDom.Compiler.ICodeGenerator" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Data.TypedDataSetGenerator" /> class is not intended for use as a stand-alone component, but as a class from which other classes derive standard functionality.</para>
@@ -96,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transforms a string in a valid, typed <see cref="T:System.Data.DataSet" /> name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that is the converted name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The source name to transform into a valid, typed <see cref="T:System.Data.DataSet" /> name. </param>
         <param name="codeGen">

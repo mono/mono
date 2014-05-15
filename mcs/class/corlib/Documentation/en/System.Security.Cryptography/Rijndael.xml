@@ -108,7 +108,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Rijndael'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of <see cref="T:System.Security.Cryptography.Rijndael" /> is <see cref="T:System.Security.Cryptography.RijndaelManaged" />.</para>
@@ -117,6 +116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a cryptographic object to perform the <see cref="T:System.Security.Cryptography.Rijndael" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -135,7 +138,6 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Rijndael'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Acceptable values for the <paramref name="algName" /> parameter are Rijndael and System.Security.Cryptography.RijndaelManaged.</para>
@@ -144,6 +146,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a cryptographic object to perform the specified implementation of the <see cref="T:System.Security.Cryptography.Rijndael" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object.</para>
+        </returns>
         <param name="algName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.Rijndael" /> to create. </param>
       </Docs>

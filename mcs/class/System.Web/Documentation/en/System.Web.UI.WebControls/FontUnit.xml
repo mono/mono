@@ -541,7 +541,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.Equals(System.Object)" /> method to determine whether the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from. For the specified <see cref="T:System.Object" /> to be equivalent, the object must be a <see cref="T:System.Web.UI.WebControls.FontUnit" /> that contains the same values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> and <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> properties as the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from.</para>
@@ -550,6 +549,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equivalent to the instance of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class that this method is called from; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" /> that contains the object to compare to this instance. </param>
       </Docs>
@@ -566,12 +569,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Int32" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that represents the hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -683,7 +689,6 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.FontUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects to be equivalent, each object must have the same values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> and <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> properties.</para>
@@ -692,6 +697,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> on the left of the operator that contains font properties. </param>
         <param name="right">
@@ -733,7 +742,6 @@
         <Parameter Name="right" Type="System.Web.UI.WebControls.FontUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects to be not equal to each other, each object must either have different values for the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property or the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property.</para>
@@ -742,6 +750,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects for inequality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.Web.UI.WebControls.FontUnit" /> objects are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that contains font properties on the left of the operator. </param>
         <param name="right">
@@ -762,7 +774,6 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FontUnit'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Parse(System.String)" /> method to convert the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
@@ -860,6 +871,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="s" /> parameter.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representation of one of the <see cref="T:System.Web.UI.WebControls.FontSize" /> values. </param>
       </Docs>
@@ -879,7 +894,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.WebControls.FontUnit" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Parse(System.String)" /> method to convert the specified string and culture to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent.</para>
@@ -977,6 +991,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string to its <see cref="T:System.Web.UI.WebControls.FontUnit" /> equivalent in the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="s" /> parameter in the culture specified by the <paramref name="culture" /> parameter.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representation of one of the <see cref="T:System.Web.UI.WebControls.FontSize" /> values. </param>
         <param name="culture">
@@ -997,7 +1015,6 @@
         <Parameter Name="n" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FontUnit'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the static <see cref="M:System.Web.UI.WebControls.FontUnit.Point(System.Int32)" /> method to create a <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="n" /> parameter.</para>
@@ -1006,6 +1023,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.WebControls.FontUnit" /> of type <see cref="T:System.Drawing.Point" /> from an integer value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.FontUnit" /> that represents the font size specified by the <paramref name="n" /> parameter.</para>
+        </returns>
         <param name="n">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer representing the <see cref="T:System.Drawing.Point" /> value to convert to a <see cref="T:System.Web.UI.WebControls.FontUnit" />. </param>
       </Docs>
@@ -1071,7 +1092,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" />. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to FontSize.AsUnit, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.Unit" /> contained in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.FontSize" /> value.</para>
@@ -1080,6 +1100,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to the default string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1096,7 +1120,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> in the specified culture. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to FontSize.AsUnit, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.Unit" /> contained in the <see cref="P:System.Web.UI.WebControls.FontUnit.Unit" /> property. If the <see cref="P:System.Web.UI.WebControls.FontUnit.Type" /> property is set to any other <see cref="T:System.Web.UI.WebControls.FontSize" /> value, the returned string is the string equivalent of the <see cref="T:System.Web.UI.WebControls.FontSize" /> value.</para>
@@ -1105,6 +1128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to a string representation, using the specified <see cref="T:System.Globalization.CultureInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object in the specified culture.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> that contains the culture to represent the <see cref="T:System.Web.UI.WebControls.FontUnit" />. </param>
       </Docs>
@@ -1127,7 +1154,6 @@
       </Parameters>
       <Docs>
         <param name="fmt">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnit.ToString" /> method to retrieve the string representation of the <see cref="T:System.Web.UI.WebControls.FontUnit" /> object using a culture-specific format provider for any numeric values that are in the string. </para>
@@ -1138,6 +1164,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to a string equivalent using the specified format provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents this <see cref="T:System.Web.UI.WebControls.FontUnit" />, with any numeric unit value in the format specified by <paramref name="formatProvider" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">

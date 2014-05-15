@@ -152,12 +152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'StreamWriter'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.StreamWriter" /> that appends text to the file represented by this instance of the <see cref="T:System.IO.FileInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamWriter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -176,7 +179,6 @@
         <Parameter Name="destFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.IO.FileInfo.CopyTo(System.String,System.Boolean)" /> method to allow overwriting of an existing file.</para>
@@ -188,6 +190,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies an existing file to a new file, disallowing the overwriting of an existing file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file with a fully qualified path.</para>
+        </returns>
         <param name="destFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the new file to copy to. </param>
       </Docs>
@@ -209,7 +215,6 @@
         <Parameter Name="overwrite" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to allow or prevent overwriting of an existing file. Use the <see cref="M:System.IO.FileInfo.CopyTo(System.String)" />  method to prevent overwriting of an existing file by default.</para>
@@ -221,6 +226,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies an existing file to a new file, allowing the overwriting of an existing file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file, or an overwrite of an existing file if <paramref name="overwrite" /> is true. If the file exists and <paramref name="overwrite" /> is false, an <see cref="T:System.IO.IOException" /> is thrown.</para>
+        </returns>
         <param name="destFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the new file to copy to. </param>
         <param name="overwrite">
@@ -241,7 +250,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, full read/write access to new files is granted to all users.</para>
@@ -251,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new file.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateText">
@@ -267,7 +279,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'StreamWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, full read/write access to new files is granted to all users.</para>
@@ -276,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.StreamWriter" /> that writes a new text file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamWriter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Decrypt">
@@ -451,7 +466,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -462,6 +476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control list (ACL) entries for the file described by the current <see cref="T:System.IO.FileInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the current file.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -479,7 +497,6 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -490,6 +507,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the specified type of access control list (ACL) entries for the file described by the current <see cref="T:System.IO.FileInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.FileSecurity" /> object that encapsulates the access control rules for the current file.     </para>
+        </returns>
         <param name="includeSections">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.AccessControl.AccessControlSections" /> values that specifies which group of access control entries to retrieve. </param>
       </Docs>
@@ -645,12 +666,15 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file opened in the specified mode, with read/write access and unshared.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
       </Docs>
@@ -672,12 +696,15 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode with read, write, or read/write access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> object opened in the specified mode and access, and unshared.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
         <param name="access">
@@ -702,12 +729,15 @@
         <Parameter Name="share" Type="System.IO.FileShare" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode with read, write, or read/write access and the specified sharing option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> object opened with the specified mode, access, and sharing options.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> constant specifying the mode (for example, Open or Append) in which to open the file. </param>
         <param name="access">
@@ -730,7 +760,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a read-only <see cref="T:System.IO.FileStream" /> object with the <see cref="T:System.IO.FileShare" /> mode set to <see cref="F:System.IO.FileShare.Read" />.</para>
@@ -739,6 +768,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a read-only <see cref="T:System.IO.FileStream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new read-only <see cref="T:System.IO.FileStream" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OpenText">
@@ -755,12 +788,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'StreamReader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.IO.StreamReader" /> with UTF8 encoding that reads from an existing text file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new StreamReader with UTF8 encoding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OpenWrite">
@@ -777,7 +813,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'FileStream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.FileInfo.OpenWrite" /> method opens a file if one already exists for the file path, or creates a new file if one does not exist. For an existing file, it does not append the new text to the existing text. Instead, it overwrites the existing characters with the new characters. If you overwrite a longer string (such as "This is a test of the OpenWrite method") with a shorter string (like "Second run"), the file will contain a mix of the strings ("Second runtest of the OpenWrite method").</para>
@@ -786,6 +821,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a write-only <see cref="T:System.IO.FileStream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A write-only unshared <see cref="T:System.IO.FileStream" /> object for a new or existing file.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Replace">
@@ -809,7 +848,6 @@
         <Parameter Name="destinationBackupFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -823,6 +861,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces the contents of a specified file with the file described by the current <see cref="T:System.IO.FileInfo" /> object, deleting the original file, and creating a backup of the replaced file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileInfo" /> object that encapsulates information about the file described by the <paramref name="destFileName" /> parameter.</para>
+        </returns>
         <param name="destinationFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file to replace with the current file.</param>
         <param name="destinationBackupFileName">
@@ -851,7 +893,6 @@
         <Parameter Name="ignoreMetadataErrors" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -865,6 +906,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces the contents of a specified file with the file described by the current <see cref="T:System.IO.FileInfo" /> object, deleting the original file, and creating a backup of the replaced file.  Also specifies whether to ignore merge errors. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileInfo" /> object that encapsulates information about the file described by the <paramref name="destFileName" /> parameter.</para>
+        </returns>
         <param name="destinationFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a file to replace with the current file.</param>
         <param name="destinationBackupFileName">
@@ -939,7 +984,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string returned by the <see cref="M:System.IO.FileInfo.ToString" /> method represents path that was passed to the constructor.  When you create a <see cref="T:System.IO.FileInfo" /> object using the constructors, the <see cref="M:System.IO.FileInfo.ToString" /> method returns the fully qualified path.  However, there are cases where the string returned by the <see cref="M:System.IO.FileInfo.ToString" /> method does not represent the fully qualified path.  For example, when you create a <see cref="T:System.IO.FileInfo" /> object using the <see cref="Overload:System.IO.DirectoryInfo.GetFiles" /> method, the <see cref="M:System.IO.FileInfo.ToString" /> method does not represent the fully qualified path.      </para>
@@ -948,6 +992,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the path as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the path.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

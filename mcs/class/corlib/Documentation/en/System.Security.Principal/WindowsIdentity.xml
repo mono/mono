@@ -476,7 +476,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'WindowsIdentity'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property returns an empty <see cref="T:System.Security.Principal.WindowsIdentity" /> object that enables you to treat operations as anonymous. The property value does not correspond to a Windows anonymous user and cannot be used for impersonation. Also, note that the identity returned by this property is not static; each call to <see cref="M:System.Security.Principal.WindowsIdentity.GetAnonymous" /> returns a different anonymous identity.</para>
@@ -486,6 +485,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Security.Principal.WindowsIdentity" /> object that you can use as a sentinel value in your code to represent an anonymous user. The property value does not represent the built-in anonymous identity used by the Windows operating system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents an anonymous user.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCurrent">
@@ -502,7 +505,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a WindowsIdentity instance representing the current user.</returns>
         <remarks>
           <example>
             <code lang="C#">
@@ -516,6 +518,10 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Security.Principal.WindowsIdentity" /> object that represents the current Windows user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the current user.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCurrent">
@@ -533,7 +539,6 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
         <Parameter Name="ifImpersonating" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -543,6 +548,10 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Security.Principal.WindowsIdentity" /> object that represents the Windows identity for either the thread or the process, depending on the value of the <paramref name="ifImpersonating" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents a Windows user.</para>
+        </returns>
         <param name="ifImpersonating">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return the <see cref="T:System.Security.Principal.WindowsIdentity" /> only if the thread is currently impersonating; false to return the <see cref="T:System.Security.Principal.WindowsIdentity" />   of the thread if it is impersonating or the <see cref="T:System.Security.Principal.WindowsIdentity" /> of the process if the thread is not currently impersonating.</param>
       </Docs>
@@ -562,7 +571,6 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
         <Parameter Name="desiredAccess" Type="System.Security.Principal.TokenAccessLevels" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -572,6 +580,10 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Security.Principal.WindowsIdentity" /> object that represents the current Windows user, using the specified desired token access level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the current user.</para>
+        </returns>
         <param name="desiredAccess">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
       </Docs>
@@ -611,7 +623,6 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'WindowsImpersonationContext'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On Windows NT platforms, the current user must have sufficient rights to allow impersonation.</para>
@@ -620,6 +631,10 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Impersonates the user represented by the <see cref="T:System.Security.Principal.WindowsIdentity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the Windows user prior to impersonation; this can be used to revert to the original user's context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Impersonate">
@@ -638,7 +653,6 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
         <Parameter Name="userToken" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WindowsImpersonationContext'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On Windows NT platforms, the current user must have sufficient rights to allow impersonation.</para>
@@ -651,6 +665,10 @@ Console.WriteLine ("\tToken:\t\t{0}", wi.Token);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Impersonates the user represented by the specified user token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
         <param name="userToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle of a Windows account token. This token is usually retrieved through a call to unmanaged code, such as a call to the Win32 API LogonUser function. </param>
       </Docs>

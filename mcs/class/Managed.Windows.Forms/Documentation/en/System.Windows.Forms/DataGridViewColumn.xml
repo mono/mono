@@ -450,7 +450,6 @@
         <Parameter Name="fixedHeight" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -462,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the ideal width of the column based on the specified criteria.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ideal width, in pixels, of the column.</para>
+        </returns>
         <param name="autoSizeColumnMode">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAutoSizeColumnMode" /> value that specifies an automatic sizing mode. </param>
         <param name="fixedHeight">
@@ -829,7 +832,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -839,6 +841,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string that describes the column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that describes the column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

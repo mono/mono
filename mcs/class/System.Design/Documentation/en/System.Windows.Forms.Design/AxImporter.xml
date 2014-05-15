@@ -104,12 +104,15 @@
         <Parameter Name="file" Type="System.IO.FileInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a wrapper for an ActiveX control for use in the design-time environment.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assembly qualified name for the type of ActiveX control for which a wrapper was generated.</para>
+        </returns>
         <param name="file">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileInfo" /> indicating the file that contains the control. </param>
       </Docs>
@@ -128,12 +131,15 @@
         <Parameter Name="typeLib" Type="System.Runtime.InteropServices.UCOMITypeLib" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a wrapper for an ActiveX control for use in the design-time environment.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assembly qualified name for the type of ActiveX control for which a wrapper was generated.</para>
+        </returns>
         <param name="typeLib">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.UCOMITypeLib" /> that indicates the type library to generate the control from. </param>
       </Docs>
@@ -153,12 +159,15 @@
         <Parameter Name="clsid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a wrapper for an ActiveX control for use in the design-time environment.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An assembly qualified name for the type of ActiveX control for which a wrapper was generated.</para>
+        </returns>
         <param name="typeLib">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.UCOMITypeLib" /> that indicates the type library to generate the control from. </param>
         <param name="clsid">

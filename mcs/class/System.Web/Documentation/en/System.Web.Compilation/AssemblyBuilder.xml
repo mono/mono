@@ -118,7 +118,6 @@
         <Parameter Name="buildProvider" Type="System.Web.Compilation.BuildProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -130,6 +129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allows a build provider to create a temporary source file, and include the source file in the assembly compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An open <see cref="T:System.IO.TextWriter" /> that can be used to write source code to a temporary file.</para>
+        </returns>
         <param name="buildProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />The build provider generating the code source file.</param>
       </Docs>
@@ -148,7 +151,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -158,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allows a build provider to create a resource file to include in the assembly compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An open <see cref="T:System.IO.Stream" /> that can be used to write resources, which are included in the assembly compilation.</para>
+        </returns>
         <param name="buildProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />The build provider generating the resource.</param>
         <param name="name">
@@ -203,7 +209,6 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a temporary file path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A path to a temporary file, with the specified file extension.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The file extension to use for the temporary file.</param>
       </Docs>

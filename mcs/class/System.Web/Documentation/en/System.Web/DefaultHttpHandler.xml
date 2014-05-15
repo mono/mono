@@ -65,7 +65,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates an asynchronous call to the HTTP handler.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that contains information about the status of the process.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that provides references to intrinsic server objects that are used to service HTTP requests.</param>
         <param name="callback">
@@ -227,7 +230,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -255,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the target URL for the current request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The overridden URL to use in the request; or null if an overridden URL is not provided.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

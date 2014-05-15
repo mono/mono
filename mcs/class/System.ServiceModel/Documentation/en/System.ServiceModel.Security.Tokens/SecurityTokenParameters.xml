@@ -90,7 +90,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern. In that pattern, this method performs some validation and then calls <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" />, which is an abstract method that is overridden in derived classes to perform the core functionality.</para>
@@ -99,6 +98,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones another instance of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CloneCore">
@@ -113,7 +116,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern. <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> is an abstract method that is overridden in derived classes.</para>
@@ -122,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones another instance of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> instance that represents the copy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause">
@@ -139,7 +145,6 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method must be implemented in a derived class.</para>
@@ -148,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause for a token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key identifier clause for a token.</para>
+        </returns>
         <param name="token">
           <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
         <param name="referenceStyle">
@@ -263,12 +272,15 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a token matches a key identifier clause.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token matches the key identifier clause; otherwise, false.</para>
+        </returns>
         <param name="token">
           <attribution license="cc4" from="Microsoft" modified="false" />The security token.</param>
         <param name="keyIdentifierClause">
@@ -392,7 +404,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method displays the name of this class, <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.InclusionMode" />, <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.ReferenceStyle" />, and <see cref="P:System.ServiceModel.Security.Tokens.SecurityTokenParameters.RequireDerivedKeys" />.</para>
@@ -401,6 +412,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a text representation of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of the class.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

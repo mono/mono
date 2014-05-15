@@ -205,13 +205,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object that represents the element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -231,15 +235,19 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object that represents the element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -259,15 +267,19 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object that represents the element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that contains the element extension.</para>
+        </returns>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetReader">
@@ -282,12 +294,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.XmlReader" /> associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlReader" /> associated with the <see cref="T:System.ServiceModel.Syndication.SyndicationElementExtension" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OuterName">

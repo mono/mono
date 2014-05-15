@@ -341,7 +341,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -352,6 +351,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -370,7 +373,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements of a <see cref="T:System.Collections.SortedList" /> object are sorted by the keys either according to a specific <see cref="T:System.Collections.IComparer" /> implementation specified when the <see cref="T:System.Collections.SortedList" /> is created or according to the <see cref="T:System.IComparable" /> implementation provided by the keys themselves.</para>
@@ -383,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a <see cref="T:System.Collections.SortedList" /> object contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.SortedList" /> object contains an element with the specified <paramref name="key" />; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.SortedList" /> object. </param>
       </Docs>
@@ -403,7 +409,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements of a <see cref="T:System.Collections.SortedList" /> object are sorted by the keys either according to a specific <see cref="T:System.Collections.IComparer" /> implementation specified when the <see cref="T:System.Collections.SortedList" /> is created or according to the <see cref="T:System.IComparable" /> implementation provided by the keys themselves.</para>
@@ -415,6 +420,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a <see cref="T:System.Collections.SortedList" /> object contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.SortedList" /> object contains an element with the specified <paramref name="key" />; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.SortedList" /> object.</param>
       </Docs>
@@ -435,7 +444,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The values of the elements of the <see cref="T:System.Collections.SortedList" /> object are compared to the specified value using the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
@@ -446,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a <see cref="T:System.Collections.SortedList" /> object contains a specific value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.SortedList" /> object contains an element with the specified <paramref name="value" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to locate in the <see cref="T:System.Collections.SortedList" /> object. The value can be null. </param>
       </Docs>
@@ -529,7 +541,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The index sequence is based on the sort sequence. When an element is added, it is inserted into <see cref="T:System.Collections.SortedList" /> in the correct sort order, and the indexing adjusts accordingly. When an element is removed, the indexing also adjusts accordingly. Therefore, the index of a specific key/value pair might change as elements are added or removed from the <see cref="T:System.Collections.SortedList" /> object.</para>
@@ -539,6 +550,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified index of a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified index of the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the value to get. </param>
       </Docs>
@@ -557,7 +572,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IDictionaryEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -574,6 +588,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> object that iterates through a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetKey">
@@ -592,7 +610,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The index sequence is based on the sort sequence. When an element is added, it is inserted into <see cref="T:System.Collections.SortedList" /> in the correct sort order, and the indexing adjusts accordingly. When an element is removed, the indexing also adjusts accordingly. Therefore, the index of a specific key/value pair might change as elements are added or removed from the <see cref="T:System.Collections.SortedList" /> object.</para>
@@ -602,6 +619,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the key at the specified index of a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key at the specified index of the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the key to get. </param>
       </Docs>
@@ -620,7 +641,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IList'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned <see cref="T:System.Collections.IList" /> object is a read-only view of the keys of the <see cref="T:System.Collections.SortedList" /> object. Modifications made to the underlying <see cref="T:System.Collections.SortedList" /> are immediately reflected in the <see cref="T:System.Collections.IList" />.</para>
@@ -632,6 +652,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the keys in a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> object containing the keys in the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValueList">
@@ -648,7 +672,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IList'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned <see cref="T:System.Collections.IList" /> object is a read-only view of the values of the <see cref="T:System.Collections.SortedList" /> object. Modifications made to the underlying <see cref="T:System.Collections.SortedList" /> are immediately reflected in the <see cref="T:System.Collections.IList" />.</para>
@@ -660,6 +683,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the values in a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> object containing the values in the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOfKey">
@@ -678,7 +705,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements of a <see cref="T:System.Collections.SortedList" /> object are sorted by the keys either according to a specific <see cref="T:System.Collections.IComparer" /> implementation specified when the <see cref="T:System.Collections.SortedList" /> is created, or according to the <see cref="T:System.IComparable" /> implementation provided by the keys themselves.</para>
@@ -690,6 +716,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the zero-based index of the specified key in a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <paramref name="key" /> parameter, if <paramref name="key" /> is found in the <see cref="T:System.Collections.SortedList" /> object; otherwise, -1.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.SortedList" /> object. </param>
       </Docs>
@@ -710,7 +740,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The index sequence is based on the sort sequence. When an element is added, it is inserted into <see cref="T:System.Collections.SortedList" /> in the correct sort order, and the indexing adjusts accordingly. When an element is removed, the indexing also adjusts accordingly. Therefore, the index of a specific key/value pair might change as elements are added or removed from the <see cref="T:System.Collections.SortedList" /> object.</para>
@@ -722,6 +751,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the zero-based index of the first occurrence of the specified value in a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of the <paramref name="value" /> parameter, if <paramref name="value" /> is found in the <see cref="T:System.Collections.SortedList" /> object; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to locate in the <see cref="T:System.Collections.SortedList" /> object. The value can be null. </param>
       </Docs>
@@ -960,7 +993,6 @@
         <Parameter Name="list" Type="System.Collections.SortedList" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SortedList'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To guarantee the thread safety of a <see cref="T:System.Collections.SortedList" /> object, all operations must be done through this wrapper only.</para>
@@ -970,6 +1002,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a synchronized (thread-safe) wrapper for a <see cref="T:System.Collections.SortedList" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronized (thread-safe) wrapper for the <see cref="T:System.Collections.SortedList" /> object.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.SortedList" /> object to synchronize. </param>
       </Docs>
@@ -1013,7 +1049,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>[Visual Basic, C#]</para>
@@ -1031,6 +1066,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> that iterates through the <see cref="T:System.Collections.SortedList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.SortedList" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TrimToSize">

@@ -76,7 +76,6 @@
         <Parameter Name="members" Type="System.Reflection.MemberInfo[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For each supplied member of the <paramref name="members" /> array the <see cref="M:System.Runtime.Serialization.FormatterServices.GetObjectData(System.Object,System.Reflection.MemberInfo[])" /> method extracts the value associated with the <paramref name="obj" /> object, and returns it. The length of the returned array is the same as the length of the <paramref name="members" /> array.</para>
@@ -85,6 +84,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Extracts the data from the specified object and returns it as an array of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> that contains data stored in <paramref name="members" /> and associated with <paramref name="obj" />.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to write to the formatter. </param>
         <param name="members">
@@ -107,7 +110,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because the new instance of the object is initialized to zero and no constructors are run, the object might not represent a state that is regarded as valid by that object. <see cref="M:System.Runtime.Serialization.FormatterServices.GetSafeUninitializedObject(System.Type)" /> should only be used for deserialization when the user intends to immediately populate all fields. It does not create an uninitialized string, since creating an empty instance of an immutable type serves no purpose.</para>
@@ -118,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zeroed object of the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
@@ -138,7 +144,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MemberInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generally, the serializable members of a class are the non-transient, non-static members such as fields and properties. To be included, properties must have both a getter and a setter. A class that implements the <see cref="T:System.Runtime.Serialization.ISerializable" /> interface or has a serialization surrogate does not have to serialize all these members, or can serialize additional members.</para>
@@ -147,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the serializable members for a class of the specified <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.MemberInfo" /> of the non-transient, non-static members.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type being serialized. </param>
       </Docs>
@@ -168,7 +177,6 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MemberInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generally, the serializable members of a class are the non-transient, non-static members such as fields and properties. To be included, properties must have both a getter and a setter. A class that implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or has a serialization surrogate does not have to serialize all these members, or can serialize additional members.</para>
@@ -178,6 +186,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the serializable members for a class of the specified <see cref="T:System.Type" /> and in the provided <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Reflection.MemberInfo" /> of the non-transient, non-static members.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type being serialized or cloned. </param>
         <param name="context">
@@ -203,12 +215,15 @@
         <Parameter Name="innerSurrogate" Type="System.Runtime.Serialization.ISerializationSurrogate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a serialization surrogate for the specified <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Serialization.ISerializationSurrogate" /> for the specified <paramref name="innerSurrogate" />.</para>
+        </returns>
         <param name="innerSurrogate">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified surrogate.</param>
       </Docs>
@@ -230,12 +245,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Looks up the <see cref="T:System.Type" /> of the specified object in the provided <see cref="T:System.Reflection.Assembly" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the named object.</para>
+        </returns>
         <param name="assem">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly where you want to look up the object. </param>
         <param name="name">
@@ -258,7 +276,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because the new instance of the object is initialized to zero and no constructors are run, the object might not represent a state that is regarded as valid by that object. The current method should only be used for deserialization when the user intends to immediately populate all fields. It does not create an uninitialized string, since creating an empty instance of an immutable type serves no purpose.</para>
@@ -270,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zeroed object of the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to create. </param>
       </Docs>
@@ -292,7 +313,6 @@
         <Parameter Name="data" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an element in <paramref name="data" /> is null, <see cref="M:System.Runtime.Serialization.FormatterServices.PopulateObjectMembers(System.Object,System.Reflection.MemberInfo[],System.Object[])" /> does not write anything to that field.</para>
@@ -301,6 +321,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Populates the specified object with values for each field drawn from the data array of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly populated object.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to populate. </param>
         <param name="members">

@@ -216,12 +216,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether an object equals this <see cref="T:System.Xml.UniqueId" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object equals this <see cref="T:System.Xml.UniqueId" />; otherwise false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
@@ -238,12 +241,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a hash-code representation of this <see cref="T:System.Xml.UniqueId" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash-code representation of this <see cref="T:System.Xml.UniqueId" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsGuid">
@@ -280,12 +286,15 @@
         <Parameter Name="id2" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the equality operator to test for equality of two <see cref="T:System.Xml.UniqueId" />s.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Xml.UniqueId" />s are equal, or are both null; false if they are not equal, or if only one of them is null.</para>
+        </returns>
         <param name="id1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.UniqueId" />.</param>
         <param name="id2">
@@ -307,12 +316,15 @@
         <Parameter Name="id2" Type="System.Xml.UniqueId" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the equality operator to test for inequality of two <see cref="T:System.Xml.UniqueId" />s.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the overridden equality operator returns false; otherwise false.</para>
+        </returns>
         <param name="id1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.UniqueId" />.</param>
         <param name="id2">
@@ -343,7 +355,6 @@
       </Parameters>
       <Docs>
         <param name="array">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is unsafe.</para>
@@ -352,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Puts the <see cref="T:System.Xml.UniqueId" /> value into a char array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Number of entries in the char array filled by the <see cref="T:System.Xml.UniqueId" /> value.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />Position in the char array to start inserting the <see cref="T:System.Xml.UniqueId" /> value.</param>
       </Docs>
@@ -376,12 +391,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the <see cref="T:System.Xml.UniqueId" /> value in string format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the <see cref="T:System.Xml.UniqueId" /> value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryGetGuid">
@@ -427,7 +445,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is unsafe.</para>
@@ -436,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to get the value of the <see cref="T:System.Xml.UniqueId" /> as a <see cref="T:System.Guid" /> and store it in the given byte array at the specified offest.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value stored in this instance of <see cref="T:System.Xml.UniqueId" /> is a <see cref="T:System.Guid" />; otherwise false.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />byte array that will contain the <see cref="T:System.Guid" />.</param>
         <param name="offset">

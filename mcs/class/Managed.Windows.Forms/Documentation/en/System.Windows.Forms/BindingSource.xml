@@ -208,7 +208,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.BindingSource.Add(System.Object)" /> method refers the call to the underlying list's Add method.</para>
@@ -219,6 +218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an existing item to the internal list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index at which <paramref name="value" /> was added to the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to be added to the internal list.</param>
       </Docs>
@@ -255,7 +258,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.BindingSource.AddNew" /> method adds a new item to the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. This method sets up the following series of actions:</para>
@@ -277,6 +279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new item to the underlying list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that was created and added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllowEdit">
@@ -518,7 +524,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the implementation is dependent on the underlying list's Contains method, typically the following characteristics apply:</para>
@@ -539,6 +544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an object is an item in the list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is found in the <see cref="P:System.Windows.Forms.BindingSource.List" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. The value can be null. </param>
       </Docs>
@@ -998,7 +1007,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is typically used in complex data-binding cases to locate the first row where the value of the field specified by the <paramref name="prop" /> parameter equals the value of the <paramref name="key" /> parameter</para>
@@ -1008,6 +1016,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the index of the item that has the given property descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item that has the given value for <see cref="T:System.ComponentModel.PropertyDescriptor" />.</para>
+        </returns>
         <param name="prop">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to search for. </param>
         <param name="key">
@@ -1028,7 +1040,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.BindingSource.Find(System.String,System.Object)" /> method can only be used when the underlying list is an <see cref="T:System.ComponentModel.IBindingList" /> with searching implemented. This method simply refers the request to the underlying list's <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. For example, if the underlying data source is a <see cref="T:System.Data.DataSet" />, <see cref="T:System.Data.DataTable" />, or <see cref="T:System.Data.DataView" />, this method converts <paramref name="propertyName" /> to a <see cref="T:System.ComponentModel.PropertyDescriptor" /> and calls the <see cref="M:System.Data.DataView.System#ComponentModel#IBindingList#Find(System.ComponentModel.PropertyDescriptor,System.Object)" /> method. The behavior of <see cref="M:System.Windows.Forms.BindingSource.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />, such as the value returned if no matching item is found, depends on the implementation of the method in the underlying list.</para>
@@ -1038,6 +1049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the item in the list with the specified property name and value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item with the specified property name and value. </para>
+        </returns>
         <param name="propertyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to search for.</param>
         <param name="key">
@@ -1055,12 +1070,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an enumerator for the <see cref="P:System.Windows.Forms.BindingSource.List" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="P:System.Windows.Forms.BindingSource.List" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetItemProperties">
@@ -1076,12 +1094,15 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects representing the bindable properties of the data source list type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that represents the properties on this list type used to bind data.</para>
+        </returns>
         <param name="listAccessors">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the list as bindable.</param>
       </Docs>
@@ -1099,12 +1120,15 @@
         <Parameter Name="listAccessors" Type="System.ComponentModel.PropertyDescriptor[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the list supplying data for the binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the list supplying the data for binding.</para>
+        </returns>
         <param name="listAccessors">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects to find in the list as bindable.</param>
       </Docs>
@@ -1122,7 +1146,6 @@
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="dataMember" /> is null or an empty string (""), <see cref="M:System.Windows.Forms.BindingSource.GetRelatedCurrencyManager(System.String)" /> returns the main currency manager; otherwise, it checks for another <see cref="T:System.Windows.Forms.BindingSource" /> bound to the specified data member and returns its currency manager.</para>
@@ -1131,6 +1154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the related currency manager for the specified data member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The related <see cref="T:System.Windows.Forms.CurrencyManager" /> for the specified data member.</para>
+        </returns>
         <param name="dataMember">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of column or list, within the data source to retrieve the currency manager for.</param>
       </Docs>
@@ -1148,7 +1175,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the implementation is dependent on the underlying list's IndexOf method, typically the following characteristics apply:</para>
@@ -1168,6 +1194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the first occurrence within the entire list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of the <paramref name="value" /> parameter; otherwise, -1 if <paramref name="value" /> is not in the list.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the underlying list represented by the <see cref="P:System.Windows.Forms.BindingSource.List" /> property. The value can be null. </param>
       </Docs>

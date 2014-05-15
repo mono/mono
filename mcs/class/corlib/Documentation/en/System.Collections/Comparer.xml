@@ -83,44 +83,13 @@
         <Parameter Name="b" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of <paramref name="a" /> as compared to <paramref name="b" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term> A negative number</term>
-              <description>
-                <paramref name="a " />&lt;
-      <paramref name="b." /></description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>
-                <paramref name="a " />==
-<paramref name="b." /></description>
-            </item>
-            <item>
-              <term> A positive number</term>
-              <description>
-                <paramref name="a " />&gt;
-<paramref name="b." /></description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">A null reference is considered to
-   compare less than any other non-null object, and equal to any other null
-   reference, independent of the underlying <see cref="T:System.Type" /> of either object.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>Both <paramref name="a" /> and <paramref name="b" /> are not <see langword="null" /> and do not implement the <see cref="T:System.IComparable" /> interface.</para>
           <para> -or-</para>
           <para>Both <paramref name="a" /> and <paramref name="b" /> are not <see langword="null" /> and are not assignment-compatible types.</para>
         </exception>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="a" /> implements <see cref="T:System.IComparable" />, then <paramref name="a" />. CompareTo (<paramref name="b" />) is returned; otherwise, if <paramref name="b" /> implements <see cref="T:System.IComparable" />, then the negated result of <paramref name="b" />. CompareTo (<paramref name="a" />) is returned.</para>
@@ -131,6 +100,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a case-sensitive comparison of two objects of the same type and returns a value indicating whether one is less than, equal to, or greater than the other.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="a" /> and <paramref name="b" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is less than <paramref name="b" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> equals <paramref name="b" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is greater than <paramref name="b" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="b">

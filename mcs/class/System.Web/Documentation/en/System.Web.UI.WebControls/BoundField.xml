@@ -193,7 +193,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -203,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty <see cref="T:System.Web.UI.WebControls.BoundField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Web.UI.WebControls.BoundField" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -670,7 +673,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -683,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats the specified field value for a cell in the <see cref="T:System.Web.UI.WebControls.BoundField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The field value converted to the format specified by <see cref="P:System.Web.UI.WebControls.BoundField.DataFormatString" />.</para>
+        </returns>
         <param name="encode">
           <attribution license="cc4" from="Microsoft" modified="false" />true to encode the value; otherwise, false.</param>
       </Docs>
@@ -698,7 +704,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -711,6 +716,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value used for a field's value when rendering the <see cref="T:System.Web.UI.WebControls.BoundField" /> object in a designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value to display in the designer as the field's value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -726,7 +735,6 @@
         <Parameter Name="controlContainer" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -739,6 +747,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the field bound to the <see cref="T:System.Web.UI.WebControls.BoundField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the field bound to the <see cref="T:System.Web.UI.WebControls.BoundField" />.</para>
+        </returns>
         <param name="controlContainer">
           <attribution license="cc4" from="Microsoft" modified="false" />The container for the field value.</param>
       </Docs>
@@ -809,7 +821,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -820,6 +831,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes the <see cref="T:System.Web.UI.WebControls.BoundField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false in all cases.</para>
+        </returns>
         <param name="enableSorting">
           <attribution license="cc4" from="Microsoft" modified="false" />true if sorting is supported; otherwise, false.</param>
         <param name="control">

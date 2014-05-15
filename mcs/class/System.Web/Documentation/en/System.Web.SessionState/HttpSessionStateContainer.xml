@@ -230,12 +230,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that can be used to read all the session-state variable names in the current session.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can iterate through the variable names in the session-state collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsAbandoned">

@@ -241,7 +241,6 @@
         <Parameter Name="pszKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -251,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Revokes the registration of the object currently found under the specified key in the internally maintained table of contextual object parameters, if that key is currently registered.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An S_OK HRESULT value if the specified key was successfully removed from the table; otherwise, an S_FALSE HRESULT value.</para>
+        </returns>
         <param name="pszKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to unregister. </param>
       </Docs>

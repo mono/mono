@@ -51,12 +51,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Boxes the supplied unmanaged memory pointer and the type associated with that pointer into a managed <see cref="T:System.Reflection.Pointer" /> wrapper object. The value and the type are saved so they can be accessed from the native code during an invocation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer object.</para>
+        </returns>
         <param name="ptr">
           <attribution license="cc4" from="Microsoft" modified="false" />The supplied unmanaged memory pointer. </param>
         <param name="type">
@@ -107,12 +110,15 @@
         <Parameter Name="ptr" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Void*'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the stored pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns void.</para>
+        </returns>
         <param name="ptr">
           <attribution license="cc4" from="Microsoft" modified="false" />The stored pointer. </param>
       </Docs>

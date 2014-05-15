@@ -55,12 +55,15 @@
         <Parameter Name="formatString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an object from one object type to another object type. This class is obsolete. Use the <see cref="T:System.Convert" /> class and the <see cref="M:System.String.Format(System.String,System.Object)" /> method instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to convert.</param>
         <param name="toType">

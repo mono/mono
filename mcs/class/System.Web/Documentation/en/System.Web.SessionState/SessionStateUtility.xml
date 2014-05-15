@@ -112,7 +112,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.SessionState.SessionStateUtility.GetHttpSessionStateFromContext(System.Web.HttpContext)" /> method can be used by a session-state module to retrieve session data from the current request. This occurs during the <see cref="E:System.Web.HttpApplication.ReleaseRequestState" /> event at the end of a request. The returned session data can then be written to the session data store. If the session has been abandoned, the session data can be removed from the data store and <see cref="T:System.Web.HttpContext" />, and the <system>Session_OnEnd</system> event can be executed. </para>
@@ -121,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves session data from the context for the current request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.SessionState.IHttpSessionState" /> implementation instance populated with session data from the current request.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> from which to retrieve session data.</param>
       </Docs>
@@ -138,7 +141,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.SessionState.SessionStateUtility.GetSessionStaticObjects(System.Web.HttpContext)" /> method is used to retrieve the collection of static objects defined in the Global.asax file for the ASP.NET application. A session-state module implementation will supply the returned <see cref="T:System.Web.HttpStaticObjectsCollection" /> collection to the <see cref="T:System.Web.SessionState.IHttpSessionState" /> implementation instance that is added to the current context using the <see cref="M:System.Web.SessionState.SessionStateUtility.AddHttpSessionStateToContext(System.Web.HttpContext,System.Web.SessionState.IHttpSessionState)" /> method.</para>
@@ -148,6 +150,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a reference to the static objects collection for the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.HttpStaticObjectsCollection" /> collection populated with the <see cref="P:System.Web.SessionState.HttpSessionState.StaticObjects" /> property value for the specified <see cref="T:System.Web.HttpContext" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> from which to get the static objects collection.</param>
       </Docs>

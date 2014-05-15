@@ -467,7 +467,6 @@
       <Docs>
         <param name="oldPwd">To be added.</param>
         <param name="newPwd">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -482,6 +481,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the password for the specified user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> true if the password was updated successfully; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to update the password for.</param>
       </Docs>
@@ -504,7 +507,6 @@
       <Docs>
         <param name="newPwdQuestion">To be added.</param>
         <param name="newPwdAnswer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -532,6 +534,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the password question and answer for a user in the Active Directory store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> true if the update was successful; otherwise, false. A value of false is also returned if the password is incorrect, the user is locked out, or the user does not exist in the Active Directory data store.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to change the password question and answer for.</param>
         <param name="password">
@@ -610,7 +616,6 @@
         <Parameter Name="deleteAllRelatedData" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -625,6 +630,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a user's membership information from the Active Directory data store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> true if the user was deleted; otherwise, false if the user was not found in the data store.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to delete.</param>
         <param name="deleteAllRelatedData">
@@ -794,7 +803,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -810,6 +818,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a random password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A random password.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -847,7 +859,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -857,6 +868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws a <see cref="T:System.NotSupportedException" /> exception in all cases.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.NotSupportedException" /> in all cases.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -874,7 +889,6 @@
       </Parameters>
       <Docs>
         <param name="answer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -884,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the password of the specified user from the database. The <see cref="T:System.Web.Security.ActiveDirectoryMembershipProvider" /> class does not support this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" /> exception.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to retrieve the password for.</param>
       </Docs>
@@ -902,7 +920,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -914,6 +931,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the membership user information associated with the specified user key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> instance representing the user specified. If no user is found in the Active Directory data store for the specified <paramref name="providerUserKey" /> value, null is returned.</para>
+        </returns>
         <param name="providerUserKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the user.</param>
         <param name="userIsOnline">
@@ -934,7 +955,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -946,6 +966,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the membership user information associated with the specified user name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> instance representing the user specified. If no user is found in the Active Directory data store for the specified <paramref name="username" /> value, null is returned.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to get information for.</param>
         <param name="userIsOnline">
@@ -965,7 +989,6 @@
         <Parameter Name="email" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -983,6 +1006,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the user name associated with the specified e-mail address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name associated with the specified e-mail address.</para>
+        </returns>
         <param name="email">
           <attribution license="cc4" from="Microsoft" modified="false" />The e-mail address to search for.</param>
       </Docs>
@@ -1255,7 +1282,6 @@
       </Parameters>
       <Docs>
         <param name="answer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1298,6 +1324,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets a user's password to a new, automatically generated password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new password for the specified user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to reset the password for.</param>
       </Docs>
@@ -1316,7 +1346,6 @@
       </Parameters>
       <Docs>
         <param name="userName">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1329,6 +1358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears a lock so that a membership user can be validated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> true if the membership user was successfully unlocked; otherwise, false. The <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.UnlockUser(System.String)" /> method also returns false when the membership user is not found in the data store.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1374,7 +1407,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1430,6 +1462,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the specified user name and password exist in the Active Directory data store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> true if the specified <paramref name="username" /> and <paramref name="password" /> are valid; otherwise, false. If the user specified does not exist in the Active Directory data store, the <see cref="M:System.Web.Security.ActiveDirectoryMembershipProvider.ValidateUser(System.String,System.String)" /> method returns false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to validate.</param>
         <param name="password">

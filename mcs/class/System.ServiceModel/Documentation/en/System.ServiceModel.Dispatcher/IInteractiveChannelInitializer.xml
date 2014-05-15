@@ -71,7 +71,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To implement <see cref="T:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer" />, perform the following steps in <see cref="M:System.ServiceModel.Dispatcher.IInteractiveChannelInitializer.BeginDisplayInitializationUI(System.ServiceModel.IClientChannel,System.AsyncCallback,System.Object)" />:</para>
@@ -91,6 +90,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An asynchronous call to begin using a user interface to obtain credential information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> to use to call back when processing has completed.</para>
+        </returns>
         <param name="channel">
           <attribution license="cc4" from="Microsoft" modified="false" />The client channel.</param>
         <param name="callback">

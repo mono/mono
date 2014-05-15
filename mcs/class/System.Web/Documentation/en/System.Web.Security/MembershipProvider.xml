@@ -93,7 +93,6 @@
         <param name="name">To be added.</param>
         <param name="oldPwd">To be added.</param>
         <param name="newPwd">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a request to update the password for a membership user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the password was updated successfully; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,7 +127,6 @@
         <param name="name">To be added.</param>
         <param name="newPwdQuestion">To be added.</param>
         <param name="newPwdAnswer">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -135,6 +137,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a request to update the password question and answer for a membership user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the password question and answer are updated successfully; otherwise, false.</para>
+        </returns>
         <param name="password">
           <attribution license="cc4" from="Microsoft" modified="false" />The password for the specified user. </param>
       </Docs>
@@ -186,7 +192,6 @@
         <Parameter Name="encodedPassword" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -196,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts an encrypted password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the decrypted password.</para>
+        </returns>
         <param name="encodedPassword">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains the encrypted password to decrypt.</param>
       </Docs>
@@ -215,7 +224,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -225,6 +233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a user from the membership data source. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user was successfully deleted; otherwise, false.</para>
+        </returns>
         <param name="deleteAllRelatedData">
           <attribution license="cc4" from="Microsoft" modified="false" />true to delete data related to the user from the database; false to leave data related to the user in the database.</param>
       </Docs>
@@ -288,7 +300,6 @@
         <Parameter Name="password" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -298,6 +309,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts a password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the encrypted password.</para>
+        </returns>
         <param name="password">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains the password to encrypt.</param>
       </Docs>
@@ -389,7 +404,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -399,6 +413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of users currently accessing the application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of users currently accessing the application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -416,7 +434,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -430,6 +447,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the password for the specified user name from the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The password for the specified user name.</para>
+        </returns>
         <param name="answer">
           <attribution license="cc4" from="Microsoft" modified="false" />The password answer for the user. </param>
       </Docs>
@@ -448,7 +469,6 @@
         <Parameter Name="userIsOnline" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -458,6 +478,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets user information from the data source based on the unique identifier for the membership user. Provides an option to update the last-activity date/time stamp for the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</para>
+        </returns>
         <param name="providerUserKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the membership user to get information for.</param>
         <param name="userIsOnline">
@@ -479,7 +503,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -489,6 +512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets information from the data source for a user. Provides an option to update the last-activity date/time stamp for the user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Security.MembershipUser" /> object populated with the specified user's information from the data source.</para>
+        </returns>
         <param name="userIsOnline">
           <attribution license="cc4" from="Microsoft" modified="false" />true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user. </param>
       </Docs>
@@ -506,7 +533,6 @@
         <Parameter Name="email" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -518,6 +544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the user name associated with the specified e-mail address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user name associated with the specified e-mail address. If no match is found, return null.</para>
+        </returns>
         <param name="email">
           <attribution license="cc4" from="Microsoft" modified="false" />The e-mail address to search for. </param>
       </Docs>
@@ -750,7 +780,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -768,6 +797,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets a user's password to a new, automatically generated password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new password for the specified user.</para>
+        </returns>
         <param name="answer">
           <attribution license="cc4" from="Microsoft" modified="false" />The password answer for the specified user. </param>
       </Docs>
@@ -785,7 +818,6 @@
         <Parameter Name="userName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -795,6 +827,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears a lock so that the membership user can be validated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the membership user was successfully unlocked; otherwise, false.</para>
+        </returns>
         <param name="userName">
           <attribution license="cc4" from="Microsoft" modified="false" />The membership user whose lock status you want to clear.</param>
       </Docs>
@@ -840,7 +876,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -851,6 +886,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the specified user name and password exist in the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified username and password are valid; otherwise, false.</para>
+        </returns>
         <param name="password">
           <attribution license="cc4" from="Microsoft" modified="false" />The password for the specified user. </param>
       </Docs>

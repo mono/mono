@@ -191,11 +191,17 @@
         <Parameter Name="buffer" Type="System.ArraySegment&lt;System.Byte&gt;" />
       </Parameters>
       <Docs>
-        <param name="receiveBufferSize">To be added.</param>
-        <param name="sendBufferSize">To be added.</param>
-        <param name="buffer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets client buffer parameters.</para>
+        </summary>
+        <param name="receiveBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client receive buffer.</param>
+        <param name="sendBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the client send buffer.</param>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The receive buffer to use.</param>
       </Docs>
     </Member>
     <Member MemberName="SetRequestHeader">

@@ -175,7 +175,6 @@
         <Parameter Name="parentDesigner" Type="System.ComponentModel.Design.IDesigner" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful for testing whether a control can be parented by a particular type of parent. For example, <see cref="T:System.Windows.Forms.TabPage" /> controls can only be parented by <see cref="T:System.Windows.Forms.TabControl" /> controls.</para>
@@ -187,6 +186,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates if this designer's control can be parented by the control of the specified designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control managed by the specified designer can parent the control managed by this designer; otherwise, false.</para>
+        </returns>
         <param name="parentDesigner">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesigner" /> that manages the control to check. </param>
       </Docs>
@@ -297,7 +300,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The child control specified by <paramref name="child" /> is a child of this control designer's control. The child does not directly participate in persistence, but it will if it is exposed as a property of the main control. Consider a control like the <see cref="T:System.Windows.Forms.SplitContainer" />: it has two panels, Panel1 and Panel2. These panels are exposed through read only <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> and <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> properties on the <see cref="T:System.Windows.Forms.SplitContainer" /> control. The <see cref="T:System.Windows.Forms.SplitContainer" /> control's designer calls <see cref="M:System.Windows.Forms.Design.ControlDesigner.EnableDesignMode(System.Windows.Forms.Control,System.String)" /> for each panel, which allows other components to be dropped on them. But, in order for the contents of <see cref="P:System.Windows.Forms.SplitContainer.Panel1" /> and <see cref="P:System.Windows.Forms.SplitContainer.Panel2" /> to be saved, the <see cref="T:System.Windows.Forms.SplitContainer" /> control itself must expose the panels as public properties.</para>
@@ -308,6 +310,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables design time functionality for a child control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the child control could be enabled for design time; false if the hosting infrastructure does not support it.</para>
+        </returns>
         <param name="child">
           <attribution license="cc4" from="Microsoft" modified="false" />The child control for which design mode will be enabled.</param>
         <param name="name">
@@ -372,12 +378,15 @@
         <Parameter Name="selectionType" Type="System.Windows.Forms.Design.Behavior.GlyphSelectionType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Windows.Forms.Design.Behavior.ControlBodyGlyph" /> representing the bounds of this control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Design.Behavior.ControlBodyGlyph" /> representing the bounds of this control.</para>
+        </returns>
         <param name="selectionType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.GlyphSelectionType" /> value that specifies the selection state.</param>
       </Docs>
@@ -395,7 +404,6 @@
         <Parameter Name="selectionType" Type="System.Windows.Forms.Design.Behavior.GlyphSelectionType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that based on <paramref name="selectionType" />, the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects returned will represent one of these selection states:</para>
@@ -415,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects representing the selection borders and grab handles for a standard control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects.</para>
+        </returns>
         <param name="selectionType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Design.Behavior.GlyphSelectionType" /> value that specifies the selection state.</param>
       </Docs>
@@ -429,7 +441,6 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Design.ControlDesigner.GetHitTest(System.Drawing.Point)" /> method determines whether a click at the specified point should be passed to the control, while the control is in design mode. You can override and implement this method to enable your control to receive clicks in the design-time environment.</para>
@@ -442,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a mouse click at the specified point should be handled by the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a click at the specified point is to be handled by the control; otherwise, false.</para>
+        </returns>
         <param name="point">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> indicating the position at which the mouse was clicked, in screen coordinates. </param>
       </Docs>
@@ -580,7 +595,6 @@
         <Parameter Name="internalControlIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An internal control is a control that is not in the <see cref="P:System.ComponentModel.IContainer.Components" /> collection of the <see cref="P:System.ComponentModel.Design.IDesignerHost.Container" />. <see cref="T:System.Windows.Forms.SplitterPanel" /> is an example of one such control.</para>
@@ -589,6 +603,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the internal control designer with the specified index in the <see cref="T:System.Windows.Forms.Design.ControlDesigner" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Design.ControlDesigner" /> at the specified index.</para>
+        </returns>
         <param name="internalControlIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />A specified index to select the internal control designer. This index is zero-based.</param>
       </Docs>
@@ -626,7 +644,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An internal control is a control that is not in the <see cref="P:System.ComponentModel.IContainer.Components" /> collection of the <see cref="P:System.ComponentModel.Design.IDesignerHost.Container" />. <see cref="T:System.Windows.Forms.SplitterPanel" /> is an example of one such control.</para>
@@ -635,6 +652,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of internal control designers in the <see cref="T:System.Windows.Forms.Design.ControlDesigner" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of internal control designers in the <see cref="T:System.Windows.Forms.Design.ControlDesigner" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnContextMenu">

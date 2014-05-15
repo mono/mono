@@ -131,7 +131,8 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="inner">To be added.</param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The InnerException property returns the same value that is passed into the constructor, or null if the InnerException property does not supply the inner exception value to the constructor.</para>
@@ -229,7 +230,8 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="fileName">To be added.</param>
+        <param name="fileName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the name of the file that was not loaded. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The InnerException property returns the same value that is passed into the constructor, or null if the InnerException property does not supply the inner exception value to the constructor.</para>
@@ -408,10 +410,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> 
-representation of the current exception.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
@@ -421,6 +419,10 @@ representation of the current exception.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified name of the current exception, and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified name of this exception, and possibly the error message, the name of the inner exception, and the stack trace, depending on which <see cref="T:System.IO.FileLoadException" /> constructor is used.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -116,13 +116,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of the access rules associated with the specified security identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of access rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
         <param name="includeExplicit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include access rules explicitly set for the object.</param>
         <param name="includeInherited">
@@ -148,13 +151,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of the audit rules associated with the specified security identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of audit rules associated with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
         <param name="includeExplicit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include audit rules explicitly set for the object.</param>
         <param name="includeInherited">
@@ -230,7 +236,6 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AccessRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -242,6 +247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes access rules that contain the same security identifier and access mask as the specified access rule from the Discretionary Access Control List (DACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the access rule was successfully removed; otherwise, false.</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />The access rule to remove.</param>
       </Docs>
@@ -317,7 +326,6 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.AuditRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -328,6 +336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes audit rules that contain the same security identifier and access mask as the specified audit rule from the System Access Control List (SACL) associated with this <see cref="T:System.Security.AccessControl.CommonObjectSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was successfully removed; otherwise, false.</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />The audit rule to remove.</param>
       </Docs>

@@ -385,12 +385,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.ToolStripMenuItem" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the <see cref="T:System.Windows.Forms.ToolStripMenuItem" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultDropDown">
@@ -401,7 +404,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -411,6 +413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a generic <see cref="T:System.Windows.Forms.ToolStripDropDown" /> for which events can be defined.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic <see cref="T:System.Windows.Forms.ToolStripDropDown" /> for which can be defined.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -924,12 +930,15 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a mnemonic character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed as a mnemonic by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>

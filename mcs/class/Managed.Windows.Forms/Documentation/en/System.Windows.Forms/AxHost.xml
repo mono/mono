@@ -524,12 +524,15 @@
         <Parameter Name="clsid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by the system to create the ActiveX control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the ActiveX control. </para>
+        </returns>
         <param name="clsid">
           <attribution license="cc4" from="Microsoft" modified="false" />The CLSID of the ActiveX control.</param>
       </Docs>
@@ -1148,12 +1151,15 @@
         <Parameter Name="color" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Drawing.Color" /> structure that corresponds to the specified OLE color value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Color" /> structure that represents the translated OLE color value.</para>
+        </returns>
         <param name="color">
           <attribution license="cc4" from="Microsoft" modified="false" />The OLE color value to translate.</param>
       </Docs>
@@ -1180,12 +1186,15 @@
         <Parameter Name="font" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Drawing.Font" /> created from the specified OLE <see cref="http://go.microsoft.com/fwlink/?LinkId=166075">IFont</see> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> created from the specified <see cref="http://go.microsoft.com/fwlink/?LinkId=166075">IFont</see>, <see cref="P:System.Windows.Forms.Control.DefaultFont" /> if the font could not be created, or null if <paramref name="font" /> is null.</para>
+        </returns>
         <param name="font">
           <attribution license="cc4" from="Microsoft" modified="false" />The IFont to create a <see cref="T:System.Drawing.Font" /> from.</param>
       </Docs>
@@ -1209,12 +1218,15 @@
         <Parameter Name="font" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Drawing.Font" /> created from the specified OLE <see cref="http://go.microsoft.com/fwlink/?LinkId=166073">IFontDisp</see> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Font" /> created from the specified <see cref="http://go.microsoft.com/fwlink/?LinkId=166073">IFontDisp</see>, <see cref="P:System.Windows.Forms.Control.DefaultFont" /> if the font could not be created, or null if <paramref name="font" /> is null.</para>
+        </returns>
         <param name="font">
           <attribution license="cc4" from="Microsoft" modified="false" />The IFontDisp to create a <see cref="T:System.Drawing.Font" /> from.</param>
       </Docs>
@@ -1238,12 +1250,15 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE <see cref="http://go.microsoft.com/fwlink/?LinkId=166073">IFontDisp</see> object created from the specified <see cref="T:System.Drawing.Font" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="http://go.microsoft.com/fwlink/?LinkId=166073">IFontDisp</see> object created from the specified font or null if <paramref name="font" /> is null.</para>
+        </returns>
         <param name="font">
           <attribution license="cc4" from="Microsoft" modified="false" />The font to create an IFontDisp object from.</param>
       </Docs>
@@ -1267,12 +1282,15 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE <see cref="http://go.microsoft.com/fwlink/?LinkId=166075">IFont</see> object created from the specified <see cref="T:System.Drawing.Font" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="http://go.microsoft.com/fwlink/?LinkId=166075">IFont</see> object created from the specified font, or null if <paramref name="font" /> is null or the <see cref="http://go.microsoft.com/fwlink/?LinkId=166075">IFont</see> could not be created.</para>
+        </returns>
         <param name="font">
           <attribution license="cc4" from="Microsoft" modified="false" />The font to create an IFont object from.</param>
       </Docs>
@@ -1296,12 +1314,15 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE IPictureDisp object corresponding to the specified <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the OLE IPictureDisp object.</para>
+        </returns>
         <param name="image">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> to convert.</param>
       </Docs>
@@ -1325,12 +1346,15 @@
         <Parameter Name="cursor" Type="System.Windows.Forms.Cursor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE IPicture object corresponding to the specified <see cref="T:System.Windows.Forms.Cursor" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the OLE IPicture object.</para>
+        </returns>
         <param name="cursor">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.Windows.Forms.Cursor" />
@@ -1356,12 +1380,15 @@
         <Parameter Name="image" Type="System.Drawing.Image" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE IPicture object corresponding to the specified <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the OLE IPicture object.</para>
+        </returns>
         <param name="image">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Image" /> to convert.</param>
       </Docs>
@@ -1385,7 +1412,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An OLE Automation date is implemented as a floating-point number whose value is the number of days from midnight, 30 December 1899. For example, midnight, 31 December 1899 is represented by 1.0; 6 A.M., 1 January 1900 is represented by 2.25; midnight, 29 December 1899 is represented by -1.0; and 6 A.M., 29 December 1899 is represented by -1.25.</para>
@@ -1396,6 +1422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE Automation date that corresponds to the specified <see cref="T:System.DateTime" /> structure. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number that contains an OLE Automation date equivalent to specified <paramref name="time" /> value.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> structure to translate.</param>
       </Docs>
@@ -1417,12 +1447,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a reference to the underlying ActiveX control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the ActiveX control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1444,12 +1477,15 @@
         <Parameter Name="color" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an OLE color value that corresponds to the specified <see cref="T:System.Drawing.Color" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OLE color value that represents the translated <see cref="T:System.Drawing.Color" /> structure.</para>
+        </returns>
         <param name="color">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> structure to translate.</param>
       </Docs>
@@ -1476,7 +1512,6 @@
         <Parameter Name="picture" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to convert IPictureDisp objects in addition to IPicture objects. This works because the IPictureDisp OLE interface is a subset of the IPicture interface. Converting IPictureDisp objects with this method is necessary because the <see cref="M:System.Windows.Forms.AxHost.GetPictureFromIPictureDisp(System.Object)" /> does not work correctly at this time.</para>
@@ -1485,6 +1520,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Drawing.Image" /> corresponding to the specified OLE IPicture object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> representing the IPicture. </para>
+        </returns>
         <param name="picture">
           <attribution license="cc4" from="Microsoft" modified="false" />The IPicture to convert.</param>
       </Docs>
@@ -1508,7 +1547,6 @@
         <Parameter Name="picture" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not work correctly. You can use the <see cref="M:System.Windows.Forms.AxHost.GetPictureFromIPicture(System.Object)" /> method to convert an IPictureDisp object into an <see cref="T:System.Drawing.Image" />, however, because the IPictureDisp OLE interface is a subset of the IPicture interface. </para>
@@ -1517,6 +1555,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Drawing.Image" /> corresponding to the specified OLE IPictureDisp object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> representing the IPictureDisp. </para>
+        </returns>
         <param name="picture">
           <attribution license="cc4" from="Microsoft" modified="false" />The IPictureDisp to convert.</param>
       </Docs>
@@ -1550,7 +1592,6 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ActiveX controls scale themselves, so this method does not perform any special calculations, ignores the <paramref name="factor" /> and <paramref name="specified" /> values, and returns the <paramref name="bounds" /> value unchanged. </para>
@@ -1559,6 +1600,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called by the system to retrieve the current bounds of the ActiveX control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unmodified <paramref name="bounds" /> value.</para>
+        </returns>
         <param name="bounds">
           <attribution license="cc4" from="Microsoft" modified="false" />The original bounds of the ActiveX control.</param>
         <param name="factor">
@@ -1577,7 +1622,6 @@
         <Parameter Name="date" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="date" /> parameter is a double-precision floating-point number that represents a date as the number of days before or after the base date, midnight, 30 December 1899. The sign and integral part of <paramref name="date" /> encode the date as a positive or negative day displacement from 30 December 1899, and the absolute value of the fractional part of <paramref name="date" /> encodes the time of day as a fraction of a day displacement from midnight. <paramref name="date" /> must be a value between negative 657435.0 through positive 2958466.0.</para>
@@ -1588,6 +1632,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> structure that corresponds to the specified OLE Automation date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> that represents the same date and time as <paramref name="date" />.</para>
+        </returns>
         <param name="date">
           <attribution license="cc4" from="Microsoft" modified="false" />The OLE Automate date to translate.</param>
       </Docs>
@@ -1671,7 +1719,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Property pages allow an ActiveX control user to view and change ActiveX control properties. These properties are accessed by invoking a control properties dialog box, which contains one or more property pages that provide a customized, graphical interface for viewing and editing the control properties.</para>
@@ -1680,6 +1727,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the ActiveX control has a property page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the ActiveX control has a property page; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1808,7 +1859,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.AxHost.IsInputChar(System.Char)" /> method is called during window message preprocessing to determine whether the given input character should be preprocessed or sent directly to the ActiveX control. The preprocessing of a character includes checking whether the character is a mnemonic of another control.</para>
@@ -1818,6 +1868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if a character is an input character that the ActiveX control recognizes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character should be sent directly to the ActiveX control and not preprocessed; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test. </param>
       </Docs>
@@ -2476,12 +2530,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the hosted control is in a state in which its properties can be accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the properties of the hosted control can be accessed; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3144,12 +3201,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of type <see cref="T:System.Attribute" /> for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> with the attributes for the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -3169,7 +3229,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the type name instead of the value that the <see cref="M:System.Windows.Forms.AxHost.System#ComponentModel#ICustomTypeDescriptor#GetClassName" /> method returns.</para>
@@ -3178,6 +3237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the class name of the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null in all cases.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -3197,7 +3260,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the default name instead of the value that the <see cref="M:System.Windows.Forms.AxHost.System#ComponentModel#ICustomTypeDescriptor#GetComponentName" /> method returns.</para>
@@ -3206,6 +3268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null in all cases.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -3225,7 +3291,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the default type converter instead of the value that the <see cref="M:System.Windows.Forms.AxHost.System#ComponentModel#ICustomTypeDescriptor#GetConverter" /> method returns.</para>
@@ -3234,6 +3299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null in all cases.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -3253,12 +3322,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents the default event for the current object, or null if the object does not have events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -3278,12 +3350,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the default property for the current object, or null if the object does not have properties.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -3305,12 +3380,15 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor of the specified type for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the specified type that is the editor for the current object, or null if the editor cannot be found.</para>
+        </returns>
         <param name="editorBaseType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for the current object.</param>
       </Docs>
@@ -3332,12 +3410,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the events for the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -3359,12 +3440,15 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for the current object using the specified attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the events for the <see cref="T:System.Windows.Forms.AxHost" /> that match the given set of attributes.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -3386,12 +3470,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the events for the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -3413,12 +3500,15 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for the current object using the specified attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the events for the current <see cref="T:System.Windows.Forms.AxHost" /> that match the given set of attributes.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -3442,12 +3532,15 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the object that owns the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current object.</para>
+        </returns>
         <param name="pd">
           <attribution license="cc4" from="Microsoft" modified="false" />Not used.</param>
       </Docs>

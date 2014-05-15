@@ -222,7 +222,6 @@
         <Parameter Name="errorMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.Design.ControlDesigner.CreateErrorDesignTimeHtml(System.String)" /> method to create HTML markup to display an error message for a control at design time. The value for <paramref name="errorMessage" /> specifies a localized string that is displayed to the user of the control at design time.</para>
@@ -241,6 +240,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates HTML markup to display a specified error message at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML markup string that contains the specified error message.</para>
+        </returns>
         <param name="errorMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The error message to include in the generated HTML markup.</param>
       </Docs>
@@ -259,7 +262,6 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.Design.ControlDesigner.CreateErrorDesignTimeHtml(System.String,System.Exception)" /> method to provide simple HTML markup that can be used to display error and exception details for a control at design time. The value for <paramref name="errorMessage" /> specifies a localized string that is displayed to the user of the control at design time.</para>
@@ -278,6 +280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the HTML markup to display a specified exception error message at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML markup that contains the specified <paramref name="errorMessage" /> and <paramref name="e" />.</para>
+        </returns>
         <param name="errorMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The error message to include in the generated HTML string.</param>
         <param name="e">
@@ -292,12 +298,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a simple rectangular placeholder representation that displays the type and ID of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains design-time HTML markup providing basic information about the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -314,12 +323,15 @@
         <Parameter Name="instruction" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a simple rectangular placeholder representation that displays the type and ID of the control, and also additional specified instructions or information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains design-time HTML markup providing information about the control.</para>
+        </returns>
         <param name="instruction">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains text and markup to add to the HTML output. </param>
       </Docs>
@@ -339,12 +351,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a copy of the associated control for viewing or rendering on the design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Web server control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DataBindingsEnabled">
@@ -457,12 +472,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the coordinates of the rectangle representing the boundaries for the control as displayed on the design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> object representing the boundaries for the control on the design surface relative to the control, not the document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDesignTimeHtml">
@@ -473,12 +491,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup that is used to represent the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML markup used to represent the control at design time.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -498,7 +519,6 @@
         <Parameter Name="regions" Type="System.Web.UI.Design.DesignerRegionCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The design host calls the <see cref="M:System.Web.UI.Design.ControlDesigner.GetDesignTimeHtml(System.Web.UI.Design.DesignerRegionCollection)" /> method to get the design-time HTML markup and the current list of control designer regions. Using the DesignerRegionCollection, the design host can then request the markup for each editable control designer region.</para>
@@ -508,6 +528,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup to display the control and populates the collection with the current control designer regions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The design-time HTML markup for the associated control, including all control designer regions.</para>
+        </returns>
         <param name="regions">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of control designer regions for the associated control.</param>
       </Docs>
@@ -525,7 +549,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A resource provider factory creates resource providers and resource writers, depending on the current settings in the system.web/globalization section of the configuration file (either the Machine.config or Web.config files for both global and local resources). If no globalization settings are found, the <paramref name="serviceProvider" /> parameter is used to create a <see cref="T:System.Web.UI.Design.DesignTimeResourceProviderFactory" /> object using the default implementation for the design host.</para>
@@ -535,6 +558,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an appropriate resource provider factory, depending on the globalization settings in the configuration file for the site.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.DesignTimeResourceProviderFactory" /> object, if any are defined in the configuration file; otherwise, null.</para>
+        </returns>
         <param name="serviceProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IServiceProvider" /> object that can retrieve global and local services.</param>
       </Docs>
@@ -552,7 +579,6 @@
         <Parameter Name="region" Type="System.Web.UI.Design.EditableDesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of the <see cref="M:System.Web.UI.Design.ControlDesigner.GetEditableDesignerRegionContent(System.Web.UI.Design.EditableDesignerRegion)" /> method returns an empty string (""). </para>
@@ -562,6 +588,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the content for an editable region of the design-time view of the associated control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The persisted content for the region, if the control designer supports editable regions; otherwise, an empty string ("").</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.EditableDesignerRegion" /> object to get content for.</param>
       </Docs>
@@ -574,7 +604,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default behavior of the <see cref="M:System.Web.UI.Design.ControlDesigner.GetEmptyDesignTimeHtml" /> method is to return a string that contains the name of the component. The <see cref="M:System.Web.UI.Design.ControlDesigner.GetEmptyDesignTimeHtml" /> method should be called in the implementation of the <see cref="M:System.Web.UI.Design.ControlDesigner.GetDesignTimeHtml" /> method when there is no design-time HTML markup.</para>
@@ -583,6 +612,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup to represent a Web server control at design time that will have no visual representation at run time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML markup used to represent a control at design time that would otherwise have no visual representation. The default is a rectangle that contains the type and ID of the component.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -599,7 +632,6 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.ControlDesigner.GetErrorDesignTimeHtml(System.Exception)" /> method is typically called, if an exception is thrown in the <see cref="Overload:System.Web.UI.Design.ControlDesigner.GetDesignTimeHtml" /> method.</para>
@@ -608,6 +640,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML markup that provides information about the specified exception. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The design-time HTML markup for the specified exception.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The exception that occurred. </param>
       </Docs>
@@ -627,12 +663,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the persistable inner HTML markup of the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the persistable inner HTML markup for the associated control. The default is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPersistInnerHtml">
@@ -643,7 +682,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -654,6 +692,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the persistable inner HTML markup of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The persistable inner HTML markup of the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -676,12 +718,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an object that contains the design-time markup for the content and regions of the associated control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewRendering" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetViewRendering">
@@ -697,12 +742,15 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an object that contains the design-time markup for the content and regions of the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewRendering" /> object.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Control" /> object.</param>
       </Docs>
@@ -720,12 +768,15 @@
         <Parameter Name="designer" Type="System.Web.UI.Design.ControlDesigner" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an object that contains the design-time markup for the content and regions of the associated control for the specified control designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewRendering" /> object.</para>
+        </returns>
         <param name="designer">
           <attribution license="cc4" from="Microsoft" modified="false" />A control designer that derives from <see cref="T:System.Web.UI.Design.ControlDesigner" />.</param>
       </Docs>
@@ -1033,7 +1084,6 @@
         <Parameter Name="propName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1044,6 +1094,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating whether the specified property on the associated control is data-bound.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the property is data-bound; otherwise, false.</para>
+        </returns>
         <param name="propName">
           <attribution license="cc4" from="Microsoft" modified="false" />The property to test for data binding. </param>
       </Docs>

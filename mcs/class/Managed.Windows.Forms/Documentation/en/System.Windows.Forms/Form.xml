@@ -1248,7 +1248,6 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1260,6 +1259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the size when autoscaling the form based on a specified font.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.SizeF" /> representing the autoscaled size of the form.</para>
+        </returns>
         <param name="font">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Font" /> representing the font to determine the autoscaled base size of the form. </param>
       </Docs>
@@ -3324,12 +3327,15 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
@@ -3353,7 +3359,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Form.ProcessDialogKey(System.Windows.Forms.Keys)" /> method overrides the base <see cref="M:System.Windows.Forms.ContainerControl.ProcessDialogKey(System.Windows.Forms.Keys)" /> implementation to provide additional handling of the RETURN and ESCAPE keys in dialog boxes. The method performs no processing on keystrokes that include the ALT or CONTROL modifiers.</para>
@@ -3362,6 +3367,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog box key. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the keystroke was processed and consumed by the control; otherwise, false to allow further processing.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
@@ -3403,12 +3412,15 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a mnemonic character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed as a mnemonic by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
@@ -3888,7 +3900,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3900,6 +3911,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shows the form as a modal dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3916,7 +3931,6 @@
         <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to display a modal dialog box in your application. When this method is called, the code following it is not executed until after the dialog box is closed. The dialog box can be assigned one of the values of <see cref="T:System.Windows.Forms.DialogResult" /> by assigning it to the <see cref="P:System.Windows.Forms.Button.DialogResult" /> property of a <see cref="T:System.Windows.Forms.Button" /> on the form or by setting the <see cref="P:System.Windows.Forms.Form.DialogResult" /> property of the form in code. This value is then returned by this method. You can use this return value to determine how to process the actions that occurred in the dialog box. For example, if the dialog box was closed and returned the DialogResult.Cancel value through this method, you could prevent code following the call to <see cref="M:System.Windows.Forms.Form.ShowDialog" /> from executing.</para>
@@ -3927,6 +3941,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shows the form as a modal dialog box with the specified owner.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />Any object that implements <see cref="T:System.Windows.Forms.IWin32Window" /> that represents the top-level window that will own the modal dialog box. </param>
       </Docs>
@@ -4348,12 +4366,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string representing the current instance of the form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of the fully qualified name of the form object's class, with the <see cref="P:System.Windows.Forms.Form.Text" /> property of the form appended to the end. For example, if the form is derived from the class MyForm in the MyNamespace namespace, and the <see cref="P:System.Windows.Forms.Form.Text" /> property is set to <userInput>Hello, World</userInput>, this method will return <userInput>MyNamespace.MyForm, Text: Hello, World</userInput>.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

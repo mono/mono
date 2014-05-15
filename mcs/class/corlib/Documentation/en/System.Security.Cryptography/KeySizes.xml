@@ -48,6 +48,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.KeySizes" /> class with the specified key values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created instance of <see cref="T:System.Security.Cryptography.KeySizes" />.</para>
+        </returns>
         <param name="minSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The minimum valid key size. </param>
         <param name="maxSize">

@@ -103,7 +103,6 @@
         <Parameter Name="b" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="a" /> and <paramref name="b" /> are both strings, this method uses <see cref="M:System.Globalization.CompareInfo.Compare(System.String,System.String)" /> to compare the strings with the casing ignored; otherwise, it uses the <see cref="T:System.IComparable" /> implementation of either object. That is, if <paramref name="a" /> implements <see cref="T:System.IComparable" />, then this method returns the result of <paramref name="a" />. CompareTo (<paramref name="b" />); otherwise, if <paramref name="b" /> implements <see cref="T:System.IComparable" />, then it returns the negated result of <paramref name="b" />. CompareTo (<paramref name="a" />).</para>
@@ -114,6 +113,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a case-insensitive comparison of two objects of the same type and returns a value indicating whether one is less than, equal to, or greater than the other.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="a" /> and <paramref name="b" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is less than <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> equals <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="a" /> is greater than <paramref name="b" />, with casing ignored. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="b">

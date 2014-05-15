@@ -48,7 +48,6 @@
         <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transport channels should delegate to this method to get the default SOAP WS-Addressing fault converter.</para>
@@ -57,6 +56,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the default fault converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.ServiceModel.Channels.FaultConverter" />.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The message version.</param>
       </Docs>

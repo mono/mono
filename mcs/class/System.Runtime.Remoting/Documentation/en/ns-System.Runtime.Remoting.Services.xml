@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.Services">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.Services" /> namespace contains service classes that provide functionality to the .NET Framework. One of the most important classes of this namespace is the <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> class.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> class provides a tracking service with pluggable handlers that can detect when objects are marshaled and unmarshaled. Pluggable handlers can be created by implementing the <see cref="T:System.Runtime.Remoting.Services.ITrackingHandler" /> interface. For more information, see the <see cref="T:System.Runtime.InteropServices.Marshal" /> class.</para>
+    </remarks>
   </Docs>
 </Namespace>

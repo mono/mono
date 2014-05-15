@@ -78,6 +78,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Destroys a notification connection that had been previously established.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method supports the following return values:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK</para>
+              </term>
+              <description>
+                <para>The specified connection was successfully deleted.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_E_NOCONNECTION</para>
+              </term>
+              <description>
+                <para>The specified connection is not valid.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_E_ADVISENOTSUPPORTED</para>
+              </term>
+              <description>
+                <para>This <see cref="T:System.Runtime.InteropServices.ComTypes.IDataObject" /> implementation does not support notification.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="connection">
           <attribution license="cc4" from="Microsoft" modified="false" />A DWORD token that specifies the connection to remove. Use the value returned by <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.DAdvise(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.ADVF,System.Runtime.InteropServices.ComTypes.IAdviseSink,System.Int32@)" /> when the connection was originally established.</param>
       </Docs>
@@ -118,7 +158,6 @@
         <Parameter Name="direction" Type="System.Runtime.InteropServices.ComTypes.DATADIR" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about IDataObject::EnumFormatEtc, see the MSDN Library.</para>
@@ -127,6 +166,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an object for enumerating the <see cref="T:System.Runtime.InteropServices.ComTypes.FORMATETC" /> structures for a data object. These structures are used in calls to <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.GetData(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.STGMEDIUM@)" /> or <see cref="M:System.Runtime.InteropServices.ComTypes.IDataObject.SetData(System.Runtime.InteropServices.ComTypes.FORMATETC@,System.Runtime.InteropServices.ComTypes.STGMEDIUM@,System.Boolean)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method supports the standard return values E_INVALIDARG and E_OUTOFMEMORY, as well as the following:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK</para>
+              </term>
+              <description>
+                <para>The enumerator object was successfully created.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_NOTIMPL</para>
+              </term>
+              <description>
+                <para>The direction specified by the <paramref name="direction" /> parameter is not supported.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>OLE_S_USEREG</para>
+              </term>
+              <description>
+                <para>Requests that OLE enumerate the formats from the registry.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="direction">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.ComTypes.DATADIR" /> values that specifies the direction of the data.</param>
       </Docs>

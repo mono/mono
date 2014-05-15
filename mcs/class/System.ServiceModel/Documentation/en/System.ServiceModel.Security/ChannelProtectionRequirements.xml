@@ -160,7 +160,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Incoming parts of the current instance of this class become outgoing parts of the new instance. Outgoing parts of the current instance of this class become incoming parts of the new instance.</para>
@@ -169,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of this class with incoming and outgoing parts reversed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of this class with incoming and outgoing parts reversed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IncomingEncryptionParts">

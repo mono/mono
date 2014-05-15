@@ -206,10 +206,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The next character to be read, or -1 if no more characters are
-      available.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">An I/O error has occurred.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -221,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next character without changing the state of the reader or the character source. Returns the next available character without actually reading it from the reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer representing the next character to be read, or -1 if no more characters are available or the reader does not support seeking.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -239,11 +239,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The next character from the character source represented
-      as a <see cref="T:System.Int32" /> , or -1 if at the end
-      of the stream.</para>
-        </returns>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -253,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next character from the text reader and advances the character position by one character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the text reader, or -1 if no more characters are available. The default implementation returns -1.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -275,11 +274,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the number of characters that were read, or zero if there were no more
-   characters left to read. Can be less than <paramref name="count" /> if the end of the stream
-   has been reached. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> ) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
@@ -301,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current reader and writes the data to a buffer, beginning at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters that have been read. The number will be less than or equal to <paramref name="count" />, depending on whether the data is available within the reader. This method returns 0 (zero) if it is called when no more characters are left to read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source. </param>
         <param name="index">
@@ -326,7 +324,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The task completes after either the number of characters specified by the <paramref name="count" /> parameter are read or the end of the file is reached. </para>
@@ -336,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current text reader asynchronously and writes the data to a buffer, beginning at the specified index. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the text has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
         <param name="index">
@@ -363,11 +364,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing the number of characters that were read, or
-   zero if there were no more characters left to read. Can be
-   less than <paramref name="count" /> if the end of the stream has been reached.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">(<paramref name="index" /> + <paramref name="count" /> - 1) &gt; <paramref name="buffer" /><see langword="." />Length.</exception>
@@ -389,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current text reader and writes the data to a buffer, beginning at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters that have been read. The number will be less than or equal to <paramref name="count" />, depending on whether all input characters have been read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, this parameter contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> -1) replaced by the characters read from the current source. </param>
         <param name="index">
@@ -414,7 +414,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The task does not complete until either the number of characters specified by the <paramref name="count" /> parameter are read, or the end of the text has been reached. </para>
@@ -423,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a specified maximum number of characters from the current text reader asynchronously and writes the data to a buffer, beginning at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the text has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified character array with the values between <paramref name="index" /> and (<paramref name="index" /> + <paramref name="count" /> - 1) replaced by the characters read from the current source.</param>
         <param name="index">
@@ -446,12 +449,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the next line from the input stream, or
-<see langword="null" /> if all lines have
-   been read. The returned string does not
-   contain the line terminating character.</para>
-        </returns>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
         <exception cref="T:System.OutOfMemoryException">
           <para>There is insufficient memory to allocate a buffer for the returned string.</para>
@@ -468,6 +465,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a line of characters from the text reader and returns the data as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next line from the reader, or null if all characters have been read.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -483,7 +484,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadLineAsync" /> method, see the <see cref="M:System.IO.StreamReader.ReadLineAsync" /> method.</para>
@@ -492,6 +492,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a line of characters asynchronously and returns the data as a string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the next line from the text reader, or is null if all of the characters have been read. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadToEnd">
@@ -509,11 +513,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A string containing all characters from the current
-      position to the end of the character
-      source.</para>
-        </returns>
         <exception cref="T:System.IO.IOException"> An I/O error occurred.</exception>
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The number of characters from the current position to the end of the underlying stream is larger than <see cref="F:System.Int32.MaxValue" qualify="true" />.</exception>
@@ -527,6 +526,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all characters from the current position to the end of the text reader and returns them as one string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains all characters from the current position to the end of the text reader.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -542,7 +545,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.IO.TextReader" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextReader.ReadToEndAsync" /> method, see the <see cref="M:System.IO.StreamReader.ReadToEndAsync" /> method.</para>
@@ -551,6 +553,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all characters from the current position to the end of the text reader asynchronously and returns them as one string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains a string with the characters from the current position to the end of the text reader. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Synchronized">
@@ -570,9 +576,6 @@
         <Parameter Name="reader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A thread-safe <see cref="T:System.IO.TextReader" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">The <paramref name="reader" /> parameter is <see langword="null" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -582,6 +585,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a thread-safe wrapper around the specified TextReader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread-safe <see cref="T:System.IO.TextReader" />.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The TextReader to synchronize. </param>
       </Docs>

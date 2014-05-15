@@ -304,13 +304,16 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains an entry with the specified key; otherwise false.</para>
+        </returns>
         <param name="keyword">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
@@ -352,7 +355,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="connectionStringBuilder" Type="System.Data.Common.DbConnectionStringBuilder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -363,6 +365,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the connection information in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> object with the connection information in the supplied object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the connection information in both of the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> objects causes an equivalent connection string; otherwise false.</para>
+        </returns>
         <param name="connectionStringBuilder">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> to be compared with this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> object.</param>
       </Docs>
@@ -512,7 +518,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -522,6 +527,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the entry with the specified key from the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key existed within the connection string and was removed; false if the key did not exist.</para>
+        </returns>
         <param name="keyword">
           <attribution license="cc4" from="Microsoft" modified="false" />The key of the key/value pair to be removed from the connection string in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
@@ -539,7 +548,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -549,6 +557,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified key exists in this <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> contains an entry with the specified key; otherwise false.</para>
+        </returns>
         <param name="keyword">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</param>
       </Docs>
@@ -671,7 +683,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="keyword" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
@@ -681,6 +692,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Collections.IDictionary" /> object contains an element with the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.IDictionary" /> contains an element with the key; otherwise, false.</para>
+        </returns>
         <param name="keyword">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.IDictionary" /> object.</param>
       </Docs>
@@ -696,7 +711,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IDictionary" /> interface.</para>
@@ -706,6 +720,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IDictionary.Item">
@@ -764,7 +782,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -774,6 +791,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetAttributes">
@@ -787,7 +808,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -797,6 +817,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of custom attributes for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> containing the attributes for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -810,7 +834,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -820,6 +843,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the class name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of the object, or null if the class does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -833,7 +860,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -843,6 +869,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -856,7 +886,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -866,6 +895,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> that is the converter for this object, or null if there is no <see cref="T:System.ComponentModel.TypeConverter" /> for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -879,7 +912,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -889,6 +921,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents the default event for this object, or null if this object does not have events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -902,7 +938,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -912,6 +947,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the default property for this object, or null if this object does not have properties.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -927,7 +966,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -937,6 +975,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor of the specified type for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
         <param name="editorBaseType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object.</param>
       </Docs>
@@ -952,7 +994,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -962,6 +1003,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the events for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -977,7 +1022,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -987,6 +1031,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component using the specified attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the filtered events for this component instance.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -1002,7 +1050,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -1012,6 +1059,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -1027,7 +1078,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -1037,6 +1087,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component using the attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the filtered properties for this component instance.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -1054,7 +1108,6 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbConnectionStringBuilder" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -1064,6 +1117,10 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that contains the property described by the specified property descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
         <param name="pd">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found.</param>
       </Docs>
@@ -1076,13 +1133,16 @@ initial catalog="AdventureWorks;NewValue=Bad"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the connection string associated with this <see cref="T:System.Data.Common.DbConnectionStringBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="P:System.Data.Common.DbConnectionStringBuilder.ConnectionString" /> property.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

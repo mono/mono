@@ -92,7 +92,6 @@
         <Parameter Name="isFirstDisplayedRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Modifies the input cell border style according to the specified criteria. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modified <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" />.</para>
+        </returns>
         <param name="dataGridViewAdvancedBorderStyleInput">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that represents the cell border style to modify.</param>
         <param name="dataGridViewAdvancedBorderStylePlaceholder">
@@ -135,7 +138,6 @@
         <Parameter Name="advancedBorderStyle" Type="System.Windows.Forms.DataGridViewAdvancedBorderStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -154,6 +156,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Drawing.Rectangle" /> that represents the widths of all the cell margins. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the widths of all the cell margins.</para>
+        </returns>
         <param name="advancedBorderStyle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewAdvancedBorderStyle" /> that the margins are to be calculated for. </param>
       </Docs>
@@ -171,7 +177,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -182,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the cell's row will be unshared when the cell is clicked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
@@ -197,7 +206,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -207,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,7 +285,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -284,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the cell's row will be unshared when the cell's content is clicked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
@@ -301,7 +316,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -312,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the cell's row will be unshared when the cell's content is double-clicked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnContentDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
@@ -357,7 +375,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -370,6 +387,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewCell" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewCell.DataGridViewCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewCell" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -520,7 +541,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -531,6 +551,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the cell's row will be unshared when the cell is double-clicked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> containing the data passed to the <see cref="M:System.Windows.Forms.DataGridViewCell.OnDoubleClick(System.Windows.Forms.DataGridViewCellEventArgs)" /> method.</param>
       </Docs>
@@ -613,7 +637,6 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.EnterUnsharesRow(System.Int32,System.Boolean)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnEnter(System.Int32,System.Boolean)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnEnter(System.Int32,System.Boolean)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
@@ -623,6 +646,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the parent row will be unshared when the focus moves to the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared; otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
         <param name="throughMouseClick">
@@ -812,7 +839,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -826,6 +852,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the formatted value of the cell to copy to the <see cref="T:System.Windows.Forms.Clipboard" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the value of the cell to copy to the <see cref="T:System.Windows.Forms.Clipboard" />.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the row containing the cell.</param>
         <param name="firstCell">
@@ -853,7 +883,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -863,6 +892,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding rectangle that encloses the cell's content area using a default <see cref="T:System.Drawing.Graphics" /> and cell style currently in effect for the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's contents.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
@@ -882,7 +915,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -893,6 +925,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding rectangle that encloses the cell's content area, which is calculated using the specified <see cref="T:System.Drawing.Graphics" /> and cell style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's contents.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
         <param name="cellStyle">
@@ -915,7 +951,6 @@
         <Parameter Name="context" Type="System.Windows.Forms.DataGridViewDataErrorContexts" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -927,6 +962,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current, formatted value of the cell, regardless of whether the cell is in edit mode and the value has not been committed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current, formatted value of the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell.</param>
         <param name="context">
@@ -948,7 +987,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -959,6 +997,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding rectangle that encloses the cell's error icon, if one is displayed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's error icon, if one is displayed; otherwise, <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
         <param name="cellStyle">
@@ -983,12 +1025,15 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the error for the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that describes the error for the current <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell.</param>
       </Docs>
@@ -1036,7 +1081,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the cell does not have an associated <see cref="T:System.Windows.Forms.ContextMenuStrip" />, it will inherit one from its parents, using the following precedence:</para>
@@ -1061,6 +1105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the inherited shortcut menu for the current cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ContextMenuStrip" /> if the parent <see cref="T:System.Windows.Forms.DataGridView" />, <see cref="T:System.Windows.Forms.DataGridViewRow" />, or <see cref="T:System.Windows.Forms.DataGridViewColumn" /> has a <see cref="T:System.Windows.Forms.ContextMenuStrip" /> assigned; otherwise, null.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The row index of the current cell.</param>
       </Docs>
@@ -1075,7 +1123,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1085,6 +1132,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the current state of the cell as inherited from the state of its row and column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values representing the current state of the cell.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell.</param>
       </Docs>
@@ -1104,7 +1155,6 @@
         <Parameter Name="includeColors" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1114,6 +1164,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the style applied to the cell. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that includes the style settings of the cell inherited from the cell's parent row, column, and <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </returns>
         <param name="inheritedCellStyle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> to be populated with the inherited cell style. </param>
         <param name="rowIndex">
@@ -1138,7 +1192,6 @@
         <Parameter Name="constraintSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1148,6 +1201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the preferred size, in pixels, of the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that represents the preferred size, in pixels, of the cell.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the cell.</param>
         <param name="cellStyle">
@@ -1171,7 +1228,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1181,6 +1237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the size of the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the cell's dimensions.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
@@ -1198,7 +1258,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1208,6 +1267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the cell. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value contained in the <see cref="T:System.Windows.Forms.DataGridViewCell" />.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
       </Docs>
@@ -1371,7 +1434,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1382,6 +1444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the parent row is unshared if the user presses a key while the focus is on the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
         <param name="rowIndex">
@@ -1401,7 +1467,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.KeyEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1411,6 +1476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if edit mode should be started based on the given key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if edit mode should be started; otherwise, false. The default is false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that represents the key that was pressed.</param>
       </Docs>
@@ -1429,7 +1498,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1440,6 +1508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared if a key is pressed while a cell in the row has focus.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> that contains the event data. </param>
         <param name="rowIndex">
@@ -1460,7 +1532,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1471,6 +1542,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the parent row is unshared when the user releases a key while the focus is on the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains the event data. </param>
         <param name="rowIndex">
@@ -1494,7 +1569,6 @@
         <Parameter Name="throughMouseClick" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridViewCell.LeaveUnsharesRow(System.Int32,System.Boolean)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewCell.OnLeave(System.Int32,System.Boolean)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewCell.OnLeave(System.Int32,System.Boolean)" /> has the effect of unsharing the row containing the cell. Otherwise, it should return false.</para>
@@ -1504,6 +1578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the focus leaves a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row.</param>
         <param name="throughMouseClick">
@@ -1524,7 +1602,6 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1534,6 +1611,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the height, in pixels, of the specified text, given the specified characteristics.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height, in pixels, of the text.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
         <param name="text">
@@ -1603,7 +1684,6 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1613,6 +1693,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the ideal height and width of the specified text given the specified characteristics.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the preferred height and width of the text.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
         <param name="text">
@@ -1646,7 +1730,6 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1656,6 +1739,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the height and width of the specified text given the specified characteristics.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> representing the height and width of the text.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
         <param name="text">
@@ -1688,13 +1775,16 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the width, in pixels, of the specified text given the specified characteristics.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The width, in pixels, of the text.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to render the text.</param>
         <param name="text">
@@ -1725,7 +1815,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1736,6 +1825,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared if the user clicks a mouse button while the pointer is on a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
@@ -1753,7 +1846,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1764,6 +1856,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared if the user double-clicks a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data.</param>
       </Docs>
@@ -1781,7 +1877,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1792,6 +1887,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the user holds down a mouse button while the pointer is on a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
@@ -1809,7 +1908,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1820,6 +1918,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse pointer moves over a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
@@ -1837,7 +1939,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1848,6 +1949,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse pointer leaves the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
       </Docs>
@@ -1865,7 +1970,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1876,6 +1980,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the mouse pointer moves over a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
@@ -1893,7 +2001,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1904,6 +2011,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a row will be unshared when the user releases a mouse button while the pointer is on a cell in the row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the row will be unshared, otherwise, false. The base <see cref="T:System.Windows.Forms.DataGridViewCell" /> class always returns false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains the event data. </param>
       </Docs>
@@ -2551,7 +2662,6 @@
         <Parameter Name="valueTypeConverter" Type="System.ComponentModel.TypeConverter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2565,6 +2675,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a value formatted for display to an actual cell value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell value.</para>
+        </returns>
         <param name="formattedValue">
           <attribution license="cc4" from="Microsoft" modified="false" />The display value of the cell.</param>
         <param name="cellStyle">
@@ -2649,13 +2763,16 @@
         <Parameter Name="isFirstDisplayedRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the location and size of the editing panel hosted by the cell, and returns the normal bounds of the editing control within the editing panel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the normal bounds of the editing control within the editing panel.</para>
+        </returns>
         <param name="cellBounds">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that defines the cell bounds. </param>
         <param name="cellClip">
@@ -2835,13 +2952,16 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the value of the cell. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value has been set; otherwise, false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the cell's parent row. </param>
         <param name="value">
@@ -2983,7 +3103,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2994,6 +3113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that describes the current object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

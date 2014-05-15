@@ -676,13 +676,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.ToolStrip" /> item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the <see cref="T:System.Windows.Forms.ToolStrip" /> item.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -696,13 +699,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the control collection for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Windows.Forms.Control.ControlCollection" /> assigned to the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -723,12 +729,15 @@
         <Parameter Name="onClick" Type="System.EventHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a default <see cref="T:System.Windows.Forms.ToolStripItem" /> with the specified text, image, and event handler on a new <see cref="T:System.Windows.Forms.ToolStrip" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="M:System.Windows.Forms.ToolStripButton.#ctor(System.String,System.Drawing.Image,System.EventHandler)" />, or a <see cref="T:System.Windows.Forms.ToolStripSeparator" /> if the <paramref name="text" /> parameter is a hyphen (-).</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to use for the <see cref="T:System.Windows.Forms.ToolStripItem" />. If the <paramref name="text" /> parameter is a hyphen (-), this method creates a <see cref="T:System.Windows.Forms.ToolStripSeparator" />.</param>
         <param name="image">
@@ -750,12 +759,15 @@
         <Parameter Name="layoutStyle" Type="System.Windows.Forms.ToolStripLayoutStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies the visual arrangement for the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.ToolStripLayoutStyle" /> values. The default is null.</para>
+        </returns>
         <param name="layoutStyle">
           <attribution license="cc4" from="Microsoft" modified="false" />The visual arrangement to be applied to the <see cref="T:System.Windows.Forms.ToolStrip" />.</param>
       </Docs>
@@ -1174,7 +1186,6 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not relevant for this class.</para>
@@ -1183,6 +1194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not relevant for this class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child <see cref="T:System.Windows.Forms.Control" /> that is located at the specified coordinates.</para>
+        </returns>
         <param name="point">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" />.</param>
       </Docs>
@@ -1206,7 +1221,6 @@
         <Parameter Name="skipValue" Type="System.Windows.Forms.GetChildAtPointSkip" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not relevant for this class.</para>
@@ -1215,6 +1229,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not relevant for this class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child <see cref="T:System.Windows.Forms.Control" /> that is located at the specified coordinates.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> value.</param>
         <param name="skipValue">
@@ -1231,13 +1249,16 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the item located at the specified point in the client area of the <see cref="T:System.Windows.Forms.ToolStrip" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ToolStripItem" /> at the specified location, or null if the <see cref="T:System.Windows.Forms.ToolStripItem" /> is not found.</para>
+        </returns>
         <param name="point">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> at which to search for the <see cref="T:System.Windows.Forms.ToolStripItem" />. </param>
       </Docs>
@@ -1256,13 +1277,16 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the item located at the specified x- and y-coordinates of the <see cref="T:System.Windows.Forms.ToolStrip" /> client area.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ToolStripItem" /> located at the specified location, or null if the <see cref="T:System.Windows.Forms.ToolStripItem" /> is not found.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The horizontal coordinate, in pixels, from the left edge of the client area. </param>
         <param name="y">
@@ -1283,7 +1307,6 @@
         <Parameter Name="direction" Type="System.Windows.Forms.ArrowDirection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1293,6 +1316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the next <see cref="T:System.Windows.Forms.ToolStripItem" /> from the specified reference point and moving in the specified direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ToolStripItem" /> that is specified by the <paramref name="start" /> parameter and is next in the order as specified by the <paramref name="direction" /> parameter.</para>
+        </returns>
         <param name="start">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> that is the reference point from which to begin the retrieval of the next item.</param>
         <param name="direction">
@@ -1614,7 +1641,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.ToolStrip.IsInputChar(System.Char)" /> method is called during window message preprocessing to determine whether the given input character should be preprocessed or sent directly to the <see cref="T:System.Windows.Forms.ToolStrip" />. If the <see cref="M:System.Windows.Forms.ToolStrip.IsInputChar(System.Char)" /> method returns true, the specified character is sent directly to the <see cref="T:System.Windows.Forms.ToolStrip" />. However, if the method returns false, the character is preprocessed and only sent to the <see cref="T:System.Windows.Forms.ToolStrip" /> if it is not consumed by the preprocessing phase. The preprocessing of a character includes checking whether the character is a mnemonic of another control.</para>
@@ -1623,6 +1649,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a character is an input character that the item recognizes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character should be sent directly to the item and not preprocessed; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test.</param>
       </Docs>
@@ -1640,12 +1670,15 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values.</param>
       </Docs>
@@ -2759,7 +2792,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.ToolStrip.ProcessDialogKey(System.Windows.Forms.Keys)" /> method is called during message preprocessing to handle dialog characters such as TAB, RETURN, ESCAPE, and arrow keys. This method is called only if the <see cref="M:System.Windows.Forms.ToolStrip.IsInputKey(System.Windows.Forms.Keys)" /> method indicates that the control is not processing the key. The <see cref="M:System.Windows.Forms.ToolStrip.ProcessDialogKey(System.Windows.Forms.Keys)" /> simply sends the character to the parent control's <see cref="M:System.Windows.Forms.ToolStrip.ProcessDialogKey(System.Windows.Forms.Keys)" /> method, or returns false if the control has no parent. The <see cref="T:System.Windows.Forms.Form" /> class overrides this method to perform actual processing of dialog box keys. This method is only called when the control is hosted in a Windows Forms application or an ActiveX control.</para>
@@ -2768,6 +2800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog box key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
@@ -2785,7 +2821,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.ToolStrip.ProcessMnemonic(System.Char)" /> method is called to give a control the opportunity to process a mnemonic character. This method should determine whether the control is in a state to process mnemonics and whether the given character represents a mnemonic. If so, the method should perform the action associated with the mnemonic and return true. If not, the method should return false. </para>
@@ -2796,6 +2831,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a mnemonic character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed as a mnemonic by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
@@ -3240,13 +3279,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ToolStrip" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the <see cref="T:System.Windows.Forms.ToolStrip" /> control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

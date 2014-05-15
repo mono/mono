@@ -48,7 +48,6 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the <paramref name="method" /> attributes to see if they support serialization.</para>
@@ -57,6 +56,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies serialization support by the <paramref name="method" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="method" /> supports serialization; otherwise, false.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MethodInfo" /> to check for serialization attributes.</param>
       </Docs>
@@ -75,7 +78,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Collections are serialized as follows:</para>
@@ -105,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes the given collection into a CodeDOM object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM object representing <paramref name="value" />.</para>
+        </returns>
         <param name="manager">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use during serialization.</param>
         <param name="value">
@@ -128,7 +134,6 @@
         <Parameter Name="valuesToSerialize" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.CodeDom.CodeExpression" /> that refers to the collection can be null.</para>
@@ -137,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes the given collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialized collection if the serialization process succeeded; otherwise, null.</para>
+        </returns>
         <param name="manager">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.IDesignerSerializationManager" /> to use during serialization.</param>
         <param name="targetExpression">

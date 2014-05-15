@@ -701,11 +701,6 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after the operation has
-      occurred.
-      </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Boolean)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -716,6 +711,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified Boolean value to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The Boolean value to append. </param>
       </Docs>
@@ -738,9 +737,6 @@
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Byte)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -752,6 +748,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 8-bit unsigned integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -774,9 +774,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Char)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -787,6 +784,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified Unicode character to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The Unicode character to append. </param>
       </Docs>
@@ -809,9 +810,6 @@
         <Parameter Name="value" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method appends all the characters in the specified array to the current instance in the same order as they appear in <paramref name="value" />. If <paramref name="value" /> is null, no changes are made.</para>
@@ -823,6 +821,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of the Unicode characters in a specified array to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters to append. </param>
       </Docs>
@@ -845,11 +847,6 @@
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after the operation has
-      occurred.
-      </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Decimal)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -861,6 +858,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified decimal number to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -884,9 +885,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Double)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -898,6 +896,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified double-precision floating-point number to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -921,10 +923,6 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after the operation has occurred.
-      </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Int16)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -936,6 +934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 16-bit signed integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -958,9 +960,6 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Int32)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -972,6 +971,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 32-bit signed integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -994,9 +997,6 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Int64)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1008,6 +1008,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 64-bit signed integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1030,9 +1034,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Object)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates. It defines a Dog class, creates a Dog object, and makes three calls to the <see cref="M:System.Text.StringBuilder.Append(System.Boolean)" /> method to create a string that contains the dog's name and breed.</para>
@@ -1044,6 +1045,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified object to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to append. </param>
       </Docs>
@@ -1071,9 +1076,6 @@
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.SByte)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1085,6 +1087,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 8-bit signed integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1107,9 +1113,6 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.Single)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1121,6 +1124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified single-precision floating-point number to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1144,9 +1151,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.String)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1158,6 +1162,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a copy of the specified string to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to append. </param>
       </Docs>
@@ -1185,9 +1193,6 @@
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.UInt16)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1199,6 +1204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 16-bit unsigned integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1226,9 +1235,6 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.UInt32)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1240,6 +1246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 32-bit unsigned integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1267,9 +1277,6 @@
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.StringBuilder.Append(System.UInt64)" /> method modifies the existing instance of this class; it does not return a new class instance. Because of this, you can call a method or property on the existing reference and you do not have to assign the return value to a <see cref="T:System.Text.StringBuilder" /> object, as the following example illustrates.</para>
@@ -1281,6 +1288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified 64-bit unsigned integer to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to append. </param>
       </Docs>
@@ -1304,9 +1315,6 @@
         <Parameter Name="repeatCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="repeatCount" /> is less than zero.</exception>
         <remarks>
@@ -1319,6 +1327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a specified number of copies of the string representation of a Unicode character to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to append. </param>
         <param name="repeatCount">
@@ -1345,9 +1357,6 @@
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="charCount" /> are not both zero.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1367,6 +1376,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string representation of a specified subarray of Unicode characters to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A character array. </param>
         <param name="startIndex">
@@ -1395,9 +1408,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="count" /> are not both zero.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1417,6 +1427,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a copy of a specified substring to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string that contains the substring to append. </param>
         <param name="startIndex">
@@ -1444,9 +1458,6 @@
         <Parameter Name="arg0" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1521,6 +1532,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string returned by processing a composite format string, which contains zero or more format items, to this instance. Each format item is replaced by the string representation of a single argument.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="format" /> appended. Each format item in <paramref name="format" /> is replaced by the string representation of <paramref name="arg0" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks). </param>
         <param name="arg0">
@@ -1552,10 +1567,6 @@ public class StringBuilderTest {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after
-      operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1634,6 +1645,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string returned by processing a composite format string, which contains zero or more format items, to this instance. Each format item is replaced by the string representation of a corresponding argument in a parameter array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="format" /> appended. Each format item in <paramref name="format" /> is replaced by the string representation of the corresponding object argument.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks). </param>
         <param name="args">
@@ -1666,9 +1681,6 @@ public class StringBuilderTest {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="format" /> or <paramref name="args" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1764,6 +1776,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string returned by processing a composite format string, which contains zero or more format items, to this instance. Each format item is replaced by the string representation of a corresponding argument in a parameter array using a specified format provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed. After the append operation, this instance contains any data that existed before the operation, suffixed by a copy of <paramref name="format" /> where any format specification is replaced by the string representation of the corresponding object argument. </para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information. </param>
         <param name="format">
@@ -1792,9 +1808,6 @@ public class StringBuilderTest {
         <Parameter Name="arg1" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1870,6 +1883,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string returned by processing a composite format string, which contains zero or more format items, to this instance. Each format item is replaced by the string representation of either of two arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="format" /> appended. Each format item in <paramref name="format" /> is replaced by the string representation of the corresponding object argument.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks). </param>
         <param name="arg0">
@@ -1899,9 +1916,6 @@ public class StringBuilderTest {
         <Parameter Name="arg2" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after the operation has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="format" /> is a null reference.</exception>
         <exception cref="T:System.FormatException">
@@ -1978,6 +1992,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the string returned by processing a composite format string, which contains zero or more format items, to this instance. Each format item is replaced by the string representation of either of three arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="format" /> appended. Each format item in <paramref name="format" /> is replaced by the string representation of the corresponding object argument.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A composite format string (see Remarks). </param>
         <param name="arg0">
@@ -2007,7 +2025,6 @@ public class StringBuilderTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2018,6 +2035,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the default line terminator to the end of the current <see cref="T:System.Text.StringBuilder" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AppendLine">
@@ -2040,7 +2061,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2051,6 +2071,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a copy of the specified string followed by the default line terminator to the end of the current <see cref="T:System.Text.StringBuilder" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the append operation has completed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to append. </param>
       </Docs>
@@ -2143,7 +2167,6 @@ public class StringBuilderTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -2154,6 +2177,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all characters from the current <see cref="T:System.Text.StringBuilder" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose <see cref="P:System.Text.StringBuilder.Length" /> is 0 (zero).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -2216,10 +2243,6 @@ public class StringBuilderTest {
         <Parameter Name="capacity" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> equal to the
-   new <see cref="P:System.Text.StringBuilder.Capacity" /> of the current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="capacity" /> is less zero. </exception>
         <remarks>
@@ -2230,6 +2253,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ensures that the capacity of this instance of <see cref="T:System.Text.StringBuilder" /> is at least the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new capacity of this instance.</para>
+        </returns>
         <param name="capacity">
           <attribution license="cc4" from="Microsoft" modified="false" />The minimum capacity to ensure. </param>
       </Docs>
@@ -2252,16 +2279,15 @@ public class StringBuilderTest {
         <Parameter Name="sb" Type="System.Text.StringBuilder" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance and <paramref name="sb" /> have the same 
- value; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this instance and <paramref name="sb" /> have equal string, <see cref="P:System.Text.StringBuilder.Capacity" />, and <see cref="P:System.Text.StringBuilder.MaxCapacity" /> values; otherwise, false.</para>
+        </returns>
         <param name="sb">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
       </Docs>
@@ -2285,10 +2311,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after insertion has occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2305,6 +2327,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a Boolean value into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2330,9 +2356,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2349,6 +2372,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified 8-bit unsigned integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2374,9 +2401,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2393,6 +2417,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified Unicode character into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2418,10 +2446,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after insertion has occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance </para>
@@ -2438,6 +2462,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified array of Unicode characters into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2463,9 +2491,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2482,6 +2507,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a decimal number into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2508,9 +2537,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2527,6 +2553,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a double-precision floating-point number into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2553,10 +2583,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after insertion has occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2573,6 +2599,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified 16-bit signed integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2598,9 +2628,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2617,6 +2644,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified 32-bit signed integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2642,9 +2673,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance </para>
@@ -2661,6 +2689,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a 64-bit signed integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2686,9 +2718,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2706,6 +2735,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of an object into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2736,9 +2769,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2755,6 +2785,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified 8-bit signed integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2780,9 +2814,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2799,6 +2830,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a single-precision floating point number into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2825,9 +2860,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance </para>
@@ -2844,6 +2876,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts a string into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2874,9 +2910,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2893,6 +2926,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a 16-bit unsigned integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2923,9 +2960,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2942,6 +2976,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a 32-bit unsigned integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -2972,9 +3010,6 @@ public class StringBuilderTest {
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance</para>
@@ -2991,6 +3026,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a 64-bit unsigned integer into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -3017,10 +3056,6 @@ public class StringBuilderTest {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after insertion has occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> is greater than the length of the current instance </para>
@@ -3040,6 +3075,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts one or more copies of a specified string into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after insertion has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -3069,9 +3108,6 @@ public class StringBuilderTest {
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after insertion has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="value" /> is a null reference, and <paramref name="startIndex" /> and <paramref name="charCount" /> are not both zero.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -3089,6 +3125,10 @@ public class StringBuilderTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the string representation of a specified subarray of Unicode characters into this instance at the specified character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the insert operation has completed.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in this instance where insertion begins. </param>
         <param name="value">
@@ -3175,10 +3215,6 @@ public class StringBuilderTest {
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after removal has occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> or <paramref name="length" /> is less than zero </para>
@@ -3217,6 +3253,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified range of characters from this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance after the excise operation has completed.</para>
+        </returns>
         <param name="startIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in this instance where removal begins. </param>
         <param name="length">
@@ -3242,9 +3282,6 @@ public class StringBuilderTest  {
         <Parameter Name="newChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after substitution has occurred.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method performs an ordinal, case-sensitive comparison to identify occurrences of <paramref name="oldChar" /> in the current instance. The size of the current <see cref="T:System.Text.StringBuilder" /> instance is unchanged after the replacement. </para>
@@ -3253,6 +3290,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces all occurrences of a specified character in this instance with another specified character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="oldChar" /> replaced by <paramref name="newChar" />.</para>
+        </returns>
         <param name="oldChar">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to replace. </param>
         <param name="newChar">
@@ -3278,11 +3319,6 @@ public class StringBuilderTest  {
         <Parameter Name="newValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The current instance after substitution has
-      occurred.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="oldValue" /> is a null reference.</exception>
         <exception cref="T:System.ArgumentException">The length of <paramref name="oldvalue" /> is zero.</exception>
@@ -3294,6 +3330,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces all occurrences of a specified string in this instance with another specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with all instances of <paramref name="oldValue" /> replaced by <paramref name="newValue" />.</para>
+        </returns>
         <param name="oldValue">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to replace. </param>
         <param name="newValue">
@@ -3321,9 +3361,6 @@ public class StringBuilderTest  {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after substitution has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>The sum of <paramref name="startIndex" /> and <paramref name="count" /> is larger than the length of the current instance </para>
           <para>-or-</para>
@@ -3338,6 +3375,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces, within a substring of this instance, all occurrences of a specified character with another specified character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with <paramref name="oldChar" /> replaced by <paramref name="newChar" /> in the range from <paramref name="startIndex" /> to <paramref name="startIndex" /> + <paramref name="count" /> -1.</para>
+        </returns>
         <param name="oldChar">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to replace. </param>
         <param name="newChar">
@@ -3369,9 +3410,6 @@ public class StringBuilderTest  {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The current instance after substitution has occurred.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="oldValue" /> is a null reference.</para>
@@ -3391,6 +3429,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces, within a substring of this instance, all occurrences of a specified string with another specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to this instance with all instances of <paramref name="oldValue" /> replaced by <paramref name="newValue" /> in the range from <paramref name="startIndex" /> to <paramref name="startIndex" /> + <paramref name="count" /> - 1.</para>
+        </returns>
         <param name="oldValue">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to replace. </param>
         <param name="newValue">
@@ -3449,9 +3491,6 @@ public class StringBuilderTest  {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representing the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must call the <see cref="M:System.Text.StringBuilder.ToString" /> method to convert the <see cref="T:System.Text.StringBuilder" /> object to a <see cref="T:System.String" /> object before you can pass the string represented by the <see cref="T:System.Text.StringBuilder" /> object to a method that has a <see cref="T:System.String" /> parameter or display it in the user interface.</para>
@@ -3460,6 +3499,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string whose value is the same as this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3481,9 +3524,6 @@ public class StringBuilderTest  {
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.String" /> representing the characters in the specified range.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> or <paramref name="length" /> is less than zero. </para>
@@ -3498,6 +3538,10 @@ public class StringBuilderTest  {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a substring of this instance to a <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string whose value is the same as the specified substring of this instance.</para>
+        </returns>
         <param name="startIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The starting position of the substring in this instance. </param>
         <param name="length">

@@ -70,12 +70,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a peer resolver object with the settings defined on this binding element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolver" /> object that is used to perform peer name to address resolution. The settings on the peer resolver must be defined on the binding element. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReferralPolicy">

@@ -35,7 +35,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.PropertyConverter.EnumFromString(System.Type,System.String)" /> method is used to convert a string value to its equivalent enumeration value.</para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation to a value of the specified enumeration type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumeration of type <paramref name="enumType" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the enumeration type to create from the <paramref name="value" /> parameter.</param>
         <param name="value">
@@ -68,7 +71,6 @@
         <Parameter Name="enumValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.PropertyConverter.EnumToString(System.Type,System.Object)" /> method is used to convert an enumeration value to its equivalent string representation.</para>
@@ -80,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the specified enumeration type to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of <paramref name="enumValue" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the enumeration type of <paramref name="enumValue" />. </param>
         <param name="enumValue">
@@ -102,7 +108,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.PropertyConverter.ObjectFromString(System.Type,System.Reflection.MemberInfo,System.String)" /> method is used to convert a string value to an object.</para>
@@ -114,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string value to the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="objType" />.</para>
+        </returns>
         <param name="objType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to create from <paramref name="value" />.</param>
         <param name="propertyInfo">

@@ -75,7 +75,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -98,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlWriter" /> object used to create one or more new child nodes at the end of the list of child nodes of the current node. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to create new child nodes at the end of the list of child nodes of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AppendChild">
@@ -372,7 +375,6 @@
         <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -398,6 +400,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the XML data in the <see cref="T:System.Xml.XPath.XPathNavigator" /> conforms to the XML Schema definition language (XSD) schema provided.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if no schema validation errors occurred; otherwise, false.</para>
+        </returns>
         <param name="schemas">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaSet" /> containing the schemas used to validate the XML data contained in the <see cref="T:System.Xml.XPath.XPathNavigator" />.</param>
         <param name="validationEventHandler">
@@ -418,7 +424,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The cloned XPathNavigator.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XPath.XPathNavigator.Clone" /> method is especially useful in conjunction with the <see cref="T:System.Xml.XPath.XPathNodeIterator" />. An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> is used to iterate over a selected node set, and contains a <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property which returns an <see cref="T:System.Xml.XPath.XPathNavigator" /> positioned on the context node of the <see cref="T:System.Xml.XPath.XPathNodeIterator" />. However, the <see cref="T:System.Xml.XPath.XPathNavigator" /> returned by the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property cannot be used to move away from the node set. Instead, you clone the returned <see cref="T:System.Xml.XPath.XPathNavigator" /> and use the cloned navigator to do any additional moves.</para>
@@ -428,6 +433,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> positioned at the same node as this <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XPath.XPathNavigator" /> positioned at the same node as this <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ComparePosition">
@@ -446,8 +455,6 @@
         <Parameter Name="nav" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>
-          <see cref="F:System.Xml.XmlNodeOrder.Unknown" /> if the argument navigator comes from different IXPathNavigable instance; <see cref="T:System.Xml.XmlNodeOrder.Same" /> if the navigator is positioned on the same location as this navigator; <see cref="F:System.Xml.XmlNodeOrder.Before" /> if this instance positions current node before the current node of the argument navigator; <see cref="F:System.Xml.XmlNodeOrder.After" /> if the argument navigator positions current node before the current node of this instance.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table describes the <see cref="T:System.Xml.XmlNodeOrder" /> enumeration.</para>
@@ -530,6 +537,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the position of the current <see cref="T:System.Xml.XPath.XPathNavigator" /> with the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeOrder" /> value representing the comparative position of the two <see cref="T:System.Xml.XPath.XPathNavigator" /> objects.</para>
+        </returns>
         <param name="nav">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> to compare against.</param>
       </Docs>
@@ -550,7 +561,6 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XPath.XPathExpression" /> instance that is the result of compilation.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An XPath expression is evaluated to yield one of the following return types: </para>
@@ -574,6 +584,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles a string representing an XPath expression and returns an <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathExpression" /> object representing the XPath expression.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing an XPath expression.</param>
       </Docs>
@@ -642,7 +656,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -672,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlWriter" /> object used to create new attributes on the current element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to create new attributes on the current element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateNavigator">
@@ -687,7 +704,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -697,6 +713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a copy of the <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> copy of this <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DeleteRange">
@@ -777,7 +797,6 @@
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="System.Object" /> instance that represents the evaluation result.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following C# code converts the Price/text() node to a number, multiplies it by 10, and returns the resulting value.</para>
@@ -791,6 +810,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates the specified XPath expression and returns the typed result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the expression (Boolean, number, string, or node set). This maps to <see cref="T:System.Boolean" />, <see cref="T:System.Double" />, <see cref="T:System.String" />, or <see cref="T:System.Xml.XPath.XPathNodeIterator" /> objects respectively.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing an XPath expression that can be evaluated.</param>
       </Docs>
@@ -811,7 +834,6 @@
         <Parameter Name="expr" Type="System.Xml.XPath.XPathExpression" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="System.Object" /> instance that represents the evaluation result.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following C# code returns a number after converting the Price/text() node to a number and multiplying the value by 10.</para>
@@ -826,6 +848,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates the <see cref="T:System.Xml.XPath.XPathExpression" /> and returns the typed result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the expression (Boolean, number, string, or node set). This maps to <see cref="T:System.Boolean" />, <see cref="T:System.Double" />, <see cref="T:System.String" />, or <see cref="T:System.Xml.XPath.XPathNodeIterator" /> objects respectively.</para>
+        </returns>
         <param name="expr">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathExpression" /> that can be evaluated.</param>
       </Docs>
@@ -846,7 +872,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -862,6 +887,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates the specified XPath expression and returns the typed result, using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes in the XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the expression (Boolean, number, string, or node set). This maps to <see cref="T:System.Boolean" />, <see cref="T:System.Double" />, <see cref="T:System.String" />, or <see cref="T:System.Xml.XPath.XPathNodeIterator" /> objects respectively.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing an XPath expression that can be evaluated.</param>
         <param name="resolver">
@@ -885,7 +914,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="context" Type="System.Xml.XPath.XPathNodeIterator" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="System.Object" /> instance that represents the evaluation result.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The expression is evaluated using the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> node of the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> as the context node. If <paramref name="context" /> is null, the node on which the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned is used as the context node.</para>
@@ -906,6 +934,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses the supplied context to evaluate the <see cref="T:System.Xml.XPath.XPathExpression" />, and returns the typed result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the expression (Boolean, number, string, or node set). This maps to <see cref="T:System.Boolean" />, <see cref="T:System.Double" />, <see cref="T:System.String" />, or <see cref="T:System.Xml.XPath.XPathNodeIterator" /> objects respectively.</para>
+        </returns>
         <param name="expr">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathExpression" /> that can be evaluated.</param>
         <param name="context">
@@ -929,7 +961,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The value of the specified attribute. String.Empty if the current node is not element, or specified attribute was not found.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> must be positioned on an element node before calling the <see cref="M:System.Xml.XPath.XPathNavigator.GetAttribute(System.String,System.String)" /> method.</para>
@@ -939,6 +970,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the attribute with the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the value of the specified attribute; <see cref="F:System.String.Empty" /> if a matching attribute is not found, or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not positioned on an element node.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
         <param name="namespaceURI">
@@ -961,7 +996,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The namespace URI string if there was the specified namespace node. String.Empty if no such namespace node.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Namespaces xml and xmlns always return a value. If <see cref="F:System.String.Empty" /> is specified as the <paramref name="name" /> parameter, the <see cref="M:System.Xml.XPath.XPathNavigator.GetNamespace(System.String)" /> method returns the default xmlns namespace.</para>
@@ -972,6 +1006,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the namespace node corresponding to the specified local name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the value of the namespace node; <see cref="F:System.String.Empty" /> if a matching namespace node is not found, or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not positioned on an element node.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the namespace node.</param>
       </Docs>
@@ -991,7 +1029,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1043,6 +1080,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the in-scope namespaces of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IDictionary`2" /> collection of namespace names keyed by prefix.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> value specifying the namespaces to return.</param>
       </Docs>
@@ -1179,7 +1220,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1200,6 +1240,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlWriter" /> object used to create a new sibling node after the currently selected node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to create a new sibling node after the currently selected node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertAfter">
@@ -1330,7 +1374,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1351,6 +1394,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlWriter" /> object used to create a new sibling node before the currently selected node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to create a new sibling node before the currently selected node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertBefore">
@@ -1586,7 +1633,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="nav" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>True if the argument navigator is a descendant of this navigator; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> is a descendant of the current <see cref="T:System.Xml.XPath.XPathNavigator" /> if it is positioned on a descendant node of the current <see cref="T:System.Xml.XPath.XPathNavigator" />. Take, for example, the following XML string: </para>
@@ -1606,6 +1652,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Xml.XPath.XPathNavigator" /> is a descendant of the current <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Xml.XPath.XPathNavigator" /> is a descendant of the current <see cref="T:System.Xml.XPath.XPathNavigator" />; otherwise, false.</para>
+        </returns>
         <param name="nav">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> to compare to this <see cref="T:System.Xml.XPath.XPathNavigator" />.</param>
       </Docs>
@@ -1707,7 +1757,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="other" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>True if the current node was the same position; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XPath.XPathNavigator.IsSamePosition(System.Xml.XPath.XPathNavigator)" /> method assumes that the <see cref="T:System.Xml.XPath.XPathNavigator" /> specified shares the same implementation and is points at the same document instance as the current <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -1725,6 +1774,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, determines whether the current <see cref="T:System.Xml.XPath.XPathNavigator" /> is at the same position as the specified <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Xml.XPath.XPathNavigator" /> objects have the same position; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> to compare to this <see cref="T:System.Xml.XPath.XPathNavigator" />.</param>
       </Docs>
@@ -1830,7 +1883,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1843,6 +1895,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespace URI for the specified prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the namespace URI assigned to the namespace prefix specified; null if no namespace URI is assigned to the prefix specified. The <see cref="T:System.String" /> returned is atomized.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to resolve. To match the default namespace, pass <see cref="F:System.String.Empty" />.</param>
       </Docs>
@@ -1862,7 +1918,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1875,6 +1930,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the prefix declared for the specified namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the namespace prefix assigned to the namespace URI specified; otherwise, <see cref="F:System.String.Empty" /> if no prefix is assigned to the namespace URI specified. The <see cref="T:System.String" /> returned is atomized.</para>
+        </returns>
         <param name="namespaceURI">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to resolve for the prefix.</param>
       </Docs>
@@ -1895,7 +1954,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if the current node matches; otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has no affect on the state of the <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -1904,6 +1962,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current node matches the specified XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node matches the specified XPath expression; otherwise, false.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />The XPath expression.</param>
       </Docs>
@@ -1924,7 +1986,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="expr" Type="System.Xml.XPath.XPathExpression" />
       </Parameters>
       <Docs>
-        <returns>True if the current node matches; otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has no effect on the state of the <see cref="T:System.Xml.XPath.XPathNavigator" />. This method is identical to the <see cref="M:System.Xml.XPath.XPathNavigator.Matches(System.String)" /> method, except that a <see cref="T:System.Xml.XPath.XPathExpression" /> object containing the compiled XPath expression is specified, rather than an XPath expression <see cref="T:System.String" />.</para>
@@ -1933,6 +1994,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current node matches the specified <see cref="T:System.Xml.XPath.XPathExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node matches the <see cref="T:System.Xml.XPath.XPathExpression" />; otherwise, false.</para>
+        </returns>
         <param name="expr">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathExpression" /> object containing the compiled XPath expression.</param>
       </Docs>
@@ -1953,7 +2018,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="other" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>True if it successfully moved the current node; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method always returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> specified is an <see cref="T:System.Xml.XPath.XPathNavigator" /> that shares the same implementation and points at the same document instance as the current <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -1963,6 +2027,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the same position as the specified <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the same position as the specified <see cref="T:System.Xml.XPath.XPathNavigator" />; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> positioned on the node that you want to move to. </param>
       </Docs>
@@ -1984,7 +2052,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if the current node was successfully moved to the specified attribute; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not currently positioned on an element, this method returns false.</para>
@@ -1995,6 +2062,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the attribute with the matching local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the attribute; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
         <param name="namespaceURI">
@@ -2016,7 +2087,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="type" Type="System.Xml.XPath.XPathNodeType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2069,6 +2139,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the child node of the <see cref="T:System.Xml.XPath.XPathNodeType" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the child node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the child node to move to.</param>
       </Docs>
@@ -2089,13 +2163,16 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the child node with the local name and namespace URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the child node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the child node to move to.</param>
         <param name="namespaceURI">
@@ -2116,12 +2193,16 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node was not the first sibling and moved successfully; False if it is the first node for the other siblings.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the first sibling node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the first sibling node of the current node; false if there is no first sibling, or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute node. If the <see cref="T:System.Xml.XPath.XPathNavigator" /> is already positioned on the first sibling, <see cref="T:System.Xml.XPath.XPathNavigator" /> will return true and will not move its position.</para>
+          <para>If <see cref="T:System.Xml.XPath.XPathNavigator.MoveToFirst" /> returns false because there is no first sibling, or if <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToFirstAttribute">
@@ -2138,7 +2219,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node was successfully moved to the first attribute; False if the current node is not element, or the current element has no attributes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not currently positioned on an element, this method returns false and the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> does not change.</para>
@@ -2149,6 +2229,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the first attribute of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the first attribute of the current node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToFirstChild">
@@ -2165,7 +2249,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node had the first child and moved successfully; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -2175,6 +2258,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the first child node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the first child node of the current node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToFirstNamespace">
@@ -2191,7 +2278,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node was an element and successfully moved to the first namespace node; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> class returns namespace nodes in reverse document order. Therefore, <see cref="M:System.Xml.XPath.XPathNavigator.MoveToFirstNamespace" /> essentially moves to the last namespace node in the current scope.</para>
@@ -2204,6 +2290,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to first namespace node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the first namespace node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToFirstNamespace">
@@ -2222,7 +2312,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceScope" Type="System.Xml.XPath.XPathNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>True if the current node the namespace nodes and moved to the first namespace node successfully; False if the current node is not an element.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> class returns namespace nodes in reverse document order. Therefore, <see cref="M:System.Xml.XPath.XPathNavigator.MoveToFirstNamespace(System.Xml.XPath.XPathNamespaceScope)" /> essentially moves to the last namespace node in the current scope.</para>
@@ -2252,6 +2341,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the first namespace node that matches the <see cref="T:System.Xml.XPath.XPathNamespaceScope" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the first namespace node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="namespaceScope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathNamespaceScope" /> value describing the namespace scope. </param>
       </Docs>
@@ -2271,7 +2364,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="type" Type="System.Xml.XPath.XPathNodeType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2288,6 +2380,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the following element of the <see cref="T:System.Xml.XPath.XPathNodeType" /> specified in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> moved successfully; otherwise false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the element. The <see cref="T:System.Xml.XPath.XPathNodeType" /> cannot be <see cref="F:System.Xml.XPath.XPathNodeType.Attribute" /> or <see cref="F:System.Xml.XPath.XPathNodeType.Namespace" />.</param>
       </Docs>
@@ -2308,7 +2404,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2318,6 +2413,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the element with the local name and namespace URI specified in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> moved successfully; otherwise false.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -2340,7 +2439,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="end" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2366,6 +2464,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the following element of the <see cref="T:System.Xml.XPath.XPathNodeType" /> specified, to the boundary specified, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> moved successfully; otherwise false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the element. The <see cref="T:System.Xml.XPath.XPathNodeType" /> cannot be <see cref="F:System.Xml.XPath.XPathNodeType.Attribute" /> or <see cref="F:System.Xml.XPath.XPathNodeType.Namespace" />.</param>
         <param name="end">
@@ -2389,7 +2491,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="end" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2412,6 +2513,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the element with the local name and namespace URI specified, to the boundary specified, in document order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> moved successfully; otherwise false.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the element.</param>
         <param name="namespaceURI">
@@ -2436,7 +2541,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if the current node was successfully moved; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to identify nodes by unique ID provided the source document explicitly declares attributes of type ID using a DTD.</para>
@@ -2447,6 +2551,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves to the node that has an attribute of type ID whose value matches the specified <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving; otherwise, false. If false, the position of the navigator is unchanged.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing the ID value of the node to which you want to move.</param>
       </Docs>
@@ -2467,7 +2575,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>True if there was the specified namespace node and moved to the namespace node successfully; False if no such namespace node.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>After the <see cref="T:System.Xml.XPath.XPathNavigator" /> has been moved to the namespace node, the <see cref="P:System.Xml.XPath.XPathNavigator.Name" /> property reflects the name of the namespace.</para>
@@ -2479,6 +2586,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the namespace node with the specified namespace prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the specified namespace; false if a matching namespace node was not found, or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not positioned on an element node. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the namespace node.</param>
       </Docs>
@@ -2497,12 +2608,15 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node has the next sibling and moved successfully; False if it is the last node.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next sibling node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next sibling node; otherwise, false if there are no more siblings or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute node. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToNext">
@@ -2520,7 +2634,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="type" Type="System.Xml.XPath.XPathNodeType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2595,6 +2708,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next sibling node of the current node that matches the <see cref="T:System.Xml.XPath.XPathNodeType" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next sibling node; otherwise, false if there are no more siblings or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute node. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the sibling node to move to.</param>
       </Docs>
@@ -2615,13 +2732,16 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next sibling node with the local name and namespace URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next sibling node; false if there are no more siblings, or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute node. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the next sibling node to move to.</param>
         <param name="namespaceURI">
@@ -2642,7 +2762,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node was successfully moved to the next attribute; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="T:System.Xml.XPath.XPathNavigator" /> is not currently positioned on an attribute, this method returns false and the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> does not change.</para>
@@ -2653,6 +2772,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next attribute; false if there are no more attributes. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToNextNamespace">
@@ -2669,7 +2792,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node was a namespace node and successfully moved to the next namespace node; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> class returns namespace nodes in reverse document order. Therefore, <see cref="M:System.Xml.XPath.XPathNavigator.MoveToNextNamespace" /> essentially moves to the namespace node above the one in the current scope.</para>
@@ -2682,6 +2804,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next namespace node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next namespace node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToNextNamespace">
@@ -2700,7 +2826,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="namespaceScope" Type="System.Xml.XPath.XPathNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>True if the current node has the next namespace and moved successfully; False if it is the last namespace node or not positioned a namespace node.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> class returns namespace nodes in reverse document order. </para>
@@ -2713,6 +2838,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the next namespace node matching the <see cref="T:System.Xml.XPath.XPathNamespaceScope" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the next namespace node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
         <param name="namespaceScope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathNamespaceScope" /> value describing the namespace scope. </param>
       </Docs>
@@ -2731,7 +2860,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node had parent node and moved successfully; Otherwise False.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of the <see cref="M:System.Xml.XPath.XPathNavigator.MoveToParent" /> method depends on the <see cref="T:System.Xml.XPath.XPathNodeType" /> of the current node, and the <see cref="T:System.Xml.XPath.XPathNodeType" /> of the parent node to move to. </para>
@@ -2852,6 +2980,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the parent node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the parent node of the current node; otherwise, false. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToPrevious">
@@ -2868,12 +3000,15 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if the current node has the previous sibling and moved successfully; False if it is the first node.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> to the previous sibling node of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is successful moving to the previous sibling node; otherwise, false if there is no previous sibling node or if the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on an attribute node. If false, the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> is unchanged.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveToRoot">
@@ -3145,7 +3280,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3167,6 +3301,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlWriter" /> object used to create a new child node at the beginning of the list of child nodes of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to create a new child node at the beginning of the list of child nodes of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PrependChild">
@@ -3352,7 +3490,6 @@ nav.Evaluate(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3371,6 +3508,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlReader" /> object that contains the current node and its child nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> object that contains the current node and its child nodes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReplaceRange">
@@ -3388,7 +3529,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="lastSiblingToReplace" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3401,6 +3541,10 @@ nav.Evaluate(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces a range of sibling nodes from the current node to the node specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlWriter" /> object used to specify the replacement range.</para>
+        </returns>
         <param name="lastSiblingToReplace">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathNavigator" /> positioned on the last sibling node in the range to replace.</param>
       </Docs>
@@ -3571,7 +3715,6 @@ nav.Evaluate(expr);</code>
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="System.Xml.XPath.XPathNodeIterator" /> instance that holds all the results.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The context for the selection is the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> when this method is called. After calling this method, the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> returned represents the set of selected nodes. Use <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method of the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> to iterate over the selected node set.</para>
@@ -3601,6 +3744,10 @@ while (iterator.MoveNext())
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a node set, using the specified XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> pointing to the selected node set.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing an XPath expression.</param>
       </Docs>
@@ -3621,7 +3768,6 @@ while (iterator.MoveNext())
         <Parameter Name="expr" Type="System.Xml.XPath.XPathExpression" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="System.Xml.XPath.XPathNodeIterator" /> instance that holds all the results.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The context for the selection is the position of the <see cref="T:System.Xml.XPath.XPathNavigator" /> when you called this method. After you call this method, the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> returned represents the set of selected nodes. Use <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> on the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> to iterate over the selected node set.</para>
@@ -3677,6 +3823,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a node set using the specified <see cref="T:System.Xml.XPath.XPathExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that points to the selected node set.</para>
+        </returns>
         <param name="expr">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathExpression" /> object containing the compiled XPath query.</param>
       </Docs>
@@ -3697,13 +3847,16 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a node set using the specified XPath expression with the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that points to the selected node set.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing an XPath expression.</param>
         <param name="resolver">
@@ -3727,7 +3880,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="matchSelf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XPath.XPathNavigator.SelectAncestors(System.Xml.XPath.XPathNodeType,System.Boolean)" /> method has no effect on the state of the <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -3736,6 +3888,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the ancestor nodes of the current node that have a matching <see cref="T:System.Xml.XPath.XPathNodeType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes. The returned nodes are in reverse document order.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the ancestor nodes.</param>
         <param name="matchSelf">
@@ -3760,7 +3916,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="matchSelf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="F:System.String.Empty" /> is specified as the <paramref name="name" /> parameter, all ancestor nodes that belong to the specified namespace URI are selected. If <see cref="F:System.String.Empty" /> is specified as the <paramref name="namespaceURI" /> parameter, all ancestor nodes with the specified local name that belong to no namespace are selected. If <see cref="F:System.String.Empty" /> is specified as both the local name and namespace URI, all ancestor nodes that belong to no namespace are selected.</para>
@@ -3770,6 +3925,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the ancestor nodes of the current node that have the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes. The returned nodes are in reverse document order.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the ancestor nodes.</param>
         <param name="namespaceURI">
@@ -3794,7 +3953,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="type" Type="System.Xml.XPath.XPathNodeType" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XPath.XPathNavigator.SelectChildren(System.Xml.XPath.XPathNodeType)" /> method has no effect on the state of the <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -3803,6 +3961,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the child nodes of the current node that have the matching <see cref="T:System.Xml.XPath.XPathNodeType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the child nodes.</param>
       </Docs>
@@ -3824,7 +3986,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="F:System.String.Empty" /> is specified as the <paramref name="name" /> parameter, all child nodes that belong to the specified namespace URI are selected. If <see cref="F:System.String.Empty" /> is specified as the <paramref name="namespaceURI" /> parameter, all child nodes with the specified local name that belong to no namespace are selected. If both the local name and namespace URI parameters are <see cref="F:System.String.Empty" />, all child nodes that belong to no namespace are selected.</para>
@@ -3834,6 +3995,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the child nodes of the current node that have the local name and namespace URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the child nodes. </param>
         <param name="namespaceURI">
@@ -3857,7 +4022,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="matchSelf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XPath.XPathNavigator.SelectDescendants(System.Xml.XPath.XPathNodeType,System.Boolean)" /> method has no effect on the state of the <see cref="T:System.Xml.XPath.XPathNavigator" />.</para>
@@ -3866,6 +4030,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the descendant nodes of the current node that have a matching <see cref="T:System.Xml.XPath.XPathNodeType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNodeType" /> of the descendant nodes.</param>
         <param name="matchSelf">
@@ -3890,7 +4058,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="matchSelf" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance that holds all the resulting nodes.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="F:System.String.Empty" /> is specified as the <paramref name="name" /> parameter, all descendant nodes that belong to the specified namespace URI are selected. If <see cref="F:System.String.Empty" /> is specified as the <paramref name="namespaceURI" /> parameter, all descendant nodes with the specified local name that belong to no namespace are selected. If both the local name and namespace URI parameters are <see cref="F:System.String.Empty" />, all descendant nodes that belong to no namespace are selected.</para>
@@ -3901,6 +4068,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects all the descendant nodes of the current node with the local name and namespace URI specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNodeIterator" /> that contains the selected nodes.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the descendant nodes. </param>
         <param name="namespaceURI">
@@ -3924,7 +4095,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3934,6 +4104,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a single node in the <see cref="T:System.Xml.XPath.XPathNavigator" /> using the specified XPath query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object that contains the first matching node for the XPath query specified; otherwise, null if there are no query results.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing an XPath expression.</param>
       </Docs>
@@ -3953,7 +4127,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="expression" Type="System.Xml.XPath.XPathExpression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3963,6 +4136,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a single node in the <see cref="T:System.Xml.XPath.XPathNavigator" /> using the specified <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object that contains the first matching node for the XPath query specified; otherwise null if there are no query results.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XPath.XPathExpression" /> object containing the compiled XPath query.</param>
       </Docs>
@@ -3983,7 +4160,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3996,6 +4172,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a single node in the <see cref="T:System.Xml.XPath.XPathNavigator" /> object using the specified XPath query with the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object that contains the first matching node for the XPath query specified; otherwise null if there are no query results.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> representing an XPath expression.</param>
         <param name="resolver">
@@ -4080,7 +4260,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XPath.XPathNavigator" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
@@ -4090,6 +4269,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new copy of the <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new copy of the <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -4106,7 +4289,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>A string that represents the node value.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The content returned by the <see cref="M:System.Xml.XPath.XPathNavigator.ToString" /> method depends on the <see cref="T:System.Xml.XPath.XPathNodeType" /> of the node.</para>
@@ -4207,6 +4389,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the text value of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the text value of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypedValue">
@@ -4420,7 +4606,6 @@ XPathNodeIterator ni = nav.Select(expr);</code>
         <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4431,6 +4616,10 @@ XPathNodeIterator ni = nav.Select(expr);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the current node's value as the <see cref="T:System.Type" /> specified, using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current node as the <see cref="T:System.Type" /> requested.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to return the current node's value as.</param>
         <param name="nsResolver">

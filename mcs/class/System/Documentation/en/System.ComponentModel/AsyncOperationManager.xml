@@ -40,7 +40,6 @@
         <Parameter Name="userSuppliedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -56,6 +55,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.ComponentModel.AsyncOperation" /> for tracking the duration of a particular asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AsyncOperation" /> that you can use to track the duration of an asynchronous method invocation.</para>
+        </returns>
         <param name="userSuppliedState">
           <attribution license="cc4" from="Microsoft" modified="false" />An object used to associate a piece of client state, such as a task ID, with a particular asynchronous operation. </param>
       </Docs>

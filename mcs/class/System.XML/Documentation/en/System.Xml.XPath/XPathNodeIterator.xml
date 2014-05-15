@@ -75,7 +75,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Returns a new XPathNodeIterator copy of this instance.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The cloned <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is positioned at the same node in the node set if calls have been made to the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method. The cloned <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is not affected by subsequent changes to this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
@@ -84,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a clone of this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object clone of this <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Count">
@@ -174,7 +177,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -190,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> object to iterate through the selected node set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object to iterate through the selected node set.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MoveNext">
@@ -206,7 +212,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>True if it could iterate to the next node; False if it didn't have more nodes to be iterated.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNodeIterator" /> object is positioned on the first node in the selected node set only after the initial call to the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method. The node set is created in document order. Therefore, calling the <see cref="M:System.Xml.XPath.XPathNodeIterator.MoveNext" /> method moves to the next node in document order.</para>
@@ -221,6 +226,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, moves the <see cref="T:System.Xml.XPath.XPathNavigator" /> object returned by the <see cref="P:System.Xml.XPath.XPathNodeIterator.Current" /> property to the next node in the selected node set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.XPath.XPathNavigator" /> object moved to the next node; false if there are no more selected nodes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ICloneable.Clone">
@@ -237,7 +246,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XPath.XPathNodeIterator" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
@@ -246,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

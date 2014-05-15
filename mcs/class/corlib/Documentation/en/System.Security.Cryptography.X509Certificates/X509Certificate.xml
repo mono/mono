@@ -468,7 +468,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'X509Certificate'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ASN.1 DER is the only certificate format supported by this class. </para>
@@ -480,6 +479,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an X.509v3 certificate from the specified PKCS7 signed file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created X.509 certificate.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of the PKCS7 signed file from which to create the X.509 certificate. </param>
       </Docs>
@@ -500,7 +503,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'X509Certificate'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ASN.1 DER is the only certificate format supported by this class.</para>
@@ -509,6 +511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an X.509v3 certificate from the specified signed file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created X.509 certificate.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The path of the signed file from which to create the X.509 certificate. </param>
       </Docs>
@@ -533,7 +539,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -543,6 +548,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> objects for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object is equal to the object specified by the <paramref name="other" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to compare to the current object. </param>
       </Docs>
@@ -563,7 +572,6 @@
         <Parameter Name="other" Type="System.Security.Cryptography.X509Certificates.X509Certificate" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> objects are considered equal if they have the same issuer and serial number.</para>
@@ -572,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> objects for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object is equal to the object specified by the <paramref name="other" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to compare to the current object.</param>
       </Docs>
@@ -596,7 +608,6 @@
         <Parameter Name="contentType" Type="System.Security.Cryptography.X509Certificates.X509ContentType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -606,6 +617,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to a byte array in a format described by one of the <see cref="T:System.Security.Cryptography.X509Certificates.X509ContentType" /> values. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes that represents the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
+        </returns>
         <param name="contentType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509ContentType" /> values that describes how to format the output data. </param>
       </Docs>
@@ -626,7 +641,6 @@
         <Parameter Name="password" Type="System.Security.SecureString" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -639,6 +653,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to a byte array using the specified format and a password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
+        </returns>
         <param name="contentType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509ContentType" /> values that describes how to format the output data.</param>
         <param name="password">
@@ -666,7 +684,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -679,6 +696,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exports the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object to a byte array in a format described by one of the <see cref="T:System.Security.Cryptography.X509Certificates.X509ContentType" /> values, and using the specified password.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes that represents the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
+        </returns>
         <param name="contentType">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Cryptography.X509Certificates.X509ContentType" /> values that describes how to format the output data.</param>
         <param name="password">
@@ -699,7 +720,6 @@
         <Parameter Name="date" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some cultures cannot convert future dates into strings. If the expiration date of an X.509 certificate is beyond the range of the culture, <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate.FormatDate(System.DateTime)" /> falls back to a calendar that can express the date. If the <see cref="P:System.Globalization.CultureInfo.Calendar" /> value is <see cref="T:System.Globalization.UmAlQuraCalendar" />, the calendar is changed to the <see cref="T:System.Globalization.HijriCalendar" /> class; otherwise, it is changed to the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />.</para>
@@ -708,6 +728,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified date and time to a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of the <see cref="T:System.DateTime" /> object.</para>
+        </returns>
         <param name="date">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
       </Docs>
@@ -726,12 +750,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Return the SHA1 hash of the complete certificate in a byte array.</returns>
         <remarks>This is similar to the thumbprint used in many certificate viewers.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash value for the X.509v3 certificate as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash value for the X.509 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCertHashString">
@@ -748,12 +775,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Return the SHA1 hash of the complete certificate in a string. </returns>
         <remarks>This is similar to the thumbprint used in many certificate viewers.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the SHA1 hash value for the X.509v3 certificate as a hexadecimal string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hexadecimal string representation of the X.509 certificate hash value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEffectiveDateString">
@@ -770,7 +800,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The effective date is the date after which the X.509 certificate is considered valid.</para>
@@ -780,6 +809,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the effective date of this X.509v3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The effective date for this X.509 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetExpirationDateString">
@@ -796,7 +829,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The expiration date is the date after which the X.509 certificate is no longer considered valid.</para>
@@ -809,6 +841,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the expiration date of this X.509v3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The expiration date for this X.509 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFormat">
@@ -825,7 +861,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The string "X509".</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The format X.509 is always returned in this implementation.</para>
@@ -834,6 +869,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the format of this X.509v3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The format of this X.509 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -850,7 +889,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the X.509 certificate hash is an array of more than 4 bytes, any byte after the fourth byte is not seen in this integer representation.</para>
@@ -859,6 +897,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the X.509v3 certificate as an integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the X.509 certificate as an integer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIssuerName">
@@ -880,12 +922,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the certification authority that issued the X.509v3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the certification authority that issued the X.509 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetKeyAlgorithm">
@@ -902,12 +947,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the key algorithm information for this X.509v3 certificate as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key algorithm information for this X.509 certificate as a string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetKeyAlgorithmParameters">
@@ -924,12 +972,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the key algorithm parameters for the X.509v3 certificate as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key algorithm parameters for the X.509 certificate as an array of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetKeyAlgorithmParametersString">
@@ -946,12 +997,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the key algorithm parameters for the X.509v3 certificate as a hexadecimal string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key algorithm parameters for the X.509 certificate as a hexadecimal string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetName">
@@ -973,12 +1027,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the principal to which the certificate was issued.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the principal to which the certificate was issued.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPublicKey">
@@ -995,12 +1052,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public key for the X.509v3 certificate as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public key for the X.509 certificate as an array of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPublicKeyString">
@@ -1017,12 +1077,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public key for the X.509v3 certificate as a hexadecimal string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The public key for the X.509 certificate as a hexadecimal string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRawCertData">
@@ -1039,12 +1102,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the raw data for the entire X.509v3 certificate as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the X.509 certificate data.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRawCertDataString">
@@ -1061,12 +1127,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the raw data for the entire X.509v3 certificate as a hexadecimal string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The X.509 certificate data as a hexadecimal string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSerialNumber">
@@ -1083,12 +1152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the serial number of the X.509v3 certificate as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serial number of the X.509 certificate as an array of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSerialNumberString">
@@ -1105,12 +1177,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the serial number of the X.509v3 certificate as a hexadecimal string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serial number of the X.509 certificate as a hexadecimal string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Handle">
@@ -1498,12 +1573,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The string "System.Security.Cryptography.X509Certificates.X509Certificate".</returns>
         <remarks>This is just a call to <see cref="M:System.Object.ToString()" />.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -1522,15 +1600,15 @@
         <Parameter Name="fVerbose" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If true, return most details from the X.509 certificate.</para>
-          <para>If false, return the string "System.Security.Cryptography.X509Certificates.X509Certificate".</para>
-        </returns>
         <remarks>Useful for debugging purpose only. The format of the string will change in future versions of the framework.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object, with extra information, if specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the current <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate" /> object.</para>
+        </returns>
         <param name="fVerbose">
           <attribution license="cc4" from="Microsoft" modified="false" />true to produce the verbose form of the string representation; otherwise, false. </param>
       </Docs>

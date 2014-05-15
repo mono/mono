@@ -169,7 +169,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -180,6 +179,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Collections.Stack" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -198,7 +201,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method determines equality by calling <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -209,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an element is in the <see cref="T:System.Collections.Stack" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if <paramref name="obj" /> is found in the <see cref="T:System.Collections.Stack" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.Stack" />. The value can be null. </param>
       </Docs>
@@ -285,7 +291,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>[Visual Basic, C#]</para>
@@ -303,6 +308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.Stack" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsSynchronized">
@@ -347,7 +356,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is similar to the <see cref="M:System.Collections.Stack.Pop" /> method, but <see cref="M:System.Collections.Stack.Peek" /> does not modify the <see cref="T:System.Collections.Stack" />.</para>
@@ -358,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the object at the top of the <see cref="T:System.Collections.Stack" /> without removing it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> at the top of the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Pop">
@@ -374,7 +386,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is similar to the <see cref="M:System.Collections.Stack.Peek" /> method, but <see cref="M:System.Collections.Stack.Peek" /> does not modify the <see cref="T:System.Collections.Stack" />.</para>
@@ -386,6 +397,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes and returns the object at the top of the <see cref="T:System.Collections.Stack" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> removed from the top of the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Push">
@@ -436,7 +451,6 @@
         <Parameter Name="stack" Type="System.Collections.Stack" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Stack'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To guarantee the thread safety of the <see cref="T:System.Collections.Stack" />, all operations must be done through this wrapper.</para>
@@ -449,6 +463,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a synchronized (thread safe) wrapper for the <see cref="T:System.Collections.Stack" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronized wrapper around the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
         <param name="stack">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Stack" /> to synchronize. </param>
       </Docs>
@@ -495,7 +513,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements are copied onto the array in last-in-first-out (LIFO) order, similar to the order of the elements returned by a succession of calls to <see cref="M:System.Collections.Stack.Pop" />.</para>
@@ -505,6 +522,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the <see cref="T:System.Collections.Stack" /> to a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing copies of the elements of the <see cref="T:System.Collections.Stack" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

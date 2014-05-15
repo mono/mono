@@ -228,7 +228,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The <see cref="System.Xml.XPath.XPathNavigator" /> instance created by this class.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.XPath.XPathNavigator" /> is positioned on the root element of the <see cref="T:System.Xml.XPath.XPathDocument" />. If there is no root element, the <see cref="T:System.Xml.XPath.XPathNavigator" /> is positioned on the first element in the <see cref="T:System.Xml.XPath.XPathDocument" />.</para>
@@ -237,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a read-only <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating through nodes in this <see cref="T:System.Xml.XPath.XPathDocument" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

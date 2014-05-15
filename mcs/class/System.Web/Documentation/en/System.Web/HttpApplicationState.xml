@@ -143,12 +143,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Web.HttpApplicationState" /> object by numerical index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by <paramref name="index" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the application state object. </param>
       </Docs>
@@ -167,7 +170,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following example returns an object named MyAppVar1 from the <see cref="T:System.Web.HttpApplicationState" /> collection of the intrinsic <see cref="P:System.Web.HttpContext.Application" /> object and copies it to a new object variable.</para>
@@ -180,6 +182,10 @@ MyObject = Application.Get("MyAppVar1");</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Web.HttpApplicationState" /> object by name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the object. </param>
       </Docs>
@@ -198,12 +204,15 @@ MyObject = Application.Get("MyAppVar1");</code>
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Web.HttpApplicationState" /> object name by index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name under which the application state object was saved.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the application state object. </param>
       </Docs>

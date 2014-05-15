@@ -31,7 +31,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, the message box displays an <ui>OK</ui> button. The message box does not contain a caption in the title.</para>
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
       </Docs>
@@ -59,7 +62,6 @@
         <Parameter Name="caption" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, the message box displays an <ui>OK</ui> button.</para>
@@ -68,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with specified text and caption.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -89,7 +95,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -99,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box. </param>
         <param name="text">
@@ -121,7 +130,6 @@
         <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can have a maximum of three buttons on the message box.</para>
@@ -130,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with specified text, caption, and buttons.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -154,7 +166,6 @@
         <Parameter Name="caption" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -164,6 +175,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text and caption.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -189,7 +204,6 @@
         <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can have a maximum of three buttons on the message box.</para>
@@ -198,6 +212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with specified text, caption, buttons, and icon.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -225,7 +243,6 @@
         <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -235,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text, caption, and buttons.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -263,7 +284,6 @@
         <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can have a maximum of three buttons on the message box.</para>
@@ -272,6 +292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, and default button.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -302,7 +326,6 @@
         <Parameter Name="icon" Type="System.Windows.Forms.MessageBoxIcon" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -312,6 +335,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text, caption, buttons, and icon.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -343,7 +370,6 @@
         <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can have a maximum of three buttons on the message box.</para>
@@ -352,6 +378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, and options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -385,7 +415,6 @@
         <Parameter Name="defaultButton" Type="System.Windows.Forms.MessageBoxDefaultButton" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -395,6 +424,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text, caption, buttons, icon, and default button.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -432,7 +465,6 @@
         <Parameter Name="displayHelpButton" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -442,6 +474,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -477,7 +513,6 @@
         <Parameter Name="helpFilePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -488,6 +523,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -520,7 +559,6 @@
         <Parameter Name="options" Type="System.Windows.Forms.MessageBoxOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner. A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -530,6 +568,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box in front of the specified object and with the specified text, caption, buttons, icon, default button, and options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -570,7 +612,6 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -580,6 +621,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file and Help keyword.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -618,7 +663,6 @@
         <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -630,6 +674,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file and HelpNavigator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -668,7 +716,6 @@
         <Parameter Name="helpFilePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur. You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner.</para>
@@ -679,6 +726,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -718,7 +769,6 @@
         <Parameter Name="param" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur.</para>
@@ -731,6 +781,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file, HelpNavigator, and Help topic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to display in the message box. </param>
         <param name="caption">
@@ -772,7 +826,6 @@
         <Parameter Name="keyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur. You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level owner.</para>
@@ -782,6 +835,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file and Help keyword.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -823,7 +880,6 @@
         <Parameter Name="navigator" Type="System.Windows.Forms.HelpNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur. You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner.</para>
@@ -835,6 +891,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file and HelpNavigator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">
@@ -877,7 +937,6 @@
         <Parameter Name="param" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A message box is a modal dialog box, which means no input (keyboard or mouse click) can occur except to objects on the modal form. The program must hide or close a modal form (typically in response to some user action) before input to another form can occur. You can use the <paramref name="owner" /> parameter to specify a particular object, which implements the <see cref="T:System.Windows.Forms.IWin32Window" /> interface, that will serve as the dialog box's top-level window and owner.</para>
@@ -890,6 +949,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a message box with the specified text, caption, buttons, icon, default button, options, and Help button, using the specified Help file, HelpNavigator, and Help topic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />An implementation of <see cref="T:System.Windows.Forms.IWin32Window" /> that will own the modal dialog box.</param>
         <param name="text">

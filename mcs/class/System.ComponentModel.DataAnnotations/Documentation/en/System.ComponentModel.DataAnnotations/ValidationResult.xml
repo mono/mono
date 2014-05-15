@@ -73,10 +73,15 @@
         <Parameter Name="memberNames" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="errorMessage">To be added.</param>
-        <param name="memberNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> class by using an error message and a list of members that have validation errors.</para>
+        </summary>
+        <param name="errorMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message.</param>
+        <param name="memberNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of member names that have validation errors.</param>
       </Docs>
     </Member>
     <Member MemberName="ErrorMessage">
@@ -153,12 +158,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current validation result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current validation result.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

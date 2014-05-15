@@ -155,7 +155,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.Add(System.IntPtr,System.Int32)" /> method does not throw an exception if the result is too large to represent as a pointer on the specified platform. Instead, the addition operation is performed in an unchecked context.</para>
@@ -165,6 +164,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an offset to the value of a pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new pointer that reflects the addition of <paramref name="offset" /> to <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The pointer to add the offset to.</param>
         <param name="offset">
@@ -188,12 +191,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is a <see cref="T:System.IntPtr" /> instance and has the same value as the current
-   instance. If <paramref name="obj" /> is a null reference or is not an instance of
-<see cref="T:System.IntPtr" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">The method overrides
@@ -204,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.IntPtr" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance or null. </param>
       </Docs>
@@ -224,9 +225,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">The algorithm
@@ -241,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -264,7 +266,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.op_Addition(System.IntPtr,System.Int32)" /> method defines the addition operation for <see cref="T:System.IntPtr" /> objects. It enables code such as the following.</para>
@@ -276,6 +277,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an offset to the value of a pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new pointer that reflects the addition of <paramref name="offset" /> to <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The pointer to add the offset to.</param>
         <param name="offset">
@@ -305,17 +310,16 @@
         <Parameter Name="value2" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="value1" /> represents the same value as <paramref name="value2" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.IntPtr.Equals(System.Object)" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.IntPtr" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value1" /> equals <paramref name="value2" />; otherwise, false.</para>
+        </returns>
         <param name="value1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first pointer or handle to compare.</param>
         <param name="value2">
@@ -501,17 +505,16 @@
         <Parameter Name="value2" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="value1" /> represents a different value than <paramref name="value2" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.IntPtr.Equals(System.Object)" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.IntPtr" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value1" /> does not equal <paramref name="value2" />; otherwise, false.</para>
+        </returns>
         <param name="value1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first pointer or handle to compare. </param>
         <param name="value2">
@@ -539,7 +542,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.op_Subtraction(System.IntPtr,System.Int32)" /> method defines the subtraction operation for <see cref="T:System.IntPtr" /> objects. It enables code such as the following.</para>
@@ -551,6 +553,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts an offset from the value of a pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new pointer that reflects the subtraction of <paramref name="offset" /> from <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The pointer to subtract the offset from.</param>
         <param name="offset">
@@ -618,7 +624,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.Subtract(System.IntPtr,System.Int32)" /> method does not throw an exception if the result is too small to represent as a pointer on the specified platform. Instead, the subtraction operation is performed in an unchecked context.</para>
@@ -628,6 +633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts an offset from the value of a pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new pointer that reflects the subtraction of <paramref name="offset" /> from <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The pointer to subtract the offset from.</param>
         <param name="offset">
@@ -685,16 +694,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing 
-   the same value as the current instance.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.OverflowException">The current platform is not a 32-bit platform and the value of the current instance is greater than <see cref="F:System.Int32.MaxValue" /> or less than <see cref="F:System.Int32.MinValue" />.</exception>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer equal to the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -718,15 +727,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> containing the
- same value as the current instance.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer equal to the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -753,9 +762,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A pointer to <see langword="void" />. </para>
-        </returns>
         <remarks>
           <para>This member is not CLS-compliant. For a CLS-compliant alternative, use 
    <see cref="M:System.IntPtr.ToInt32" />.</para>
@@ -768,6 +774,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a pointer to an unspecified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to <see cref="T:System.Void" />; that is, a pointer to memory containing data of an unspecified type.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -786,9 +796,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <see cref="P:System.IntPtr.Size" /> property for this instance is 4, then this method is equivalent to <see cref="M:System.Int32.ToString" />; otherwise, this method is equivalent to <see cref="M:System.Int64.ToString" />.</para>
@@ -797,6 +804,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.IntPtr" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -815,7 +826,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="format" /> parameter is null or an empty string (""), the return value is formatted with the general format specifier ("G"). For more information about numeric format specifiers, see the <format type="text/html"><a href="580e57eb-ac47-4ffd-bccd-3a1637c2f467">Standard Numeric Format Strings</a></format> topic. </para>
@@ -825,6 +835,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.IntPtr" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of the current <see cref="T:System.IntPtr" /> object.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format specification that governs how the current <see cref="T:System.IntPtr" /> object is converted. </param>
       </Docs>

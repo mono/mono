@@ -314,11 +314,6 @@ containing the number of bytes returned from the resource.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> for reading data from the
-   current
-   host.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not implemented in the derived class. </exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -331,6 +326,10 @@ containing the number of bytes returned from the resource.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns the data stream from the Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.IO.Stream" /> class for reading data from the Internet resource.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

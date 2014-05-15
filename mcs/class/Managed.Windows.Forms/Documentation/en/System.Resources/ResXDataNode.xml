@@ -121,12 +121,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the position of the resource in the resource file. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that specifies the location of this resource in the resource file as a line position (<see cref="P:System.Drawing.Point.X" />) and a column position (<see cref="P:System.Drawing.Point.Y" />). If this resource is not part of a resource file, this method returns a structure that has an <see cref="P:System.Drawing.Point.X" /> of 0 and a <see cref="P:System.Drawing.Point.Y" /> of 0. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -142,7 +145,6 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the stored value currently exists in memory, it is returned directly. If it is stored in the resource file and it is not a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> looks for a <see cref="T:System.ComponentModel.TypeConverter" /> by using the specified type resolution service that can convert from a string to the appropriate object. If the resource is a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> tries to de-serialize it. </para>
@@ -151,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the object that is stored by this node by using the specified type resolution service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that corresponds to the stored value. </para>
+        </returns>
         <param name="typeResolver">
           <attribution license="cc4" from="Microsoft" modified="false" />The type resolution service to use when looking for a type converter.</param>
       </Docs>
@@ -168,7 +174,6 @@
         <Parameter Name="names" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the stored value currently exists in memory, it is returned directly. If it is stored in the resource file and it is not a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> looks in the assemblies identified by names to find the object's corresponding type, and then looks for a <see cref="T:System.ComponentModel.TypeConverter" /> that can convert from a string to the appropriate object. If the resource is a file reference, <see cref="M:System.Resources.ResXDataNode.GetValue(System.Reflection.AssemblyName[])" /> tries to deserialize it. </para>
@@ -177,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the object that is stored by this node by searching the specified assemblies.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that corresponds to the stored value. </para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />The list of assemblies to search for the type of the object.</param>
       </Docs>
@@ -194,12 +203,15 @@
         <Parameter Name="typeResolver" Type="System.ComponentModel.Design.ITypeResolutionService" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the type name for the value by using the specified type resolution service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the fully qualified name of the type.</para>
+        </returns>
         <param name="typeResolver">
           <attribution license="cc4" from="Microsoft" modified="false" />The type resolution service to use to locate a converter for this type. </param>
       </Docs>
@@ -217,12 +229,15 @@
         <Parameter Name="names" Type="System.Reflection.AssemblyName[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the type name for the value by examining the specified assemblies.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the fully qualified name of the type.</para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />The assemblies to examine for the type. </param>
       </Docs>

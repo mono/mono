@@ -32,7 +32,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -42,6 +41,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the virtual-directory name associated with a specific site.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="siteID" /> must be unique. No two sites share the same id. The <paramref name="siteID" /> distinguishes sites that have the same name.</para>
+        </returns>
         <param name="siteID">
           <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the site.</param>
         <param name="path">
@@ -79,7 +82,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -89,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the machine-configuration file name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The machine-configuration file name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPathConfigFilename">
@@ -126,7 +132,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -136,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the configuration file at the Web root.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the configuration file at the Web root.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MapPath">
@@ -152,7 +161,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -162,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the physical directory path based on the site ID and URL associated with the site.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical directory path.</para>
+        </returns>
         <param name="siteID">
           <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the site.</param>
         <param name="path">

@@ -74,7 +74,6 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation does nothing and returns null.</para>
@@ -83,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a mouse click at the specified point should be handled by the <see cref="T:System.Windows.Forms.Design.Behavior.ComponentGlyph" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Cursor" /> if the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> is associated with <paramref name="p" />; otherwise, null.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />A point to hit-test.</param>
       </Docs>

@@ -35,12 +35,15 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a state item specified by the key for the given component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The designer state for <paramref name="component" /> specified by <paramref name="key" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which to retrieve the designer state item.</param>
         <param name="key">

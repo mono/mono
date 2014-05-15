@@ -216,7 +216,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -228,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform deletions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform deletions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,7 +247,6 @@
       </Parameters>
       <Docs>
         <param name="option">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -268,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform deletions at the data source, optionally using columns for parameter names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform deletions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -281,7 +287,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -293,6 +298,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform insertions at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform insertions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -309,7 +318,6 @@
       </Parameters>
       <Docs>
         <param name="option">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -333,6 +341,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform insertions at the data source, optionally using columns for parameter names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform insertions.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -348,13 +360,16 @@
         <Parameter Name="parameterOrdinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the specified parameter in the format of @p#. Use when building a custom command builder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the parameter with the specified number appended as part of the parameter name.</para>
+        </returns>
         <param name="parameterOrdinal">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to be included as part of the parameter's name..</param>
       </Docs>
@@ -372,13 +387,16 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the full parameter name, given the partial parameter name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The full parameter name corresponding to the partial parameter name requested.</para>
+        </returns>
         <param name="parameterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The partial name of the parameter.</param>
       </Docs>
@@ -396,7 +414,6 @@
         <Parameter Name="parameterOrdinal" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -406,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the placeholder for the parameter in the associated SQL statement.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the parameter with the specified number appended.</para>
+        </returns>
         <param name="parameterOrdinal">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to be included as part of the parameter's name.</param>
       </Docs>
@@ -424,7 +445,6 @@
       </Parameters>
       <Docs>
         <param name="cmd">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -434,6 +454,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the schema table for the <see cref="T:System.Data.Common.DbCommandBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that represents the schema for the specific <see cref="T:System.Data.Common.DbCommand" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -447,7 +471,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -459,6 +482,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform updates at the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform updates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -475,7 +502,6 @@
       </Parameters>
       <Docs>
         <param name="option">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -499,6 +525,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform updates at the data source, optionally using columns for parameter names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The automatically generated <see cref="T:System.Data.Common.DbCommand" /> object required to perform updates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -514,7 +544,6 @@
         <Parameter Name="command" Type="System.Data.Common.DbCommand" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -524,6 +553,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets the <see cref="P:System.Data.Common.DbCommand.CommandTimeout" />, <see cref="P:System.Data.Common.DbCommand.Transaction" />, <see cref="P:System.Data.Common.DbCommand.CommandType" />, and <see cref="T:System.Data.UpdateRowSource" /> properties on the <see cref="T:System.Data.Common.DbCommand" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbCommand" /> instance to use for each insert, update, or delete operation. Passing a null value allows the <see cref="M:System.Data.Common.DbCommandBuilder.InitializeCommand(System.Data.Common.DbCommand)" /> method to create a <see cref="T:System.Data.Common.DbCommand" /> object based on the Select command associated with the <see cref="T:System.Data.Common.DbCommandBuilder" />.</para>
+        </returns>
         <param name="command">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DbCommand" /> to be used by the command builder for the corresponding insert, update, or delete command.</param>
       </Docs>
@@ -541,13 +574,16 @@
         <Parameter Name="unquotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given an unquoted identifier in the correct catalog case, returns the correct quoted form of that identifier, including properly escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quoted version of the identifier. Embedded quotes within the identifier are properly escaped.</para>
+        </returns>
         <param name="unquotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The original unquoted identifier.</param>
       </Docs>
@@ -755,13 +791,16 @@
         <Parameter Name="quotedIdentifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Given a quoted identifier, returns the correct unquoted form of that identifier, including properly un-escaping any embedded quotes in the identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unquoted identifier, with embedded quotes properly un-escaped.</para>
+        </returns>
         <param name="quotedIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier that will have its embedded quotes removed.</param>
       </Docs>

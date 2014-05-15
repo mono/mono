@@ -98,7 +98,6 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Objects that implement <see cref="T:System.ComponentModel.IComponent" /> are added to the design-time container if the <paramref name="addToContainer" /> parameter is true.</para>
@@ -107,6 +106,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified type and adds it to a collection of named instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object instance.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The data type to create. </param>
         <param name="arguments">
@@ -133,7 +136,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name of the object to retrieve must have been set through a prior call to <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" />.</para>
@@ -142,6 +144,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an instance of a created object of the specified name, or null if that object does not exist.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object with the given name, or null if no object by that name can be found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the object to retrieve. </param>
       </Docs>
@@ -162,12 +168,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the specified object, or null if the object has no name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object is unnamed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to retrieve the name for. </param>
       </Docs>
@@ -189,12 +198,15 @@
         <Parameter Name="serializerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a serializer of the requested type for the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested serializer, or null if no appropriate serializer can be located.</para>
+        </returns>
         <param name="objectType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to get the serializer for. </param>
         <param name="serializerType">
@@ -217,12 +229,15 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a type of the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the type, or null if the type cannot be loaded.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the type to load. </param>
       </Docs>

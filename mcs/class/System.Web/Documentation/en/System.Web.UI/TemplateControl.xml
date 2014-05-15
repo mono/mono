@@ -185,7 +185,6 @@
         <Parameter Name="fAsciiOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LiteralControl'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.CreateResourceBasedLiteralControl(System.Int32,System.Int32,System.Boolean)" /> method is used to access literal strings that are stored in a resource and is not intended for use from within your code.</para>
@@ -194,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Accesses literal strings stored in a resource. The <see cref="M:System.Web.UI.TemplateControl.CreateResourceBasedLiteralControl(System.Int32,System.Int32,System.Boolean)" /> method is not intended for use from within your code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.LiteralControl" /> representing a literal string in a resource.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The offset of the start of the string in the resource. </param>
         <param name="size">
@@ -238,7 +241,6 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of <paramref name="expression" /> must evaluate to a public property. </para>
@@ -248,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates a data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value to place in the bound control property.</param>
       </Docs>
@@ -266,7 +272,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of <paramref name="expression" /> must evaluate to a public property. </para>
@@ -276,6 +281,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates a data-binding expression using the specified format string to display the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The navigation path from the container to the public property value to place in the bound control property.</param>
         <param name="format">
@@ -323,7 +332,6 @@
         <Parameter Name="resourceKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Application-level resources are stored in the App_GlobalResources folder. For more information, see <format type="text/html"><a href="5a29f26b-d94d-48d9-864e-5ee8890dc265">Resources in ASP.NET Applications</a></format>. </para>
@@ -332,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an application-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the requested resource object; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" />.</param>
         <param name="resourceKey">
@@ -354,7 +366,6 @@
         <Parameter Name="propName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Application-level resources are stored in the App_GlobalResources folder. For more information, see <format type="text/html"><a href="5a29f26b-d94d-48d9-864e-5ee8890dc265">Resources in ASP.NET Applications</a></format>.</para>
@@ -363,6 +374,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an application-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties, object type, and property name of the resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the requested resource object; otherwise, null.</para>
+        </returns>
         <param name="className">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" />. </param>
         <param name="resourceKey">
@@ -386,7 +401,6 @@
         <Parameter Name="resourceKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Local resource files are stored in the App_LocalResources directory. For more information, see <format type="text/html"><a href="5a29f26b-d94d-48d9-864e-5ee8890dc265">Resources in ASP.NET Applications</a></format></para>
@@ -395,6 +409,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a page-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the requested resource object; otherwise, null.</para>
+        </returns>
         <param name="resourceKey">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" />.</param>
       </Docs>
@@ -414,7 +432,6 @@
         <Parameter Name="propName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Local resource files are stored in the App_LocalResources directory. For more information, see <format type="text/html"><a href="5a29f26b-d94d-48d9-864e-5ee8890dc265">Resources in ASP.NET Applications</a></format></para>
@@ -423,6 +440,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a page-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property, object type, and property name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the requested resource object; otherwise, null.</para>
+        </returns>
         <param name="resourceKey">
           <attribution license="cc4" from="Microsoft" modified="false" />A string representing a <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" />.</param>
         <param name="objType">
@@ -441,7 +462,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>Returns the <see cref="T:System.Web.UI.UserControl" /> object specified in <i>virtualPath</i></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the control supports caching, the object returned from the <see cref="M:System.Web.UI.TemplateControl.LoadControl(System.String)" /> method is not actually a <see cref="T:System.Web.UI.Control" /> object; rather, it is a <see cref="T:System.Web.UI.PartialCachingControl" /> object. If the <paramref name="virtualPath" /> parameter is relative, the path of the loaded control is relative to the path of the <see cref="T:System.Web.UI.TemplateControl" />.</para>
@@ -451,6 +471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.Web.UI.Control" /> object from a file based on a specified virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified <see cref="T:System.Web.UI.Control" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to a control file. </param>
       </Docs>
@@ -475,7 +499,6 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the user control supports caching, the object returned from the <see cref="M:System.Web.UI.TemplateControl.LoadControl(System.Type,System.Object[])" /> method is not actually a <see cref="T:System.Web.UI.UserControl" /> object; rather, it is a <see cref="T:System.Web.UI.PartialCachingControl" /> object. </para>
@@ -485,6 +508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.Web.UI.Control" /> object based on a specified type and constructor parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the specified <see cref="T:System.Web.UI.UserControl" />.</para>
+        </returns>
         <param name="parameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments that match in number, order, and type the parameters of the constructor to invoke. If <paramref name="parameters" /> is an empty array or null, the constructor that takes no parameters (the default constructor) is invoked.</param>
       </Docs>
@@ -499,12 +526,15 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ITemplate'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains an instance of the <see cref="T:System.Web.UI.ITemplate" /> interface from an external file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the specified template.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to a user control file. </param>
       </Docs>
@@ -595,7 +625,6 @@
         <Parameter Name="content" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Control'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="content" /> parameter contains a user control, such as you would find in an .ascx file. This string cannot contain any code, because the <see cref="M:System.Web.UI.TemplateControl.ParseControl(System.String)" /> method never causes compilation.</para>
@@ -604,6 +633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses an input string into a <see cref="T:System.Web.UI.Control" /> object on the Web Forms page or user control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parsed <see cref="T:System.Web.UI.Control" />.</para>
+        </returns>
         <param name="content">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a user control. </param>
       </Docs>
@@ -626,7 +659,6 @@
         <Parameter Name="ignoreParserFilter" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="content" /> parameter contains a user control (the contents of an .ascx file). This string cannot contain any code, because the <see cref="M:System.Web.UI.TemplateControl.ParseControl(System.String)" /> method never causes compilation.</para>
@@ -636,6 +668,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses an input string into a <see cref="T:System.Web.UI.Control" /> object on the ASP.NET Web page or user control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parsed control.</para>
+        </returns>
         <param name="content">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a user control.</param>
         <param name="ignoreParserFilter">
@@ -659,7 +695,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.ReadStringResource" /> method is not intended for use from within your code.</para>
@@ -668,6 +703,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a string resource. The <see cref="M:System.Web.UI.TemplateControl.ReadStringResource" /> method is not intended for use from within your code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the resource.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadStringResource">
@@ -680,7 +719,6 @@
         <Parameter Name="t" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.ReadStringResource(System.Type)" /> method is not intended for use from within your code.</para>
@@ -689,6 +727,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a string resource. The <see cref="M:System.Web.UI.TemplateControl.ReadStringResource(System.Type)" /> method is not intended for use from within your code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the resource.</para>
+        </returns>
         <param name="t">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the resource to read.</param>
       </Docs>
@@ -774,7 +816,6 @@
         <Parameter Name="filter2" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.System.Web.UI.IFilterResolutionService.CompareFilters(System.String,System.String)" /> method is part of the <see cref="T:System.Web.UI.IFilterResolutionService" /> interface, which is specific to how a control uses device filters in a designer environment. When controls are parsed or persisted in the designer environment outside the context of a browser request, the <see cref="T:System.Web.UI.IFilterResolutionService" /> provides a way to determine if the current control is affected by a named filter and whether a named filter is part of a specific device-filter hierarchy.</para>
@@ -783,6 +824,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a parent/child relationship exists between two specified device filters. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>1, if <paramref name="filter1" /> is a parent of <paramref name="filter2" />; -1, if <paramref name="filter2" /> is a parent of <paramref name="filter1" />; otherwise, 0, if there is no parent/child relationship between <paramref name="filter1" /> and <paramref name="filter2" />.</para>
+        </returns>
         <param name="filter1">
           <attribution license="cc4" from="Microsoft" modified="false" />A device filter name. </param>
         <param name="filter2">
@@ -802,7 +847,6 @@
         <Parameter Name="filterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.System.Web.UI.IFilterResolutionService.EvaluateFilter(System.String)" /> method is part of the <see cref="T:System.Web.UI.IFilterResolutionService" /> interface, which is specific to how a control uses device filters in a designer environment. When controls are parsed or persisted in the designer environment outside the context of a browser request, the <see cref="T:System.Web.UI.IFilterResolutionService" /> provides a way to determine if the current control is affected by a named filter and whether a named filter is part of a specific device-filter hierarchy. </para>
@@ -811,6 +855,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified filter is a type of the current filter object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified filter is a type applicable to the current filter object; otherwise, false.</para>
+        </returns>
         <param name="filterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a device filter.</param>
       </Docs>
@@ -866,7 +914,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPath(System.String)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -875,6 +922,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="XPath">
@@ -892,7 +943,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPath(System.String,System.String)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String,System.String)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -901,6 +951,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified format string to display the result. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string to apply to the result. </param>
       </Docs>
@@ -920,7 +974,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPath(System.String,System.Xml.IXmlNamespaceResolver)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String,System.Xml.IXmlNamespaceResolver)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -929,6 +982,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression. </para>
+        </returns>
         <param name="resolver">
           <attribution license="cc4" from="Microsoft" modified="false" />A set of prefix and namespace mappings used for namespace resolution.</param>
       </Docs>
@@ -949,7 +1006,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPath(System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Eval(System.Object,System.String,System.String,System.Xml.IXmlNamespaceResolver)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -958,6 +1014,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution and the specified format string to display the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that results from the evaluation of the data-binding expression and conversion to a string type.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A .NET Framework format string to apply to the result. </param>
         <param name="resolver">
@@ -978,7 +1038,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPathSelect(System.String)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -987,6 +1046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> node list. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="XPathSelect">
@@ -1004,7 +1067,6 @@
       </Parameters>
       <Docs>
         <param name="xpathexpression">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.TemplateControl.XPathSelect(System.String,System.Xml.IXmlNamespaceResolver)" /> method calls the <see cref="M:System.Web.UI.XPathBinder.Select(System.Object,System.String,System.Xml.IXmlNamespaceResolver)" /> method using the <see cref="M:System.Web.UI.Page.GetDataItem" /> method to resolve the <see cref="T:System.Xml.XPath.IXPathNavigable" /> object reference that the expression is evaluated against.</para>
@@ -1013,6 +1075,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath data-binding expression using the specified prefix and namespace mappings for namespace resolution and returns a node collection that implements the <see cref="T:System.Collections.IEnumerable" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> node list. </para>
+        </returns>
         <param name="resolver">
           <attribution license="cc4" from="Microsoft" modified="false" />A set of prefix and namespace mappings used for namespace resolution. </param>
       </Docs>

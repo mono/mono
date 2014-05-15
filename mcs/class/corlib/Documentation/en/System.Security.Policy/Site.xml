@@ -75,12 +75,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an equivalent copy of the <see cref="T:System.Security.Policy.Site" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is identical to the current <see cref="T:System.Security.Policy.Site" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFromUrl">
@@ -99,12 +102,15 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Site'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Security.Policy.Site" /> object from the specified URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new site object.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL from which to create the new <see cref="T:System.Security.Policy.Site" /> object. </param>
       </Docs>
@@ -125,12 +131,15 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.IPermission'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an identity permission that corresponds to the current <see cref="T:System.Security.Policy.Site" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A site identity permission for the current <see cref="T:System.Security.Policy.Site" /> object.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence from which to construct the identity permission. </param>
       </Docs>
@@ -151,7 +160,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -161,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Security.Policy.Site" /> to the specified object for equivalence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two instances of the <see cref="T:System.Security.Policy.Site" /> class are equal; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test for equivalence with the current object. </param>
       </Docs>
@@ -179,12 +191,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code of the current website name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current website name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -294,12 +309,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current <see cref="T:System.Security.Policy.Site" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current site.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

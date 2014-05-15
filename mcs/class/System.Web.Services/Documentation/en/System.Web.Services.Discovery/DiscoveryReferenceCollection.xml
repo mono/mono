@@ -49,12 +49,15 @@
         <Parameter Name="value" Type="System.Web.Services.Discovery.DiscoveryReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> to the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position where the <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> was inserted in the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> to add to the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" />. </param>
       </Docs>
@@ -73,12 +76,15 @@
         <Parameter Name="value" Type="System.Web.Services.Discovery.DiscoveryReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" /> contains a specific <see cref="T:System.Web.Services.Discovery.DiscoveryReference" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" /> contains the <see cref="T:System.Web.Services.Discovery.DiscoveryReference" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> to locate within the <see cref="T:System.Web.Services.Discovery.DiscoveryReferenceCollection" />. </param>
       </Docs>

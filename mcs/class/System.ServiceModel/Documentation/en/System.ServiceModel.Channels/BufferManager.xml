@@ -74,7 +74,6 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a new buffer pool with as many buffers as can be created.</para>
@@ -83,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new BufferManager with a specified maximum buffer pool size and a maximum size for each individual buffer in the pool.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.ServiceModel.Channels.BufferManager" /> object with the specified parameters.</para>
+        </returns>
         <param name="maxBufferPoolSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the pool.</param>
         <param name="maxBufferSize">
@@ -129,7 +132,6 @@
         <Parameter Name="bufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If successful, the system returns a byte array buffer of at least the requested size.</para>
@@ -138,6 +140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a buffer of at least the specified size from the pool. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that is the requested size of the buffer.</para>
+        </returns>
         <param name="bufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The size, in bytes, of the requested buffer.</param>
       </Docs>

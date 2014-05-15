@@ -315,7 +315,6 @@
       <Docs>
         <param name="fault">To be added.</param>
         <param name="details">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="faultDetailTypes" /> parameter contains candidate detail types. If any of the <paramref name="faultDetailTypes" /> has a schema that matches the <paramref name="messageFault" /> parameter, a <see cref="T:System.ServiceModel.FaultException`1" /> is returned where the type parameter is the matching candidate type.</para>
@@ -324,6 +323,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Channels.FaultException" /> object from the specified message fault and an array of detail types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultException" /> object that you can throw to indicate that a SOAP fault message was received.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFault">
@@ -348,7 +351,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="faultDetailTypes" /> parameter contains candidate detail types. If any of the <paramref name="faultDetailTypes" /> has a schema that matches the <paramref name="messageFault" /> parameter, a <see cref="T:System.ServiceModel.FaultException`1" /> is returned where the type parameter is the matching candidate type.</para>
@@ -357,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Channels.FaultException" /> object from the specified message fault, action and an array of detail types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.FaultException" /> object that you can throw to indicate that a SOAP fault message was received.</para>
+        </returns>
         <param name="messageFault">
           <attribution license="cc4" from="Microsoft" modified="false" />The message fault that contains default SOAP fault information.</param>
         <param name="action">
@@ -377,12 +383,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Channels.MessageFault" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The in-memory representation of a SOAP fault that can be passed to <see cref="Overload:System.ServiceModel.Channels.Message.CreateMessage" /> to create a message that contains a fault. For <see cref="T:System.ServiceModel.FaultException" /> objects that result from fault messages, this <see cref="T:System.ServiceModel.Channels.MessageFault" /> object is the fault that arrives.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">

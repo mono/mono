@@ -57,7 +57,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a Boolean.</para>
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a Boolean.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the Boolean is true; otherwise false.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -84,7 +87,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a byte.</para>
@@ -93,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a byte.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -115,7 +121,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a byte array.</para>
@@ -124,6 +129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal.</param>
         <param name="dataIndex">
@@ -150,7 +159,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a character.</para>
@@ -159,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -181,7 +193,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a character array.</para>
@@ -190,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />Column ordinal. </param>
         <param name="dataIndex">
@@ -216,12 +231,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.IDataReader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not currently supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not currently supported.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />Not currently supported.</param>
       </Docs>
@@ -240,12 +258,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the back-end data type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the back-end data type.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -264,7 +285,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a <see cref="T:System.DateTime" /> object.</para>
@@ -273,6 +293,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a <see cref="T:System.DateTime" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -291,7 +315,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a <see cref="T:System.Decimal" /> object.</para>
@@ -300,6 +323,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a <see cref="T:System.Decimal" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -318,7 +345,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a double-precision floating-point number.</para>
@@ -327,6 +353,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -345,12 +375,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Type" /> that is the data type of the object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> that is the data type of the object.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -369,7 +402,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a single-precision floating-point number.</para>
@@ -378,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -396,12 +432,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Guid'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the GUID value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GUID value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to return. </param>
       </Docs>
@@ -420,7 +459,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a 16-bit signed integer.</para>
@@ -429,6 +467,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a 16-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -447,7 +489,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a 32-bit signed integer.</para>
@@ -456,6 +497,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -474,7 +519,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a 64-bit signed integer.</para>
@@ -483,6 +527,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -501,12 +549,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the specified column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -525,12 +576,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the column ordinal, given the name of the column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column ordinal.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the column. </param>
       </Docs>
@@ -549,7 +603,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed; therefore the data retrieved must already be a string.</para>
@@ -558,6 +611,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified column as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -576,12 +633,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value at the specified column in its native format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value to return.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -600,7 +660,6 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Using this method may be more efficient for most applications then retrieving each field individually.</para>
@@ -609,6 +668,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Populates an array of objects with the column values of the current record.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> to copy the attribute fields into. </param>
       </Docs>
@@ -627,7 +690,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method to check for null column values before calling the typed get methods (for example, <see cref="M:System.Data.SqlClient.SqlDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.SqlClient.SqlDataReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
@@ -636,6 +698,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used to indicate nonexistent values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified column is equivalent to <see cref="T:System.DBNull" />; otherwise false.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The column ordinal. </param>
       </Docs>
@@ -696,7 +762,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetAttributes" />.</para>
@@ -705,6 +770,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of custom attributes for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> that contains the attributes for this object. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -719,7 +788,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetClassName" />.</para>
@@ -728,6 +796,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the class name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of the object, or null if the class does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -742,7 +814,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetComponentName" />.</para>
@@ -751,6 +822,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -765,7 +840,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetConverter" />.</para>
@@ -774,6 +848,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> that is the converter for this object, or null if there is no <see cref="T:System.ComponentModel.TypeConverter" /> for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -788,7 +866,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent" />.</para>
@@ -797,6 +874,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that represents the default event for this object, or null if this object does not have events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -811,7 +892,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty" />.</para>
@@ -820,6 +900,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the default property for this object, or null if this object does not have properties.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -836,7 +920,6 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.CustomTypeDescriptor.GetEditor(System.Type)" />.</para>
@@ -845,6 +928,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor of the specified type for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
         <param name="editorBaseType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object.</param>
       </Docs>
@@ -861,7 +948,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents" />.</para>
@@ -870,6 +956,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the events for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -886,7 +976,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetEvents.(System.Attribute[])" />.</para>
@@ -895,6 +984,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component using the specified attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> that represents the filtered events for this component instance.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -911,7 +1004,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties" />.</para>
@@ -920,6 +1012,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the properties for this component instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -936,7 +1032,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.GetProperties.(System.Attribute[])" />.</para>
@@ -945,6 +1040,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component using the attribute array as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that represents the filtered properties for this component instance.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that is used as a filter.</param>
       </Docs>
@@ -963,7 +1062,6 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <see cref="M:System.ComponentModel.ICustomTypeDescriptor.PropertyDescriptor" />.</para>
@@ -972,6 +1070,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that contains the property described by the specified property descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
         <param name="pd">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found.</param>
       </Docs>

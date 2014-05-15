@@ -140,7 +140,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.Add(System.IntPtr,System.Int32)" /> method does not throw an exception if the result is too large to represent as a pointer on the specified platform. Instead, the addition operation is performed in an unchecked context.</para>
@@ -150,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an offset to the value of an unsigned pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new unsigned pointer that reflects the addition of <paramref name="offset" /> to <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned pointer to add the offset to.</param>
         <param name="offset">
@@ -173,24 +176,21 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is a <see cref="T:System.UIntPtr" /> instance and has the same value as the 
- current instance. If <paramref name="obj" /> is a null reference or is not an instance of
-<see cref="T:System.UIntPtr" /> , 
- returns <see langword="false" />.</para>
-          <see langword="" />
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">The method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</block>
           </para>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of <see cref="T:System.UIntPtr" /> and equals the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance or null. </param>
       </Docs>
@@ -211,10 +211,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">The algorithm used to generate the
@@ -228,6 +224,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -246,7 +246,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UIntPtr.op_Addition(System.UIntPtr,System.Int32)" /> method defines the addition operation for <see cref="T:System.UIntPtr" /> objects. It enables code such as the following.</para>
@@ -258,6 +257,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an offset to the value of an unsigned pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new unsigned pointer that reflects the addition of <paramref name="offset" /> to <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned pointer to add the offset to.</param>
         <param name="offset">
@@ -282,18 +285,18 @@ containing the hash code for the current instance.</para>
         <Parameter Name="value2" Type="System.UIntPtr" />
       </Parameters>
       <Docs>
-        <param name="value2">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value1" /> represents the same value as 
-<paramref name="value2" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.UIntPtr.Equals(System.Object)" />
+        <param name="value2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second pointer or handle to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.UIntPtr" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value1" /> equals <paramref name="value2" />; otherwise, false.</para>
+        </returns>
         <param name="value1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first pointer or handle to compare. </param>
         <param name="value2">
@@ -461,18 +464,18 @@ containing the hash code for the current instance.</para>
         <Parameter Name="value2" Type="System.UIntPtr" />
       </Parameters>
       <Docs>
-        <param name="value2">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value1" /> represents a different value than 
-<paramref name="value2" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.UIntPtr.Equals(System.Object)" />
+        <param name="value2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second pointer or handle to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.UIntPtr" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value1" /> does not equal <paramref name="value2" />; otherwise, false.</para>
+        </returns>
         <param name="value1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first pointer or handle to compare. </param>
         <param name="value2">
@@ -495,7 +498,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UIntPtr.op_Subtraction(System.UIntPtr,System.Int32)" /> method defines the subtraction operation for <see cref="T:System.UIntPtr" /> objects. It enables code such as the following.</para>
@@ -507,6 +509,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts an offset from the value of an unsigned pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new unsigned pointer that reflects the subtraction of <paramref name="offset" /> from <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned pointer to subtract the offset from.</param>
         <param name="offset">
@@ -562,7 +568,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IntPtr.Subtract(System.IntPtr,System.Int32)" /> method does not throw an exception if the result is too small to represent as a pointer on the specified platform. Instead, the subtraction operation is performed in an unchecked context.</para>
@@ -572,6 +577,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts an offset from the value of an unsigned pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new unsigned pointer that reflects the subtraction of <paramref name="offset" /> from <paramref name="pointer" />.</para>
+        </returns>
         <param name="pointer">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned pointer to subtract the offset from.</param>
         <param name="offset">
@@ -629,9 +638,6 @@ containing the hash code for the current instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A pointer to <see langword="void" />. </para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note">A pointer to <see langword="void" />
@@ -644,6 +650,10 @@ points to memory containing data of an unspecified type.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a pointer to an unspecified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to <see cref="T:System.Void" />; that is, a pointer to memory containing data of an unspecified type.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -662,10 +672,6 @@ points to memory containing data of an unspecified type.</block>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" />
-representation of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <see cref="P:System.IntPtr.Size" /> property for this instance is 4, then this method is equivalent to <see cref="M:System.UInt32.ToString" />; otherwise, this method is equivalent to <see cref="M:System.UInt64.ToString" />.</para>
@@ -674,6 +680,10 @@ representation of the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -692,10 +702,6 @@ representation of the current instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt32" /> containing the
- same value as the current instance.</para>
-        </returns>
         <exception cref="T:System.OverflowException">The current platform is not a 32-bit platform and the value of the current instance is greater than <see cref="F:System.UInt32.MaxValue" /> .</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -705,6 +711,10 @@ representation of the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a 32-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer equal to the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -723,15 +733,15 @@ representation of the current instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt64" /> containing the 
-   same value as the current instance.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to a 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit unsigned integer equal to the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

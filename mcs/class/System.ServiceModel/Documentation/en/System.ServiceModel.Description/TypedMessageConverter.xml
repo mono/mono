@@ -53,12 +53,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
       </Docs>
@@ -80,12 +83,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
         <param name="formatterAttribute">
@@ -109,12 +115,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
         <param name="formatterAttribute">
@@ -138,12 +147,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
         <param name="defaultNamespace">
@@ -168,12 +180,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
         <param name="defaultNamespace">
@@ -200,12 +215,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents a static method that returns a <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.TypedMessageConverter" /> instance.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />An action string.</param>
         <param name="defaultNamespace">
@@ -228,7 +246,6 @@
         <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method takes an untyped indigo1 message, that is, an instance of <see cref="T:System.ServiceModel.Channels.Message" />, and converts it into a typed message, that is, an instance of a type that is annotated by the <see cref="T:System.ServiceModel.MessageContractAttribute" />.</para>
@@ -237,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a typed message from the specified <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is a typed message.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />An untyped message.</param>
       </Docs>
@@ -255,12 +276,15 @@
         <Parameter Name="typedMessage" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Channels.Message" /> instance from the specified typed message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+        </returns>
         <param name="typedMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />A typed message.</param>
       </Docs>
@@ -280,12 +304,15 @@
         <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Channels.Message" /> instance from the specified typed message using the specified version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
+        </returns>
         <param name="typedMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />A typed message.</param>
         <param name="version">

@@ -86,7 +86,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -97,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly based on the <see cref="N:System.CodeDom" /> trees contained in the specified array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of the compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for the compilation.</param>
         <param name="compilationUnits">
@@ -125,7 +128,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -136,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the source code contained in the specified files, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for the compilation. </param>
         <param name="fileNames">
@@ -164,7 +170,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -175,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the specified array of strings containing source code, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler settings for this compilation. </param>
         <param name="sources">
@@ -200,7 +209,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ICodeCompiler'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is obsolete in the dnprdnext. The recommended alternative is to call the <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> methods that are directly available in the code provider.</para>
@@ -209,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new code compiler. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> that can be used for compilation of <see cref="N:System.CodeDom" /> based source code representations. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateEscapedIdentifier">
@@ -226,7 +238,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -239,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an escaped identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string for which to create an escaped identifier.</param>
       </Docs>
@@ -262,7 +277,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is obsolete in the dnprdnext. The recommended alternative is to call the <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> methods that are directly available in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> class.</para>
@@ -271,6 +285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new code generator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateGenerator">
@@ -289,7 +307,6 @@
         <Parameter Name="output" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the specified <see cref="T:System.IO.TextWriter" /> for output. This method supports more optimized code generation that incrementally updates the source code.</para>
@@ -301,6 +318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new code generator using the specified <see cref="T:System.IO.TextWriter" /> for output.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
         <param name="output">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextWriter" /> to use to output. </param>
       </Docs>
@@ -321,7 +342,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ICodeGenerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the specified file name for output.</para>
@@ -333,6 +353,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new code generator using the specified file name for output.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> that can be used to generate <see cref="N:System.CodeDom" /> based source code representations.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The file name to output to. </param>
       </Docs>
@@ -356,12 +380,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ICodeParser'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a new code parser.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.CodeDom.Compiler.ICodeParser" /> that can be used to parse source code. The base implementation always returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateProvider">
@@ -384,7 +411,6 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -402,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the specified language.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider that is implemented for the specified language name.</para>
+        </returns>
         <param name="language">
           <attribution license="cc4" from="Microsoft" modified="false" />The language name. </param>
       </Docs>
@@ -426,11 +456,26 @@
         <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="language">To be added.</param>
-        <param name="providerOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>This method is most commonly used to create an instance of a code provider in an application that may optionally use one of several providers. <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> enables you to specify at run time the version of the code provider you want to instantiate. If you know at design time which code provider is to be used, you should create an instance of that code provider instead of using the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> method. </para>
+          </block>
+          <para>Use <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String,System.Collections.Generic.IDictionary{System.String,System.String})" /> when you want to dynamically find a configured provider implementation for a specific language and options. Language names are case-insensitive. For information about supported provider options, see the specific CodeDOM provider documentation.</para>
+          <para>For information about validating a provider and calling a provider if more than one provider implementation is configured for the language name, see the Remarks section of the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.CreateProvider(System.String)" /> method.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the specified language and provider options.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider that is implemented for the specified language name and options.</para>
+        </returns>
+        <param name="language">
+          <attribution license="cc4" from="Microsoft" modified="false" />The language name.</param>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of provider options from the configuration file.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateValidIdentifier">
@@ -448,7 +493,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -461,6 +505,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a valid identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string for which to generate a valid identifier.</param>
       </Docs>
@@ -715,7 +763,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> method to enumerate the language provider settings on a computer. </para>
@@ -727,6 +774,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the language provider and compiler configuration settings for this computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> representing the settings of all configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementations.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCompilerInfo">
@@ -749,7 +800,6 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. For information about machine configuration files, see the Machine Configuration Files section in <format type="text/html"><a href="86bd26d3-737e-4484-9782-19b17f34cd1f">Configuration Files</a></format>. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method searches each provider configuration element for the specified language name. The returned <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance contains the configured language provider and compiler settings.</para>
@@ -761,6 +811,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the language provider and compiler configuration settings for the specified language.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> object populated with settings of the configured <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation.</para>
+        </returns>
         <param name="language">
           <attribution license="cc4" from="Microsoft" modified="false" />A language name. </param>
       </Docs>
@@ -781,7 +835,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.TypeConverter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A derived class can override this method to provide specific types of type converters for specific data types.</para>
@@ -790,6 +843,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.ComponentModel.TypeConverter" /> for the specified data type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type, or null if a <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type cannot be found.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to retrieve a type converter for. </param>
       </Docs>
@@ -814,7 +871,6 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetLanguageFromExtension(System.String)" /> method searches each provider configuration element for the specified file name extension.</para>
@@ -826,6 +882,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a language name associated with the specified file name extension, as configured in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> compiler configuration section.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A language name associated with the file name extension, as configured in the <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> compiler configuration settings.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />A file name extension. </param>
       </Docs>
@@ -845,7 +905,6 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -856,6 +915,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of the specified type, formatted for the language in which code is generated by this code generator. In Visual Basic, for example, passing in a <see cref="T:System.CodeDom.CodeTypeReference" /> for the <see cref="T:System.Int32" /> type will return "Integer".</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the type to return.</param>
       </Docs>
@@ -880,7 +943,6 @@
         <Parameter Name="extension" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedExtension(System.String)" /> method searches the provider configuration elements for the specified file name extension.</para>
@@ -890,6 +952,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a file name extension has an associated <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation configured on the computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation is configured for the specified file name extension; otherwise, false.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />A file name extension. </param>
       </Docs>
@@ -914,7 +980,6 @@
         <Parameter Name="language" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <format type="text/html"><a href="672a68f7-e69f-4479-ac30-e980085ec4fe">&lt;system.codedom&gt;</a></format> in the machine configuration file (Machine.config) contains the language provider and compiler configuration settings for each <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation on the computer. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsDefinedLanguage(System.String)" /> method searches the provider configuration elements for the specified language name.</para>
@@ -924,6 +989,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a language has a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation configured on the computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation is configured for the specified language; otherwise, false.</para>
+        </returns>
         <param name="language">
           <attribution license="cc4" from="Microsoft" modified="false" />The language name. </param>
       </Docs>
@@ -943,7 +1012,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method tests whether an identifier is valid. The <see cref="M:System.CodeDom.Compiler.CodeDomProvider.IsValidIdentifier(System.String)" /> method is provider specific. Identifiers that are valid for one provider might not be valid for other providers. If <paramref name="value" /> contains characters outside of the ASCII character range, check the identifier for all the languages that might be used to compile the code.</para>
@@ -955,6 +1023,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified value is a valid identifier for the current language.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to verify as a valid identifier.</param>
       </Docs>
@@ -995,7 +1067,6 @@
         <Parameter Name="codeStream" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1006,6 +1077,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the code read from the specified text stream into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> that contains a representation of the parsed code.</para>
+        </returns>
         <param name="codeStream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> object that is used to read the code to be parsed. </param>
       </Docs>
@@ -1026,7 +1101,6 @@
       </Parameters>
       <Docs>
         <param name="supports">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be called with a number of <see cref="T:System.CodeDom.Compiler.GeneratorSupport" /> flags at once to test for a set of capabilities by joining a set of appropriate capability flags together with a binary OR operator (|).</para>
@@ -1038,6 +1112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified code generation support is provided.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified code generation support is provided; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

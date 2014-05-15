@@ -30,7 +30,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implement this to return an array of parameters for the operation. This array is filled by the formatter and passed back to the invoker when <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> is called.</para>
@@ -39,6 +38,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Array" /> of parameter objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters that are to be used as arguments to the operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -82,12 +85,15 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An asynchronous implementation of the <see cref="M:System.ServiceModel.Dispatcher.IOperationInvoker.Invoke(System.Object,System.Object[],System.Object[]@)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IAsyncResult" /> used to complete the asynchronous call.</para>
+        </returns>
         <param name="instance">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be invoked.</param>
         <param name="inputs">

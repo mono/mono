@@ -119,7 +119,6 @@ private bool PromptUser(string text)
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -130,6 +129,10 @@ private bool PromptUser(string text)
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the state for this implementation of the <see cref="T:System.Security.SecurityState" /> class is available on the current host. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the state is available; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

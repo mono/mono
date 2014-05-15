@@ -34,12 +34,24 @@
         <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validationResults">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. It also checks whether each property that is marked with <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> is provided. It does not recursively validate the property values of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context and validation results collection.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation.</param>
       </Docs>
     </Member>
     <Member MemberName="TryValidateObject">
@@ -59,13 +71,26 @@
         <Parameter Name="validateAllProperties" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validationResults">To be added.</param>
-        <param name="validateAllProperties">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. It also checks whether each property that is marked with <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> is provided. It does not recursively validate the property values of the object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context, validation results collection, and a value that specifies whether to validate all properties.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation.</param>
+        <param name="validateAllProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to validate all properties; if false, only required attributes are validated..</param>
       </Docs>
     </Member>
     <Member MemberName="TryValidateProperty">
@@ -84,12 +109,24 @@
         <Parameter Name="validationResults" Type="System.Collections.Generic.ICollection&lt;System.ComponentModel.DataAnnotations.ValidationResult&gt;" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validationResults">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each <see cref="P:System.ComponentModel.DataAnnotations.ValidationException.ValidationAttribute" /> instance that is associated with the property that is identified by the <paramref name="validationContext" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the property.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property validates; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the property to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold each failed validation. </param>
       </Docs>
     </Member>
     <Member MemberName="TryValidateValue">
@@ -109,13 +146,26 @@
         <Parameter Name="validationAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt;" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validationResults">To be added.</param>
-        <param name="validationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each validation attribute in the <paramref name="validationAttributes" /> parameter against the <paramref name="value" /> parameter. If the <paramref name="validationResults" /> parameter is not null, this method adds a <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> object for each validation failure to the validation results collection. If the <paramref name="validationResults" /> parameter is null, this method does not add a <see cref="T:System.ComponentModel.DataAnnotations.ValidationResult" /> object to the collection. If a <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is included in the <paramref name="validationAttributes" /> parameter, the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is evaluated first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified value is valid with the specified attributes.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object validates; otherwise, false.</para>
+        </returns>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationResults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection to hold failed validations. </param>
+        <param name="validationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateObject">
@@ -224,11 +274,20 @@
         <Parameter Name="validationAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.DataAnnotations.ValidationAttribute&gt;" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validationAttributes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each validation attribute in the <paramref name="validationAttributes" /> parameter against the <paramref name="value" /> parameter.  If a <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is included, the <see cref="T:System.ComponentModel.DataAnnotations.RequiredAttribute" /> attribute is evaluated first.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the specified attributes.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validationAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The validation attributes.</param>
       </Docs>
     </Member>
   </Members>

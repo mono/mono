@@ -78,7 +78,6 @@
         <Parameter Name="dialog" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method displays the specified form.</para>
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shows the specified <see cref="T:System.Windows.Forms.Form" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.DialogResult" /> indicating the result code returned by the <see cref="T:System.Windows.Forms.Form" />.</para>
+        </returns>
         <param name="dialog">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Form" /> to display. </param>
       </Docs>

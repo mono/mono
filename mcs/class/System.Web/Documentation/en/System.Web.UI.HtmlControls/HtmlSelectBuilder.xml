@@ -51,7 +51,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides the <see cref="M:System.Web.UI.ControlBuilder.AllowWhitespaceLiterals" /> method to always ignore white space in the <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control.</para>
@@ -60,6 +59,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the white space literals in an <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control are to be processed or ignored.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method always returns false, indicating that white space in the <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control is ignored.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,7 +79,6 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.HtmlControls.HtmlSelectBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method to return the <see cref="T:System.Type" /> of a specified child control in an <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control.</para>
@@ -85,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the <see cref="T:System.Type" /> for the <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control's child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the <see cref="T:System.Web.UI.HtmlControls.HtmlSelect" /> control's specified child control.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the child control. </param>
         <param name="attribs">

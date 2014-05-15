@@ -25,12 +25,15 @@
         <Parameter Name="active" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Activates a specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control is successfully activated; otherwise, false.</para>
+        </returns>
         <param name="active">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> being activated. </param>
       </Docs>

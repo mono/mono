@@ -52,12 +52,15 @@
         <Parameter Name="baseAddresses" Type="System.Uri[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a <see cref="T:System.ServiceModel.ServiceHostBase" /> with a specific base address using custom initiation data. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.ServiceHostBase" /> object with the specified base addresses and initialized with the custom initiation data.</para>
+        </returns>
         <param name="constructorString">
           <attribution license="cc4" from="Microsoft" modified="false" />The initialization data that is passed to the <see cref="T:System.ServiceModel.ServiceHostBase" /> instance being constructed by the factory. </param>
         <param name="baseAddresses">

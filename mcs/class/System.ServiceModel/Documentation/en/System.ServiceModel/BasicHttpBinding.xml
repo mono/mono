@@ -96,7 +96,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of the binding elements is important. It reflects the order in which the protocol and transport channels are constructed and stacked. This collection of binding elements is a new collection and can be modified and then used to create a <see cref="T:System.ServiceModel.Channels.CustomBinding" />.</para>
@@ -105,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an ordered collection of binding elements contained in the current binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> that contains the ordered stack of binding elements described by the <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MessageEncoding">

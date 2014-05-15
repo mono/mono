@@ -310,7 +310,6 @@
       <Docs>
         <param name="uri1">To be added.</param>
         <param name="uri2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property should be overridden in a derived class in order to be used.</para>
@@ -319,6 +318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the base Uniform Resource Identifiers (URIs) of two documents based upon the order the documents were loaded by the XSLT processor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns 0.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PreserveWhitespace">
@@ -335,7 +338,6 @@
         <Parameter Name="node" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property should be overridden in a derived class in order to be used.</para>
@@ -344,6 +346,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates whether to preserve white space nodes or strip them for the given context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns false.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The white space node that is to be preserved or stripped in the current context.</param>
       </Docs>
@@ -364,7 +370,6 @@
         <Parameter Name="argTypes" Type="System.Xml.XPath.XPathResultType[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> is used at execution time to evaluate the function.</para>
@@ -373,6 +378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a function reference and returns an <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> that represents the function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="ms-help://MS.MSSDK.1033/MS.WinFXSDK.1033/cpref37/html/T_System_Xml_Xsl_IXsltContextFunction.htm">T:System.Xml.Xsl.IXsltContextFunction</see> that represents the function.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the function as it appears in the XPath expression.</param>
         <param name="name">
@@ -396,7 +405,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> is used at execution time to get the value of the variable.</para>
@@ -405,6 +413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a variable reference and returns an <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Xsl.IXsltContextVariable" /> that represents the variable at runtime.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the variable as it appears in the XPath expression.</param>
         <param name="name">

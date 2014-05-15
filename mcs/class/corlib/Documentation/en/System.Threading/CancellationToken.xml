@@ -86,12 +86,15 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.Threading.CancellationToken" /> instance is equal to the specified <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if <paramref name="other" /> is a <see cref="T:System.Threading.CancellationToken" /> and if the two instances are equal; otherwise, false. Two tokens are equal if they are associated with the same <see cref="T:System.Threading.CancellationTokenSource" /> or if they were both constructed from public CancellationToken constructors and their <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> values are equal.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The other object to which to compare this instance.</param>
       </Docs>
@@ -110,12 +113,15 @@
         <Parameter Name="other" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.Threading.CancellationToken" /> instance is equal to the specified token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are equal; otherwise, false. Two tokens are equal if they are associated with the same <see cref="T:System.Threading.CancellationTokenSource" /> or if they were both constructed from public CancellationToken constructors and their <see cref="P:System.Threading.CancellationToken.IsCancellationRequested" /> values are equal.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The other <see cref="T:System.Threading.CancellationToken" /> to which to compare this instance.</param>
       </Docs>
@@ -132,12 +138,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for a <see cref="T:System.Threading.CancellationToken" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Threading.CancellationToken" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsCancellationRequested">
@@ -202,12 +211,15 @@
         <Parameter Name="right" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two <see cref="T:System.Threading.CancellationToken" /> instances are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first instance.</param>
         <param name="right">
@@ -229,12 +241,15 @@
         <Parameter Name="right" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two <see cref="T:System.Threading.CancellationToken" /> instances are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>True if the instances are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first instance.</param>
         <param name="right">
@@ -255,7 +270,6 @@
         <Parameter Name="callback" Type="System.Action" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propagated out of this method call.</para>
@@ -266,6 +280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
       </Docs>
@@ -285,7 +303,6 @@
         <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
@@ -296,6 +313,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
         <param name="useSynchronizationContext">
@@ -317,11 +338,24 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to pass to the <paramref name="callback" /> when the delegate is invoked. This may be null.</param>
       </Docs>
     </Member>
     <Member MemberName="Register">
@@ -340,12 +374,26 @@
         <Parameter Name="useSynchronizationContext" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <param name="useSynchronizationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para> If this token is already in the canceled state, the delegate will be run immediately and synchronously. Any exception the delegate generates will be propogated out of this method call.</para>
+          <para>  The current <see cref="T:System.Threading.ExecutionContext" />, if one exists, will be captured along with the delegate and will be used when executing it.</para>
+          <para> </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a delegate that will be called when this <see cref="T:System.Threading.CancellationToken" /> is canceled.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.CancellationTokenRegistration" /> instance that can be used to deregister the callback.</para>
+        </returns>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be executed when the <see cref="T:System.Threading.CancellationToken" /> is canceled.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state to pass to the <paramref name="callback" /> when the delegate is invoked. This may be null.</param>
+        <param name="useSynchronizationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether to capture the current <see cref="T:System.Threading.SynchronizationContext" /> and use it when invoking the <paramref name="callback" />.</param>
       </Docs>
     </Member>
     <Member MemberName="ThrowIfCancellationRequested">

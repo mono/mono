@@ -325,11 +325,6 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="address" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The maximum number of service points defined in <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> has been reached and there is no service point that connects to the specified host.</exception>
@@ -341,6 +336,10 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified <see cref="T:System.Uri" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> object of the Internet resource to contact. </param>
       </Docs>
@@ -364,11 +363,6 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
         <Parameter Name="proxy" Type="System.Net.IWebProxy" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="uriString" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="uriString" /> is <see langword="null" />.</exception>
         <exception cref="T:System.UriFormatException">The URI specified in <paramref name="uriString" /> is in an invalid form.</exception>
@@ -381,6 +375,10 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified Uniform Resource Identifier (URI).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
         <param name="uriString">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the Internet resource to be contacted. </param>
         <param name="proxy">
@@ -406,11 +404,6 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
         <Parameter Name="proxy" Type="System.Net.IWebProxy" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.ServicePoint" /> that connects to the host identified in
-<paramref name="address" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The maximum number of service points defined in <see cref="P:System.Net.ServicePointManager.MaxServicePoints" /> has been reached and there is no service point that connects to the specified host.</exception>
@@ -422,6 +415,10 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds an existing <see cref="T:System.Net.ServicePoint" /> object or creates a new <see cref="T:System.Net.ServicePoint" /> object to manage communications with the specified <see cref="T:System.Uri" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.ServicePoint" /> object that manages communications for the request.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> object that contains the address of the Internet resource to contact. </param>
         <param name="proxy">

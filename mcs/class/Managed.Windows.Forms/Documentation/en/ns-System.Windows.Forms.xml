@@ -1,6 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms" /> namespace contains classes for creating Windows-based applications that take full advantage of the rich user interface features available in the Microsoft Windows operating system.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following table shows the classes in <see cref="N:System.Windows.Forms" /> namespace grouped into categories. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Class category</para>
+            </term>
+            <description>
+              <para>Details</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Control, User Control, and Form</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Most classes within the <see cref="N:System.Windows.Forms" /> namespace derive from the <see cref="T:System.Windows.Forms.Control" /> class. The <see cref="T:System.Windows.Forms.Control" /> class provides the base functionality for all controls that are displayed on a <see cref="T:System.Windows.Forms.Form" />. The <see cref="T:System.Windows.Forms.Form" /> class represents a window within an application. This includes dialog boxes, modeless windows, and Multiple Document Interface (MDI) client and parent windows. You can also create your own controls by deriving from the <see cref="T:System.Windows.Forms.UserControl" /> class.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Menus and Toolbars</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Windows Forms contains a rich set of classes for creating your own custom toolbars and menus with modern appearance and behavior (look and feel). <see cref="T:System.Windows.Forms.ToolStrip" />, <see cref="T:System.Windows.Forms.MenuStrip" />, <see cref="T:System.Windows.Forms.ContextMenuStrip" />, and <see cref="T:System.Windows.Forms.StatusStrip" /> can be used to create toolbars, menu bars, context menus, and status bars, respectively.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Controls</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>The <see cref="N:System.Windows.Forms" /> namespace provides a variety of control classes that you can use to create rich user interfaces. Some controls are designed for data entry within the application, such as <see cref="T:System.Windows.Forms.TextBox" /> and <see cref="T:System.Windows.Forms.ComboBox" /> controls. Other controls display application data, such as <see cref="T:System.Windows.Forms.Label" /> and <see cref="T:System.Windows.Forms.ListView" />. The namespace also provides controls for invoking commands within the application, such as <see cref="T:System.Windows.Forms.Button" />. The <see cref="T:System.Windows.Forms.WebBrowser" /> control and managed HTML classes, such as <see cref="T:System.Windows.Forms.HtmlDocument" />, let you display and manipulate HTML pages within your managed Windows Forms application. The <see cref="T:System.Windows.Forms.MaskedTextBox" /> control is an advanced data entry control that lets you define masks that automatically accept or reject user input. Additionally, you can use the <see cref="T:System.Windows.Forms.PropertyGrid" /> control to create your own Windows Forms Designer that displays the designer-visible properties of the controls. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Layout</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Several important classes in Windows Forms help control the layout of controls on a display surface, such as a form or control. <see cref="T:System.Windows.Forms.FlowLayoutPanel" /> lays out all the controls it contains in a serial manner, and <see cref="T:System.Windows.Forms.TableLayoutPanel" /> lets you define cells and rows for laying out controls in a fixed grid. <see cref="T:System.Windows.Forms.SplitContainer" /> divides your display surface into two or more adjustable parts.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Data and Data Binding</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Windows Forms defines a rich architecture for binding to data sources such as databases and XML files. The <see cref="T:System.Windows.Forms.DataGridView" /> control provides a customizable table for displaying data, and lets you customize cells, rows, columns, and borders. The <see cref="T:System.Windows.Forms.BindingNavigator" /> control represents a standardized way to navigate and work with data on a form; <see cref="T:System.Windows.Forms.BindingNavigator" /> is frequently paired with the <see cref="T:System.Windows.Forms.BindingSource" /> control to move through data records on a form and interact with them.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Components</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Besides controls, the <see cref="N:System.Windows.Forms" /> namespace provides other classes that do not derive from the <see cref="T:System.Windows.Forms.Control" /> class but still provide visual features to a Windows-based application. Some classes, such as <see cref="T:System.Windows.Forms.ToolTip" /> and <see cref="T:System.Windows.Forms.ErrorProvider" />, extend the capabilities or provide information to the user. With the <see cref="T:System.Windows.Forms.Help" /> and <see cref="T:System.Windows.Forms.HelpProvider" /> classes, you can display Help information to a user of your applications.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <list type="bullet">
+              <item>
+                <para>Common Dialog Boxes</para>
+              </item>
+            </list>
+          </term>
+          <description>
+            <para>Windows provides several common dialog boxes that you can use to give your application a consistent user interface when performing tasks such as opening and saving files, manipulating the font or text color, or printing. The <see cref="T:System.Windows.Forms.OpenFileDialog" /> and <see cref="T:System.Windows.Forms.SaveFileDialog" /> classes provide the functionality to display a dialog box that lets the user locate and enter the name of a file to open or save. The <see cref="T:System.Windows.Forms.FontDialog" /> class displays a dialog box to change elements of the <see cref="T:System.Drawing.Font" /> used by your application. The <see cref="T:System.Windows.Forms.PageSetupDialog" />, <see cref="T:System.Windows.Forms.PrintPreviewDialog" />, and <see cref="T:System.Windows.Forms.PrintDialog" /> classes display dialog boxes that enable the user to control aspects of printing documents. For more information about printing from a Windows-based application, see the <see cref="N:System.Drawing.Printing" /> namespace. Besides the common dialog boxes, the <see cref="N:System.Windows.Forms" /> namespace provides the <see cref="T:System.Windows.Forms.MessageBox" /> class for displaying a message box that can display and retrieve data from the user.</para>
+          </description>
+        </item>
+      </list>
+      <para>There are several classes within the <see cref="N:System.Windows.Forms" /> namespace that provide support to the classes mentioned in the previous summary. Examples of the supporting classes are enumerations, event argument classes, and delegates used by events within controls and components.</para>
+      <block subset="none" type="note">
+        <para>Classes within the Windows Forms namespace are not supported for use within a Windows service. Trying to use these classes from within a service may produce unexpected problems, such as diminished service performance and run-time exceptions. </para>
+        <para>If you are using .NET Framework version 1.1 or .NET Framework 1.0 and you must make your Windows Forms application support Windows XP visual styles, make sure that you set the FlatStyle property of your controls to <see cref="F:System.Windows.Forms.FlatStyle.System" /> and include a manifest with your executable file. A manifest is an XML file that is included either as a resource within your application executable file or as a separate file that resides in the same directory as the executable file. For an example of a manifest, see the Example section for the <see cref="T:System.Windows.Forms.FlatStyle" /> enumeration. For more information about how to use the visual styles available in Windows XP, see "Using Windows XP Visual Styles in the User Interface Design and Development" in the MSDN Library. By default visual styles are enabled for the .NET Framework versions 1.1, 1.2, and 2.0. </para>
+      </block>
+    </remarks>
   </Docs>
 </Namespace>

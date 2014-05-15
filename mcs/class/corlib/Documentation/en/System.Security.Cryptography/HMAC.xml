@@ -85,7 +85,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -95,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the default implementation of a Hash-based Message Authentication Code (HMAC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new SHA-1 instance, unless the default settings have been changed by using the <format type="text/html"><a href="03db52ef-010e-44ea-b6fd-b9c900ecad50">&lt;cryptoClass&gt; element</a></format>.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -112,7 +115,6 @@
         <Parameter Name="algorithmName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -122,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified implementation of a Hash-based Message Authentication Code (HMAC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified HMAC implementation.</para>
+        </returns>
         <param name="algorithmName">
           <attribution license="cc4" from="Microsoft" modified="false" />The HMAC implementation to use. The following table shows the valid values for the <paramref name="algorithmName" /> parameter and the algorithms they map to.</param>
       </Docs>
@@ -203,7 +209,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -213,6 +218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic stream object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code in a byte array.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HashName">

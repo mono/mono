@@ -160,12 +160,15 @@
         <Parameter Name="pSet" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces a <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified <see cref="T:System.Security.PermissionSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:System.Security.NamedPermissionSet" /> that was replaced.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to replace. </param>
         <param name="pSet">
@@ -186,7 +189,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'PolicyLevel'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a new <see cref="T:System.Security.Policy.PolicyLevel" /> with the <see cref="P:System.Security.Policy.PolicyLevel.Label" /> "AppDomain". The new <see cref="T:System.Security.Policy.PolicyLevel" /> will initially contain the same <see cref="T:System.Security.NamedPermissionSet" /> objects as in the default computer policy, and will have a single root code group that grants FullTrust to all code.</para>
@@ -195,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new policy level for use at the application domain policy level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.Security.Policy.PolicyLevel" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FromXml">
@@ -269,12 +275,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> in the current policy level with the specified name, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to find. </param>
       </Docs>
@@ -431,12 +440,15 @@
         <Parameter Name="permSet" Type="System.Security.NamedPermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified <see cref="T:System.Security.NamedPermissionSet" /> from the current policy level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> that was removed.</para>
+        </returns>
         <param name="permSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.NamedPermissionSet" /> to remove from the current policy level. </param>
       </Docs>
@@ -457,12 +469,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the <see cref="T:System.Security.NamedPermissionSet" /> with the specified name from the current policy level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.NamedPermissionSet" /> that was removed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Security.NamedPermissionSet" /> to remove. </param>
       </Docs>
@@ -507,7 +522,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PolicyStatement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -518,6 +532,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves policy based on evidence for the policy level, and returns the resulting <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting <see cref="T:System.Security.Policy.PolicyStatement" />.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> used to resolve the <see cref="T:System.Security.Policy.PolicyLevel" />. </param>
       </Docs>
@@ -538,7 +556,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CodeGroup'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to analyze the effect of the code groups in a policy level with respect to a certain set of evidence. For example, if the security policy is not granting an assembly the minimum code request permissions it needs, it can be difficult to tell by examination of the code groups exactly where the problem is.</para>
@@ -548,6 +565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves policy at the policy level and returns the root of a code group tree that matches the evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Policy.CodeGroup" /> representing the root of a tree of code groups matching the specified evidence.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Policy.Evidence" /> used to resolve policy. </param>
       </Docs>
@@ -611,12 +632,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the security object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">

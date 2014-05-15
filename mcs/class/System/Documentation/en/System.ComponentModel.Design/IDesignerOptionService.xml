@@ -41,7 +41,6 @@
         <Parameter Name="valueName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="pageName" /> parameter should consist of "WindowsFormsDesigner\CategoryName", where CategoryName is an options category name without any white space characters. The category name is typically "General". Therefore, you can access the "General" designer options category with the English page name "WindowsFormsDesigner\General".</para>
@@ -179,6 +178,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the specified Windows Forms Designer option.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified option.</para>
+        </returns>
         <param name="pageName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the page that defines the option. </param>
         <param name="valueName">

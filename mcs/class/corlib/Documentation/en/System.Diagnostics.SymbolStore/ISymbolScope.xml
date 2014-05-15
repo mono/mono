@@ -65,12 +65,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolScope []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child lexical scopes of the current lexical scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child lexical scopes that of the current lexical scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocals">
@@ -87,7 +90,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The local variables are returned in no particular order. If a local variable changes its address within the current scope, that variable is returned multiple times, each with a different offset range.</para>
@@ -96,6 +98,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the local variables within the current lexical scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local variables within the current lexical scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNamespaces">
@@ -112,12 +118,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolNamespace []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespaces that are used within the current scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespaces that are used within the current scope.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Method">

@@ -66,7 +66,6 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakeCamel(System.String)" /> method converts the initial character from an upper-case to lower-case letter, if necessary.</para>
@@ -76,6 +75,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a camel-case string from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A camel-case version of the parameter string.</para>
+        </returns>
         <param name="identifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>
@@ -96,7 +99,6 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakePascal(System.String)" /> method converts the initial character from a lower-case to upper-case letter, if necessary.</para>
@@ -106,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a Pascal-case string from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Pascal-case version of the parameter string.</para>
+        </returns>
         <param name="identifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>
@@ -126,7 +132,6 @@
         <Parameter Name="identifier" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.CodeIdentifier.MakeValid(System.String)" /> method removes any characters that cannot appear in a code identifier. It returns the string "Item" if no characters are valid. It prefixes the string "Item" to an input that begins with an invalid start character, for example, a digit, or a currency symbol.</para>
@@ -136,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces a valid code entity name from an input string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that can be used as a code identifier, such as the name of a method parameter.</para>
+        </returns>
         <param name="identifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a code entity, such as a method parameter, typically taken from an XML element or attribute name.</param>
       </Docs>

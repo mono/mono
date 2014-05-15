@@ -68,13 +68,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is equal to the current <see cref="T:System.Threading.AsyncFlowControl" /> structure. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an <see cref="T:System.Threading.AsyncFlowControl" /> structure and is equal to the current <see cref="T:System.Threading.AsyncFlowControl" /> structure; otherwise, false. </para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current structure.</param>
       </Docs>
@@ -94,13 +97,16 @@
         <Parameter Name="obj" Type="System.Threading.AsyncFlowControl" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Threading.AsyncFlowControl" /> structure is equal to the current <see cref="T:System.Threading.AsyncFlowControl" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is equal to the current <see cref="T:System.Threading.AsyncFlowControl" /> structure; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.AsyncFlowControl" /> structure to compare with the current structure.</param>
       </Docs>
@@ -118,13 +124,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for the current <see cref="T:System.Threading.AsyncFlowControl" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Threading.AsyncFlowControl" /> structure.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -143,12 +152,15 @@
         <Parameter Name="b" Type="System.Threading.AsyncFlowControl" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Threading.AsyncFlowControl" /> structures to determine whether they are equal. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two structures are equal; otherwise, false. </para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.AsyncFlowControl" /> structure.</param>
         <param name="b">
@@ -171,12 +183,15 @@
         <Parameter Name="b" Type="System.Threading.AsyncFlowControl" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Threading.AsyncFlowControl" /> structures to determine whether they are not equal. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the structures are not equal; otherwise, false. </para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Threading.AsyncFlowControl" /> structure.</param>
         <param name="b">

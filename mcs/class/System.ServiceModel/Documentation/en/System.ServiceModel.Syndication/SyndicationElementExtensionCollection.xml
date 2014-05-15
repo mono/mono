@@ -208,12 +208,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Xml.XmlReader" /> with the element extensions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlReader" /> that contains the element extensions.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -255,17 +258,21 @@
         <Parameter Name="extensionNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element extensions with the specified name and namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
         <param name="extensionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
         <param name="extensionNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadElementExtensions&lt;TExtension&gt;">
@@ -287,19 +294,23 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element extensions with the specified name and namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
         <param name="extensionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
         <param name="extensionNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadElementExtensions&lt;TExtension&gt;">
@@ -321,19 +332,23 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element extensions with the specified name and namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of element extension objects.</para>
+        </returns>
         <param name="extensionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element extension.</param>
         <param name="extensionNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the element extension.</param>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">

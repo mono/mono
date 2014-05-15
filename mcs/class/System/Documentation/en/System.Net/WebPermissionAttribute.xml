@@ -196,10 +196,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.WebPermission" /> object with the security information of the current 
- instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.SocketPermissionAttribute.CreatePermission" /> method is called by the security system, not by application code.</para>
@@ -209,6 +205,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new instance of the <see cref="T:System.Net.WebPermission" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebPermission" /> corresponding to the security declaration.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

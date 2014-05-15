@@ -39,7 +39,6 @@
         <Parameter Name="info" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceReader'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If no resources are associated with the designer for the specified culture, this method returns null.</para>
@@ -48,6 +47,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Locates the resource reader for the specified culture and returns it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Resources.IResourceReader" /> interface that contains the resources for the culture, or null if no resources for the culture exist.</para>
+        </returns>
         <param name="info">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> of the resource for which to retrieve a resource reader. </param>
       </Docs>
@@ -68,7 +71,6 @@
         <Parameter Name="info" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a new resource for the specified culture and destroys an existing resource, if one already exists.</para>
@@ -77,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Locates the resource writer for the specified culture and returns it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Resources.IResourceWriter" /> interface for the specified culture.</para>
+        </returns>
         <param name="info">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> of the resource for which to create a resource writer. </param>
       </Docs>

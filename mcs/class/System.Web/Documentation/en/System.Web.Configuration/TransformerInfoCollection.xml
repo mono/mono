@@ -103,13 +103,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.Configuration.TransformerInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.Configuration.TransformerInfo" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,13 +128,16 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the key of the passed <see cref="T:System.Web.Configuration.TransformerInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key of the passed <see cref="T:System.Web.Configuration.TransformerInfo" /> object.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.ConfigurationElement" />. The specified configuration element should be a <see cref="T:System.Web.Configuration.TransformerInfo" /> object that exists in the collection.</param>
       </Docs>

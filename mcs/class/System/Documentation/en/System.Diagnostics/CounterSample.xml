@@ -151,12 +151,15 @@
         <Parameter Name="counterSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the performance data of the counter, using a single sample point. This method is generally used for uncalculated performance counter types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The calculated performance value.</para>
+        </returns>
         <param name="counterSample">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterSample" /> structure to use as a base point for calculating performance data. </param>
       </Docs>
@@ -178,12 +181,15 @@
         <Parameter Name="nextCounterSample" Type="System.Diagnostics.CounterSample" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the performance data of the counter, using two sample points. This method is generally used for calculated performance counter types, such as averages.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The calculated performance value.</para>
+        </returns>
         <param name="counterSample">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.CounterSample" /> structure to use as a base point for calculating performance data. </param>
         <param name="nextCounterSample">
@@ -290,7 +296,6 @@
       </Parameters>
       <Docs>
         <param name="other">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
@@ -299,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified <see cref="T:System.Diagnostics.CounterSample" /> structure is equal to the current <see cref="T:System.Diagnostics.CounterSample" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="sample" /> is equal to the current instance; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -317,7 +326,6 @@
       </Parameters>
       <Docs>
         <param name="obj">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
@@ -326,6 +334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified structure is a <see cref="T:System.Diagnostics.CounterSample" /> structure and is identical to the current <see cref="T:System.Diagnostics.CounterSample" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.Diagnostics.CounterSample" /> structure and is identical to the current instance; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -341,12 +353,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for the current counter sample.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current counter sample.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -367,7 +382,6 @@
       <Docs>
         <param name="obj1">To be added.</param>
         <param name="obj2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal if they have identical property values.</para>
@@ -376,6 +390,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two <see cref="T:System.Diagnostics.CounterSample" /> structures are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are equal; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -396,7 +414,6 @@
       <Docs>
         <param name="obj1">To be added.</param>
         <param name="obj2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Diagnostics.CounterSample" /> structures are not equal if any of their property values are different.</para>
@@ -405,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two <see cref="T:System.Diagnostics.CounterSample" /> structures are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are not equal; otherwise, false</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RawValue">

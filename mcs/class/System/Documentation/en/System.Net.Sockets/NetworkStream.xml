@@ -216,10 +216,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -261,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read from the <see cref="T:System.Net.Sockets.NetworkStream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that represents the asynchronous call.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the location in memory to store data read from the <see cref="T:System.Net.Sockets.NetworkStream" />. </param>
         <param name="offset">
@@ -295,9 +295,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -338,6 +335,10 @@ method. For the complete example, see the <see cref="T:System.Net.Sockets.Socket
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write to a stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that represents the asynchronous call.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to write to the <see cref="T:System.Net.Sockets.NetworkStream" />. </param>
         <param name="offset">
@@ -604,10 +605,6 @@ indicates that the current stream does not support writing.</para>
       </Parameters>
       <Docs>
         <param name="ar">A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation. </param>
-        <returns>
-          <para> A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes read from the stream.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult" /> is <see langword="null" />.</exception>
         <exception cref="T:System.IO.IOException">An error occurred while accessing the underlying socket. <para><block subset="none" type="note">This method catches all exceptions thrown by the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" qualify="true" /> method.</block></para></exception>
@@ -631,6 +628,10 @@ indicates that the current stream does not support writing.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles the end of an asynchronous read.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read from the <see cref="T:System.Net.Sockets.NetworkStream" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -815,11 +816,6 @@ indicates that the current stream does not support writing.</para>
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes read from the
-   stream.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -851,6 +847,10 @@ indicates that the current stream does not support writing.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads data from the <see cref="T:System.Net.Sockets.NetworkStream" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read from the <see cref="T:System.Net.Sockets.NetworkStream" />.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the location in memory to store data read from the <see cref="T:System.Net.Sockets.NetworkStream" />. </param>
         <param name="offset">
@@ -929,7 +929,6 @@ indicates that the current stream does not support writing.</para>
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <block subset="none" type="note">
             <para> The <see cref="T:System.IO.Stream" /> base class uses this method to set the current
@@ -943,6 +942,10 @@ indicates that the current stream does not support writing.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current position of the stream to the given value. This method is not currently supported and always throws a <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position in the stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used. </param>
         <param name="origin">

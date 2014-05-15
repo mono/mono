@@ -66,6 +66,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the brush color-remap table of this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the color key (transparency range) for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color key is cleared. </param>
       </Docs>
@@ -140,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the color-adjustment matrix for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -166,6 +178,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the color-adjustment matrix for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the color-adjustment matrix is cleared. </param>
       </Docs>
@@ -217,6 +233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Disables gamma correction for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which gamma correction is disabled. </param>
       </Docs>
@@ -267,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the NoOp setting for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the NoOp setting is cleared. </param>
       </Docs>
@@ -318,6 +342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the (cyan-magenta-yellow-black) output channel setting for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel setting is cleared. </param>
       </Docs>
@@ -369,6 +397,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the output channel color profile setting for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the output channel profile setting is cleared. </param>
       </Docs>
@@ -420,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the color-remap table for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the remap table is cleared. </param>
       </Docs>
@@ -446,6 +482,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the threshold value for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -473,6 +513,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears the threshold value for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which the threshold is cleared. </param>
       </Docs>
@@ -489,12 +533,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object this class creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -520,6 +567,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.Imaging.ImageAttributes" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -562,6 +613,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adjusts the colors in a palette according to the adjustment settings of a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="palette">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.ColorPalette" /> that on input contains the palette to be adjusted, and on output contains the adjusted palette. </param>
         <param name="type">
@@ -592,6 +647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-remap table for the brush category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="map">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.Imaging.ColorMap" /> objects. </param>
       </Docs>
@@ -621,6 +680,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color key for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="colorLow">
           <attribution license="cc4" from="Microsoft" modified="false" />The low color-key value. </param>
         <param name="colorHigh">
@@ -654,6 +717,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color key (transparency range) for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="colorLow">
           <attribution license="cc4" from="Microsoft" modified="false" />The low color-key value. </param>
         <param name="colorHigh">
@@ -687,6 +754,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="newColorMatrix">
           <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
         <param name="grayMatrix">
@@ -718,6 +789,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="newColorMatrix">
           <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
         <param name="grayMatrix">
@@ -753,6 +828,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix and the grayscale-adjustment matrix for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="newColorMatrix">
           <attribution license="cc4" from="Microsoft" modified="false" />The color-adjustment matrix. </param>
         <param name="grayMatrix">
@@ -788,6 +867,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -816,6 +899,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -847,6 +934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-adjustment matrix for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -874,6 +965,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the gamma value for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="gamma">
           <attribution license="cc4" from="Microsoft" modified="false" />The gamma correction value. </param>
       </Docs>
@@ -906,6 +1001,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the gamma value for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="gamma">
           <attribution license="cc4" from="Microsoft" modified="false" />The gamma correction value. </param>
       </Docs>
@@ -955,6 +1054,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Turns off color adjustment for a specified category. You can call the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.ClearNoOp" /> method to reinstate the color-adjustment settings that were in place before the call to the <see cref="Overload:System.Drawing.Imaging.ImageAttributes.SetNoOp" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Imaging.ColorAdjustType" /> that specifies the category for which color correction is turned off. </param>
       </Docs>
@@ -1062,6 +1165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the output channel color-profile file for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="colorProfileFilename">
           <attribution license="cc4" from="Microsoft" modified="false" />The path name of a color-profile file. If the color-profile file is in the %SystemRoot%\System32\Spool\Drivers\Color directory, this parameter can be the file name. Otherwise, this parameter must be the fully qualified path name. </param>
       </Docs>
@@ -1110,6 +1217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the output channel color-profile file for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="colorProfileFilename">
           <attribution license="cc4" from="Microsoft" modified="false" />The path name of a color-profile file. If the color-profile file is in the %SystemRoot%\System32\Spool\Drivers\Color directory, this parameter can be the file name. Otherwise, this parameter must be the fully qualified path name. </param>
         <param name="type">
@@ -1140,6 +1251,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-remap table for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="map">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of color pairs of type <see cref="T:System.Drawing.Imaging.ColorMap" />. Each color pair contains an existing color (the first value) and the color that it will be mapped to (the second value). </param>
       </Docs>
@@ -1170,6 +1285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the color-remap table for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="map">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of color pairs of type <see cref="T:System.Drawing.Imaging.ColorMap" />. Each color pair contains an existing color (the first value) and the color that it will be mapped to (the second value). </param>
         <param name="type">
@@ -1200,6 +1319,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the threshold (transparency range) for the default category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="threshold">
           <attribution license="cc4" from="Microsoft" modified="false" />A real number that specifies the threshold value. </param>
       </Docs>
@@ -1230,6 +1353,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the threshold (transparency range) for a specified category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="threshold">
           <attribution license="cc4" from="Microsoft" modified="false" />A threshold value from 0.0 to 1.0 that is used as a breakpoint to sort colors that will be mapped to either a maximum or a minimum value. </param>
         <param name="type">
@@ -1258,6 +1385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the wrap mode that is used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
       </Docs>
@@ -1282,6 +1413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the wrap mode and color used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
         <param name="color">
@@ -1309,6 +1444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the wrap mode and color used to decide how to tile a texture across a shape, or at shape boundaries. A texture is tiled across a shape to fill it in when the texture is smaller than the shape it is filling.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />An element of <see cref="T:System.Drawing.Drawing2D.WrapMode" /> that specifies how repeated copies of an image are used to tile an area. </param>
         <param name="color">

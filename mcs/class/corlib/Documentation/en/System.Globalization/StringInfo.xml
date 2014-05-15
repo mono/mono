@@ -113,12 +113,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current <see cref="T:System.Globalization.StringInfo" /> object is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a <see cref="T:System.Globalization.StringInfo" /> object and its <see cref="P:System.Globalization.StringInfo.String" /> property equals the <see cref="P:System.Globalization.StringInfo.String" /> property of this <see cref="T:System.Globalization.StringInfo" /> object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object.</param>
       </Docs>
@@ -141,7 +144,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The behavior of <see cref="M:System.Globalization.StringInfo.GetHashCode" /> is dependent on its implementation, which might change from one version of the common language runtime to another. This might happen to improve the performance of <see cref="M:System.Globalization.StringInfo.GetHashCode" />. To make the behavior of <see cref="M:System.Globalization.StringInfo.GetHashCode" /> constant, the application should override the runtime implementation of <see cref="M:System.Globalization.StringInfo.GetHashCode" /> with an implementation known to never change.</para>
@@ -150,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates a hash code for the value of the current <see cref="T:System.Globalization.StringInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code based on the string value of this <see cref="T:System.Globalization.StringInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNextTextElement">
@@ -168,7 +174,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The .NET Framework defines a text element as a unit of text that is displayed as a single character, that is, a grapheme. A text element can be a base character, a surrogate pair, or a combining character sequence. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a surrogate pair as a coded character representation for a single abstract character that consists of a sequence of two code units, where the first unit of the pair is a high surrogate and the second is a low surrogate. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a combining character sequence as a combination of a base character and one or more combining characters. A surrogate pair can represent a base character or a combining character.</para>
@@ -178,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the first text element in a specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the first text element in the specified string.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string from which to get the text element. </param>
       </Docs>
@@ -199,7 +208,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The .NET Framework defines a text element as a unit of text that is displayed as a single character, that is, a grapheme. A text element can be a base character, a surrogate pair, or a combining character sequence. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a surrogate pair as a coded character representation for a single abstract character that consists of a sequence of two code units, where the first unit of the pair is a high surrogate and the second is a low surrogate. The Unicode Standard defines a combining character sequence as a combination of a base character and one or more combining characters. A surrogate pair can represent a base character or a combining character. </para>
@@ -209,6 +217,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the text element at the specified index of the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the text element at the specified index of the specified string.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string from which to get the text element. </param>
         <param name="index">
@@ -231,7 +243,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TextElementEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The .NET Framework defines a text element as a unit of text that is displayed as a single character, that is, a grapheme. A text element can be a base character, a surrogate pair, or a combining character sequence. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a surrogate pair as a coded character representation for a single abstract character that consists of a sequence of two code units, where the first unit of the pair is a high surrogate and the second is a low surrogate. The Unicode Standard defines a combining character sequence as a combination of a base character and one or more combining characters. A surrogate pair can represent a base character or a combining character. </para>
@@ -246,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the text elements of the entire string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.TextElementEnumerator" /> for the entire string.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to iterate through. </param>
       </Docs>
@@ -267,7 +282,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TextElementEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The .NET Framework defines a text element as a unit of text that is displayed as a single character, that is, a grapheme. A text element can be a base character, a surrogate pair, or a combining character sequence. The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a surrogate pair as a coded character representation for a single abstract character that consists of a sequence of two code units, where the first unit of the pair is a high surrogate and the second is a low surrogate. The Unicode Standard defines a combining character sequence as a combination of a base character and one or more combining characters. A surrogate pair can represent a base character or a combining character. </para>
@@ -282,6 +296,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the text elements of the string, starting at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Globalization.TextElementEnumerator" /> for the string starting at <paramref name="index" />.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to iterate through. </param>
         <param name="index">
@@ -324,7 +342,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="http://go.microsoft.com/fwlink/?linkid=37123">Unicode Standard</see> defines a surrogate pair as a coded character representation for a single abstract character that consists of a sequence of two code units, where the first unit of the pair is a high surrogate and the second is a low surrogate. A high surrogate is a Unicode code point in the range U+D800 through U+DBFF and a low surrogate is a Unicode code point in the range U+DC00 through U+DFFF.</para>
@@ -342,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the indexes of each base character, high surrogate, or control character within the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of integers that contains the zero-based indexes of each base character, high surrogate, or control character within the specified string.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search. </param>
       </Docs>
@@ -381,7 +402,6 @@
         <Parameter Name="startingTextElement" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Consider a string that consists of five text elements, indexed from 0 through 4. If the <paramref name="startingTextElement" /> parameter is 1, the  <see cref="M:System.Globalization.StringInfo.SubstringByTextElements(System.Int32)" /> method returns a substring that consists of the text elements for which the indexes are 1, 2, 3, and 4.</para>
@@ -390,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a substring of text elements from the current <see cref="T:System.Globalization.StringInfo" /> object starting from a specified text element and continuing through the last text element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A substring of text elements in this <see cref="T:System.Globalization.StringInfo" /> object, starting from the text element index specified by the <paramref name="startingTextElement" /> parameter and continuing through the last text element in this object.</para>
+        </returns>
         <param name="startingTextElement">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of a text element in this <see cref="T:System.Globalization.StringInfo" /> object.</param>
       </Docs>
@@ -410,7 +434,6 @@
         <Parameter Name="lengthInTextElements" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Consider a string that consists of five text elements, indexed from 0 through 4. If the <paramref name="startingTextElement" /> parameter is 1 and the <paramref name="lengthInTextElements" /> parameter is 3, the <see cref="M:System.Globalization.StringInfo.SubstringByTextElements(System.Int32,System.Int32)" /> method returns a substring that consists of the text elements for which the indexes are 1, 2, and 3.</para>
@@ -419,6 +442,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a substring of text elements from the current <see cref="T:System.Globalization.StringInfo" /> object starting from a specified text element and continuing through the specified number of text elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A substring of text elements in this <see cref="T:System.Globalization.StringInfo" /> object. The substring consists of the number of text elements specified by the <paramref name="lengthInTextElements" /> parameter and starts from the text element index specified by the <paramref name="startingTextElement" /> parameter.</para>
+        </returns>
         <param name="startingTextElement">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of a text element in this <see cref="T:System.Globalization.StringInfo" /> object.</param>
         <param name="lengthInTextElements">

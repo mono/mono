@@ -66,7 +66,6 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateNewStoreData(System.Web.HttpContext,System.Int32)" /> method at the beginning of a request for an ASP.NET page, during the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event. The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateNewStoreData(System.Web.HttpContext,System.Int32)" /> method is called if:</para>
@@ -84,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.SessionState.SessionStateStoreData" /> object to be used for the current request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Web.SessionState.SessionStateStoreData" /> for the current request.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> for the current request.</param>
         <param name="timeout">
@@ -409,7 +412,6 @@
         <Parameter Name="expireCallback" Type="System.Web.SessionState.SessionStateItemExpireCallback" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.SessionState.SessionStateModule" /> object calls the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.SetItemExpireCallback(System.Web.SessionState.SessionStateItemExpireCallback)" /> method when the module is initialized to determine whether calls to the Session_OnEnd event are supported by the <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation and to associate the <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate with the Session_OnEnd event.</para>
@@ -419,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets a reference to the <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" /> delegate for the Session_OnEnd event defined in the Global.asax file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the session-state store provider supports calling the Session_OnEnd event; otherwise, false.</para>
+        </returns>
         <param name="expireCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SessionState.SessionStateItemExpireCallback" />  delegate for the Session_OnEnd event defined in the Global.asax file.</param>
       </Docs>

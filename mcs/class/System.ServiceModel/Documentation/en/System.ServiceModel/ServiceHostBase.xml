@@ -129,12 +129,15 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a service endpoint to the hosted service with a specified contract, binding, and endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
         <param name="implementedContract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
         <param name="binding">
@@ -159,12 +162,15 @@
         <Parameter Name="address" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a service endpoint to the hosted service with a specified contract, binding, and a URI that contains the endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
         <param name="implementedContract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
         <param name="binding">
@@ -190,7 +196,6 @@
         <Parameter Name="listenUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="address" /> is a relative URI, one of the base addresses of the <see cref="T:System.ServiceModel.ServiceHost" /> (depending on the binding protocol) is used as the endpoint's base address.</para>
@@ -199,6 +204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a service endpoint to the hosted service with a specified contract, binding, endpoint address and URI that contains the address at which it listens.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service.</para>
+        </returns>
         <param name="implementedContract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
         <param name="binding">
@@ -226,12 +235,15 @@
         <Parameter Name="listenUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a service endpoint to the hosted service with the specified contract, binding, and URIs that contain the endpoint and listening addresses.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> added to the hosted service. This URI can be absolute or relative.</para>
+        </returns>
         <param name="implementedContract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract implemented by the endpoint.</param>
         <param name="binding">
@@ -592,12 +604,15 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation invoked on the close of the service host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-close operation. </para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-close operation has to complete before timing out.</param>
         <param name="callback">
@@ -622,12 +637,15 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation invoked on the opening of the service host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on-open operation. </para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the on-open operation has to complete before timing out.</param>
         <param name="callback">

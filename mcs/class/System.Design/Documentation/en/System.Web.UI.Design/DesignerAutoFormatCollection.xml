@@ -89,7 +89,6 @@
         <Parameter Name="format" Type="System.Web.UI.Design.DesignerAutoFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormatCollection.Add(System.Web.UI.Design.DesignerAutoFormat)" /> method adds the specified <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object to the end of the collection. To add a <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object to the collection at a specific index location, use the <see cref="M:System.Web.UI.Design.DesignerAutoFormatCollection.Insert(System.Int32,System.Web.UI.Design.DesignerAutoFormat)" /> method.</para>
@@ -98,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the format was added to the collection.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Web.UI.Design.DesignerAutoFormat" />.</param>
       </Docs>
@@ -136,7 +139,6 @@
         <Parameter Name="format" Type="System.Web.UI.Design.DesignerAutoFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormatCollection.Contains(System.Web.UI.Design.DesignerAutoFormat)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> objects that are being compared.</para>
@@ -145,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified format is contained within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the specified format is in the collection; otherwise, false.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of <see cref="T:System.Web.UI.Design.DesignerAutoFormat" />.</param>
       </Docs>
@@ -183,7 +189,6 @@
         <Parameter Name="format" Type="System.Web.UI.Design.DesignerAutoFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormatCollection.IndexOf(System.Web.UI.Design.DesignerAutoFormat)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> objects that are being compared.</para>
@@ -192,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the specified <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="format" /> within the collection; otherwise, -1, if the format is not in the collection.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> to locate within the collection.</param>
       </Docs>
@@ -429,7 +438,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -438,6 +446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> interface that iterates through the collection when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -454,7 +466,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -463,6 +474,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an item to the collection when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the added item.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -479,7 +494,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -488,6 +502,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the collection contains a specific value when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the object is in the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -504,7 +522,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -513,6 +530,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of a specific item in the collection when the <see cref="T:System.Web.UI.Design.DesignerAutoFormatCollection" /> object is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of a item in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">

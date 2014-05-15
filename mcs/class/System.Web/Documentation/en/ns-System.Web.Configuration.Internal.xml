@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web.Configuration.Internal">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web.Configuration.Internal" /> namespace contains configuration types intended for internal use only.</para>
+    </summary>
   </Docs>
 </Namespace>

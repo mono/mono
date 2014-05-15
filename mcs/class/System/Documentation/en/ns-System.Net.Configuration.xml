@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Net.Configuration">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Net.Configuration" /> namespace contains classes that applications use to programmatically access and update configuration settings for the <see cref="N:System.Net" /> namespaces.</para>
+    </summary>
   </Docs>
 </Namespace>

@@ -81,7 +81,6 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -91,6 +90,55 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, compares two objects and returns an indication of their relative sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />. </para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="x" /> is null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is equal to <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="y" /> is null.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="y" />.</param>
         <param name="y">
@@ -113,7 +161,6 @@
         <Parameter Name="y" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -123,6 +170,55 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, compares two strings and returns an indication of their relative sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="x" /> and <paramref name="y" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is less than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="x" /> is null.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is equal to <paramref name="y" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="x" /> is greater than <paramref name="y" />.</para>
+                <para>-or-</para>
+                <para>
+                  <paramref name="y" /> is null.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="y" />.</param>
         <param name="y">
@@ -145,13 +241,16 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.StringComparer" /> object that compares strings according to the rules of a specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.StringComparer" /> object that performs string comparisons according to the comparison rules used by the <paramref name="culture" /> parameter and the case rule specified by the <paramref name="ignoreCase" /> parameter.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />A culture whose linguistic rules are used to perform a string comparison.</param>
         <param name="ignoreCase">
@@ -232,7 +331,6 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -242,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, indicates whether two objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="x" /> and <paramref name="y" /> refer to the same object, or <paramref name="x" /> and <paramref name="y" /> are both the same type of object and those objects are equal; otherwise, false.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to <paramref name="y" />.</param>
         <param name="y">
@@ -264,7 +366,6 @@
         <Parameter Name="y" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -274,6 +375,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, indicates whether two strings are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="x" /> and <paramref name="y" /> refer to the same object, or <paramref name="x" /> and <paramref name="y" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />A string to compare to <paramref name="y" />.</param>
         <param name="y">
@@ -295,7 +400,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -306,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the hash code for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed hash code calculated from the value of the <paramref name="obj" /> parameter.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object.</param>
       </Docs>
@@ -325,7 +433,6 @@
         <Parameter Name="obj" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -336,6 +443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the hash code for the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed hash code calculated from the value of the <paramref name="obj" /> parameter.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A string.</param>
       </Docs>

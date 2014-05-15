@@ -56,13 +56,16 @@
         <Parameter Name="extension" Type="System.Xml.Serialization.Advanced.SchemaImporterExtension" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified importer extension to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the added extension.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtensionCollection" /> to add.</param>
       </Docs>
@@ -83,13 +86,16 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified importer extension to the collection. The name parameter allows you to supply a custom name for the extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the newly added item.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />A custom name for the extension.</param>
         <param name="type">
@@ -132,13 +138,16 @@
         <Parameter Name="extension" Type="System.Xml.Serialization.Advanced.SchemaImporterExtension" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the specified importer extension exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the extension is found; otherwise, false.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtensionCollection" /> to search for.</param>
       </Docs>
@@ -186,13 +195,16 @@
         <Parameter Name="extension" Type="System.Xml.Serialization.Advanced.SchemaImporterExtension" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified item and returns the zero-based index of the first occurrence within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the found item.</para>
+        </returns>
         <param name="extension">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.Advanced.SchemaImporterExtension" /> to search for.</param>
       </Docs>

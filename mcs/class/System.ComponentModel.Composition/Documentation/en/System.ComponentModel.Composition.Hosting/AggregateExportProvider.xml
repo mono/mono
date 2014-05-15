@@ -33,9 +33,17 @@
         <Parameter Name="providers" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.ExportProvider&gt;" />
       </Parameters>
       <Docs>
-        <param name="providers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class consults the providers in the order in which they have been specified when it calls <see cref="M:System.ComponentModel.Composition.Hosting.ExportProvider.GetExports(System.ComponentModel.Composition.Primitives.ImportDefinition)" />. </para>
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> does not take ownership of the specified providers. That is, it tries to dispose of any of the providers when it is disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class.</para>
+        </summary>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prioritized list of export providers. The providers are consulted in the order in which they are supplied.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -132,7 +140,6 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implementers should not treat cardinality-related mismatches as errors and are not expected to throw exceptions in those cases.</para>
@@ -142,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the exports that match the conditions of the specified import.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains all the exports that match the specified condition.</para>
+        </returns>
         <param name="definition">
           <attribution license="cc4" from="Microsoft" modified="false" />The conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to be returned.</param>
         <param name="atomicComposition">

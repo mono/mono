@@ -230,34 +230,6 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the current instance as compared to <paramref name="target" />. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> 
-         A negative
-         integer</term>
-              <description>The value of the current instance is less than
-         the value of <paramref name="target" />.</description>
-            </item>
-            <item>
-              <term> Zero</term>
-              <description>The value of the current instance is equal to the
-         value of <paramref name="target" />.</description>
-            </item>
-            <item>
-              <term> Any
-         positive integer</term>
-              <description>The value of the current instance is greater than the
-         value of <paramref name="target" />, or <paramref name="target" /> is
-      <see langword="null" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="note"> This method is
@@ -271,6 +243,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number that indicates the relative values of this instance and <paramref name="target" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is less than the value of <paramref name="target" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is equal to the value of <paramref name="target" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>The value of this instance is greater than the value of <paramref name="target" />.</para>
+                <para>-or- </para>
+                <para>
+                  <paramref name="target" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -293,13 +308,8 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is of the same
-   enumeration type and represents the same value as the current instance;
-   otherwise, <see langword="false" />.</para>
-        </returns>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.Equals(System.Object)" /> method overrides <see cref="M:System.ValueType.Equals(System.Object)" /> to define how enumeration members are evaluated for equality. </para>
@@ -308,6 +318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an enumeration value of the same type and with the same underlying value as this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
       </Docs>
@@ -337,12 +351,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="format">To be added.</param>
-        <returns>
-          <para> The <see cref="T:System.String" /> representation of the value of the enumeration
-   element. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" />, <paramref name="value" /> or <paramref name="format" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -385,6 +393,10 @@ public class EnumCompTo {
             <para>Red, Yellow, Green</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert. </param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output format to use. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table shows the valid values for the <paramref name="format" /> parameter. </para>
@@ -442,6 +454,10 @@ public class EnumCompTo {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value of a specified enumerated type to its equivalent string representation according to the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type of the value to convert. </param>
         <param name="value">
@@ -466,9 +482,6 @@ public class EnumCompTo {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing a hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para> The algorithm used to
       generate the hash code is unspecified.</para>
@@ -481,6 +494,10 @@ public class EnumCompTo {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -507,11 +524,6 @@ public class EnumCompTo {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the name of the enumerated constant
-   in <paramref name="enumType" /> whose value is <paramref name="value" />, or a null reference
-   if no such constant is found. If multiple constants have the same value, as to which name is returned for that value, is unspecified.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference.</exception>
         <exception cref="T:System.ArgumentException">
@@ -552,6 +564,10 @@ public class EnumCompTo {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the name of the constant in the specified enumeration that has the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the name of the enumerated constant in <paramref name="enumType" /> whose value is <paramref name="value" />; or null if no such constant is found.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
         <param name="value">
@@ -581,11 +597,6 @@ public class EnumCompTo {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> vector of the names of the constants in
-<paramref name="enumType" />. The elements of the vector
-   are sorted by the values of the enumerated constants.  If multiple constants have the same value, the order in which their names appear in the vector, relative to each other, is unspecified.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -631,6 +642,10 @@ public class enumGetNames {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the names of the constants in a specified enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array of the names of the constants in <paramref name="enumType" />. </para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
       </Docs>
@@ -650,12 +665,15 @@ public class enumGetNames {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying <see cref="T:System.TypeCode" /> for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUnderlyingType">
@@ -680,9 +698,6 @@ public class enumGetNames {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Type" /> instance that describes the underlying type of <paramref name="enumType" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -718,6 +733,10 @@ public class EnumUnderlyingTypeTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the underlying type of the specified enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The underlying type of <paramref name="enumType" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration whose underlying type will be retrieved.</param>
       </Docs>
@@ -745,13 +764,6 @@ public class EnumUnderlyingTypeTest {
         <Parameter Name="enumType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A vector of the enumeration type specified by
-   <paramref name="enumType" /> containing the values of the
-      constants in <paramref name="enumType" />. The elements of the array
-      are sorted by the values of the enumeration constants. If multiple constants have the same value, the value of each is included in the array.
-      </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -797,6 +809,10 @@ public class enumGetValues {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of the values of the constants in a specified enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the values of the constants in <paramref name="enumType" />. </para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
       </Docs>
@@ -816,7 +832,6 @@ public class enumGetValues {
         <Parameter Name="flag" Type="System.Enum" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.HasFlag(System.Enum)" /> method returns the result of the following Boolean expression.</para>
@@ -829,6 +844,10 @@ public class enumGetValues {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one or more bit fields are set in the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the bit field or bit fields that are set in <paramref name="flag" /> are also set in the current instance; otherwise, false.</para>
+        </returns>
         <param name="flag">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration value.</param>
       </Docs>
@@ -856,14 +875,6 @@ public class enumGetValues {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>
-            <see langword="true" /> if a constant
-   in the enumeration described by <paramref name="enumType" />
-   has a value equal to <paramref name="value" />; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType " />or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -895,6 +906,8 @@ public class enumIsDefined {
             <para>It is False that '3' is defined in 'Colors'.</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value or name of a constant in <paramref name="enumType" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter can be any of the following:</para>
@@ -918,6 +931,10 @@ public class enumIsDefined {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an indication whether a constant with a specified value exists in a specified enumeration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a constant in <paramref name="enumType" /> has a value equal to <paramref name="value" />; otherwise, false.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
         <param name="value">
@@ -948,12 +965,6 @@ public class enumIsDefined {
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para> A <see cref="T:System.Object" /> of type
-<paramref name="enumType" /> whose values are
-   represented by <paramref name="value" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -992,6 +1003,8 @@ public class enumTest {
             <para>2</para>
           </c>
         </example>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing the name or value to convert. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter contains the string representation of an enumeration member's underlying value or named constant, or a list of named constants delimited by commas (,). One or more blank spaces can precede or follow each value, name, or comma in <paramref name="value" />. If <paramref name="value" /> is a list, the return value is the value of the specified names combined with a bitwise OR operation.</para>
@@ -1003,6 +1016,10 @@ public class enumTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of the name or numeric value of one or more enumerated constants to an equivalent enumerated object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="enumType" /> whose value is represented by <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
         <param name="value">
@@ -1034,12 +1051,6 @@ public class enumTest {
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="ignoreCase">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Object" /> of type
-<paramref name="enumType" />
-whose values are represented by <paramref name="value" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> or <paramref name="value" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
@@ -1056,6 +1067,8 @@ whose values are represented by <paramref name="value" />. </para>
           <para>For an example that demonstrates parsing strings
       containing enumeration values, see <see cref="M:System.Enum.Parse(System.Type,System.String)" />(<see cref="T:System.Type" />, <see cref="T:System.String" />).</para>
         </example>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore case; false to regard case. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter contains the string representation of an enumeration member's underlying value or named constant, or a list of named constants delimited by commas (,). One or more blank spaces can precede or follow each value, name, or comma in <paramref name="value" />. If <paramref name="value" /> is a list, the return value is the value of the specified names combined with a bitwise OR operation.</para>
@@ -1067,6 +1080,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of the name or numeric value of one or more enumerated constants to an equivalent enumerated object. A parameter specifies whether the operation is case-insensitive.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="enumType" /> whose value is represented by <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration type. </param>
         <param name="value">
@@ -1092,7 +1109,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1101,6 +1117,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a Boolean value based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1121,7 +1141,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1130,6 +1149,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to an 8-bit unsigned integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1150,7 +1173,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1159,6 +1181,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a Unicode character based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1179,7 +1205,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1188,6 +1213,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a <see cref="T:System.DateTime" /> based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1208,7 +1237,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1217,6 +1245,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a <see cref="T:System.Decimal" /> based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1237,7 +1269,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1246,6 +1277,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a double-precision floating point number based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1266,7 +1301,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1275,6 +1309,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 16-bit signed integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1295,7 +1333,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1304,6 +1341,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 32-bit signed integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1324,7 +1365,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1333,6 +1373,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 64-bit signed integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1353,7 +1397,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1362,6 +1405,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to an 8-bit signed integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1382,7 +1429,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Currently not implemented. Always throws an exception.</para>
@@ -1391,6 +1437,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a single-precision floating-point number based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member always throws an exception.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1413,7 +1463,6 @@ whose values are represented by <paramref name="value" />. </para>
       </Parameters>
       <Docs>
         <param name="targetType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1422,6 +1471,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a specified type based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1442,7 +1495,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1451,6 +1503,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 16-bit unsigned integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1471,7 +1527,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1480,6 +1535,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 32-bit unsigned integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1500,7 +1559,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Uses <see cref="T:System.Convert" /> to perform the conversion.</para>
@@ -1509,6 +1567,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current value to a 64-bit unsigned integer based on the underlying type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted value.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -1536,17 +1598,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Byte)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1556,6 +1615,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 8-bit unsigned integer to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1586,17 +1649,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para> An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int16)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1606,6 +1666,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 16-bit signed integer to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1636,16 +1700,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int32)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1655,6 +1717,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 32-bit signed integer to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1685,17 +1751,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose 
-   value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Int64)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1705,6 +1768,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 64-bit signed integer to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1735,18 +1802,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para> An enumeration object of type <paramref name="enumType" /> whose value is
-<paramref name="value" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.Object)" /> method converts the integral value <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1756,6 +1819,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object with an integer value to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumeration object whose value is <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1789,16 +1856,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.SByte)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1808,6 +1873,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 8-bit signed integer value to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1841,16 +1910,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt16)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1860,6 +1927,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 16-bit unsigned integer value to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1893,17 +1964,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose
-   value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt32)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1913,6 +1981,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 32-bit unsigned integer value to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1946,17 +2018,14 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <returns>
-          <para>An enumeration object of type <paramref name="enumType" /> whose
-   value is <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="enumType" /> is a null reference. </exception>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="enumType" /> is not a <see cref="T:System.Type" /> that describes a <see cref="T:System.Enum" /> .</para>
         </exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to convert to an enumeration member. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Enum.ToObject(System.Type,System.UInt64)" /> method converts <paramref name="value" /> to an enumeration member whose underlying value is <paramref name="value" />. Note that the conversion succeeds even if value is outside the bounds of <paramref name="enumType" /> members. To ensure that <paramref name="value" /> is a valid underlying value of the <paramref name="enumType" /> enumeration, pass it to the <see cref="M:System.Enum.IsDefined(System.Type,System.Object)" /> method.</para>
@@ -1966,6 +2035,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 64-bit unsigned integer value to an enumeration member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the enumeration set to <paramref name="value" />.</para>
+        </returns>
         <param name="enumType">
           <attribution license="cc4" from="Microsoft" modified="false" />The enumeration type to return. </param>
         <param name="value">
@@ -1988,9 +2061,6 @@ whose values are represented by <paramref name="value" />. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the named constant specified by the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is formatted with the general format specifier ("G"). That is, if the <see cref="T:System.FlagsAttribute" /> is not applied to this enumerated type and there is a named constant equal to the value of this instance, then the return value is a string containing the name of the constant. If the <see cref="T:System.FlagsAttribute" /> is applied and there is a combination of one or more named constants equal to the value of this instance, then the return value is a string containing a delimiter-separated list of the names of the constants. Otherwise, the return value is the string representation of the numeric value of this instance. For more information about formatting enumeration values, see <format type="text/html"><a href="dd1ff672-1052-42cf-8666-4924fb6cd1a1">Enumeration Format Strings</a></format>. For more information about formatting in general, see <format type="text/html"><a href="0d1364da-5b30-4d42-8e6b-03378343343f">Formatting Types</a></format>.</para>
@@ -1999,6 +2069,10 @@ whose values are represented by <paramref name="value" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2024,11 +2098,6 @@ whose values are represented by <paramref name="value" />. </para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>  The <see cref="T:System.String" /> representation of
-   the name of the value of the current instance.
-</para>
-        </returns>
         <remarks>
           <para>This method is equivalent to the version of <see cref="M:System.Enum.ToString(System.String)" />
 that takes no arguments.</para>
@@ -2037,6 +2106,10 @@ that takes no arguments.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overload is obsolete; use <see cref="M:System.Enum.ToString" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />(obsolete) </param>
       </Docs>
@@ -2059,10 +2132,6 @@ that takes no arguments.</para>
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the value of the current
-   instance as specified by <paramref name="format" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> contains an invalid value. </exception>
         <remarks>
@@ -2073,6 +2142,10 @@ that takes no arguments.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format string. </param>
       </Docs>
@@ -2101,13 +2174,12 @@ that takes no arguments.</para>
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="provider">To be added.</param>
-        <returns>
-          <para>The <see cref="T:System.String" /> representation of the value of the current instance as specified by <paramref name="format" />.</para>
-        </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> does not contain a valid format specifier.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format specification. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />(Obsolete.)</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specify only <paramref name="format" />; the <paramref name="provider" /> parameter is obsolete.</para>
@@ -2116,6 +2188,10 @@ that takes no arguments.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overload is obsolete; use <see cref="M:System.Enum.ToString(System.String)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this instance as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format specification. </param>
         <param name="provider">

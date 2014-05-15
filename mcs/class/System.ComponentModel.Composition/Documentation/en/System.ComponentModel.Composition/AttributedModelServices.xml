@@ -87,12 +87,15 @@
         <Parameter Name="attributedPart" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a composable part from the specified attributed object, and adds it to the specified composition batch.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part.</para>
+        </returns>
         <param name="batch">
           <attribution license="cc4" from="Microsoft" modified="false" />The batch to add to.</param>
         <param name="attributedPart">
@@ -197,12 +200,15 @@
         <Parameter Name="attributedPart" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a composable part from the specified attributed object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
         <param name="attributedPart">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributed object.</param>
       </Docs>
@@ -222,12 +228,15 @@
         <Parameter Name="attributedPart" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a composable part from the specified attributed object, using the specified part definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
         <param name="partDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The definition of the new part.</param>
         <param name="attributedPart">
@@ -249,12 +258,15 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a composable part from the specified attributed object, using the specified reflection context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
         <param name="attributedPart">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributed object.</param>
         <param name="reflectionContext">
@@ -276,12 +288,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a part definition with the specified type and origin.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part definition.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the definition.</param>
         <param name="origin">
@@ -304,12 +319,15 @@
         <Parameter Name="ensureIsDiscoverable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a part definition with the specified type and origin.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new part definition.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the definition.</param>
         <param name="origin">
@@ -333,12 +351,15 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an export that matches the specified contract type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an export definition that matches <paramref name="contractType" />; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
         <param name="contractType">
@@ -362,15 +383,19 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an export that matches the specified contract type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an export definition of type <paramref name="T" />; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetContractName">
@@ -387,12 +412,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a canonical contract name for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A contract name created from the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to use.</param>
       </Docs>
@@ -414,11 +442,19 @@
         <Parameter Name="metadata" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TMetadataView">To be added.</typeparam>
-        <param name="metadata">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a metadata view object from a dictionary of loose metadata.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A metadata view containing the specified metadata.</para>
+        </returns>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of loose metadata.</param>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view object to get.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetTypeIdentity">
@@ -435,12 +471,15 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the unique identifier for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the method.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The method to examine.</param>
       </Docs>
@@ -459,12 +498,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the unique identifier for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier for the type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to examine.</param>
       </Docs>
@@ -484,12 +526,15 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition that matches <paramref name="contractType" />; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
         <param name="contractType">
@@ -512,12 +557,15 @@
         <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type and import cardinality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition that matches <paramref name="contractType" /> and <paramref name="importCardinality" />; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
         <param name="contractType">
@@ -543,15 +591,19 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition of type <paramref name="T" />; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Imports&lt;T&gt;">
@@ -572,17 +624,21 @@
         <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified part contains an import that matches the specified contract type and import cardinality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="part" /> contains an import definition of type <paramref name="T" /> that has the specified import cardinality; otherwise, false.</para>
+        </returns>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
         <param name="importCardinality">
           <attribution license="cc4" from="Microsoft" modified="false" />The import cardinality.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SatisfyImportsOnce">
@@ -600,7 +656,6 @@
         <Parameter Name="attributedPart" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike ordinary composition, parts composed with this method are not guaranteed to remain valid if the catalog behind <paramref name="compositionService" /> changes.</para>
@@ -609,6 +664,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Composes the specified part by using the specified composition service, with recomposition disabled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composed part.</para>
+        </returns>
         <param name="compositionService">
           <attribution license="cc4" from="Microsoft" modified="false" />The composition service to use.</param>
         <param name="attributedPart">
@@ -631,12 +690,15 @@
         <Parameter Name="reflectionContext" Type="System.Reflection.ReflectionContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Composes the specified part by using the specified composition service, with recomposition disabled and using the specified reflection context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composed part.</para>
+        </returns>
         <param name="compositionService">
           <attribution license="cc4" from="Microsoft" modified="false" />The composition service to use.</param>
         <param name="attributedPart">

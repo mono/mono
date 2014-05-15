@@ -202,12 +202,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="value" /> represents the same type and value as the
-   current instance. If <paramref name="value" /> is a null reference or is not an
-   instance of <see cref="T:System.Text.UnicodeEncoding" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.Text.UnicodeEncoding" /> objects are considered equal if all of the following conditions are true: </para>
@@ -227,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Text.UnicodeEncoding" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is an instance of <see cref="T:System.Text.UnicodeEncoding" /> and is equal to the current object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current object. </param>
       </Docs>
@@ -249,11 +247,6 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the number of bytes needed to encode <paramref name="s" /> as Unicode-encoded
-characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="s" /> is <see langword="null" />.</exception>
         <remarks>
@@ -268,6 +261,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding the characters in the specified <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode. </param>
       </Docs>
@@ -297,7 +294,6 @@ characters. </para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -311,6 +307,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="count">
@@ -336,12 +336,6 @@ characters. </para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> whose
-   value equals the number of bytes required to encode the range in <paramref name="chars" />
-   from <paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1 as Unicode-encoded
-   characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="chars " /> is <see langword="null" /> . </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -366,6 +360,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of bytes produced by encoding a set of characters from the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes produced by encoding the specified characters.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="index">
@@ -433,7 +431,6 @@ characters. </para>
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -448,6 +445,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters starting at the specified character pointer into a sequence of bytes that are stored starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written at the location indicated by the <paramref name="bytes" /> parameter.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first character to encode. </param>
         <param name="charCount">
@@ -479,11 +480,6 @@ characters. </para>
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the number of bytes encoded into <paramref name="bytes" /> as Unicode-encoded
-characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="bytes" /> does not contain sufficient space to store the encoded characters.</para>
@@ -524,6 +520,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified character array into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="chars">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the set of characters to encode. </param>
         <param name="charIndex">
@@ -558,11 +558,6 @@ characters. </para>
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> whose
-   value equals the number of bytes encoded into <paramref name="bytes" /> as Unicode-encoded
-   characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="bytes" /> does not contain sufficient space to store the encoded characters.</para>
@@ -603,6 +598,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes a set of characters from the specified <see cref="T:System.String" /> into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes written into <paramref name="bytes" />.</para>
+        </returns>
         <param name="s">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode. </param>
         <param name="charIndex">
@@ -640,7 +639,6 @@ characters. </para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -651,6 +649,10 @@ characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes starting at the specified byte pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="count">
@@ -676,11 +678,6 @@ characters. </para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-whose value equals the number of characters a call to <see cref="M:System.Text.UnicodeEncoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the
-specified range of <paramref name="bytes" /> as Unicode-encoded characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="bytes " /> is <see langword="null" />. </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -702,6 +699,10 @@ specified range of <paramref name="bytes" /> as Unicode-encoded characters.</par
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of characters produced by decoding a sequence of bytes from the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">
@@ -737,7 +738,6 @@ specified range of <paramref name="bytes" /> as Unicode-encoded characters.</par
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -749,6 +749,10 @@ specified range of <paramref name="bytes" /> as Unicode-encoded characters.</par
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes starting at the specified byte pointer into a set of characters that are stored starting at the specified character pointer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written at the location indicated by the <paramref name="chars" /> parameter.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="byteCount">
@@ -780,11 +784,6 @@ specified range of <paramref name="bytes" /> as Unicode-encoded characters.</par
         <Parameter Name="charIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the number of characters decoded into <paramref name="chars" /> as
-Unicode-encoded characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="chars" /> does not contain sufficient space to store the decoded characters.</para>
@@ -822,6 +821,10 @@ Unicode-encoded characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a sequence of bytes from the specified byte array into the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="byteIndex">
@@ -850,11 +853,6 @@ Unicode-encoded characters. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Text.Decoder" /> object for
-   the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> method converts sequential blocks of bytes into sequential blocks of characters, in a manner similar to the <see cref="M:System.Text.UnicodeEncoding.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" />. However, a <see cref="T:System.Text.Decoder" /> maintains state information between calls so it can correctly decode byte sequences that span blocks. The <see cref="T:System.Text.Decoder" /> also preserves trailing bytes at the end of data blocks and uses the trailing bytes in the next decoding operation. Therefore, <see cref="M:System.Text.UnicodeEncoding.GetDecoder" /> and <see cref="M:System.Text.UnicodeEncoding.GetEncoder" /> are useful for network transmission and file operations, because those operations often deal with blocks of data instead of a complete data stream.</para>
@@ -864,6 +862,10 @@ Unicode-encoded characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a decoder that converts a UTF-16 encoded sequence of bytes into a sequence of Unicode characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Decoder" /> that converts a UTF-16 encoded sequence of bytes into a sequence of Unicode characters.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -886,7 +888,6 @@ Unicode-encoded characters. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.Encoder.GetBytes(System.Char[],System.Int32,System.Int32,System.Byte[],System.Int32,System.Boolean)" /> method converts sequential blocks of characters into sequential blocks of bytes in a manner similar to the <see cref="M:System.Text.UnicodeEncoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> method of this class. However, a <see cref="T:System.Text.Encoder" /> object maintains state information between calls so that it can correctly encode character sequences that span blocks. The <see cref="T:System.Text.Encoder" /> object also preserves trailing characters at the end of data blocks and uses the trailing characters in the next encoding operation. For example, a data block might end with an unmatched high surrogate, and the matching low surrogate might be in the next data block. Therefore, <see cref="M:System.Text.UnicodeEncoding.GetDecoder" /> and <see cref="M:System.Text.UnicodeEncoding.GetEncoder" /> are useful for network transmission and file operations, because those operations often deal with blocks of data instead of a complete data stream.</para>
@@ -896,6 +897,10 @@ Unicode-encoded characters. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains an encoder that converts a sequence of Unicode characters into a UTF-16 encoded sequence of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.Encoder" /> object that converts a sequence of Unicode characters into a UTF-16 encoded sequence of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -913,10 +918,6 @@ Unicode-encoded characters. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <para>The algorithm used to generate the hash code is
       unspecified.</para>
@@ -928,6 +929,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current <see cref="T:System.Text.UnicodeEncoding" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -948,11 +953,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="charCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the maximum number of bytes required to encode <paramref name="charCount" />
-characters as Unicode-encoded characters.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="charCount" /> &lt; 0.</para>
@@ -973,6 +973,10 @@ characters as Unicode-encoded characters.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of bytes produced by encoding the specified number of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of bytes produced by encoding the specified number of characters.</para>
+        </returns>
         <param name="charCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode. </param>
       </Docs>
@@ -995,11 +999,6 @@ characters as Unicode-encoded characters.</para>
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the maximum number of characters that would be produced by
-decoding <paramref name="byteCount" /> bytes as Unicode-encoded characters. </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="byteCount" /> &lt; 0.</para>
@@ -1020,6 +1019,10 @@ decoding <paramref name="byteCount" /> bytes as Unicode-encoded characters. </pa
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the maximum number of characters produced by decoding the specified number of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum number of characters produced by decoding the specified number of bytes.</para>
+        </returns>
         <param name="byteCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to decode. </param>
       </Docs>
@@ -1040,10 +1043,6 @@ decoding <paramref name="byteCount" /> bytes as Unicode-encoded characters. </pa
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Byte" /> array that identifies the <see cref="T:System.Text.Encoding" />
-implementation used to create a <see cref="T:System.IO.Stream" /> . </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Optionally, the <see cref="T:System.Text.UnicodeEncoding" /> object provides a preamble that is an array of bytes that can be prefixed to the sequence of bytes resulting from the encoding process. If the preamble contains a byte order mark (in Unicode, code point U+FEFF), it helps the decoder determine the byte order and the transformation format or UTF. </para>
@@ -1067,6 +1066,10 @@ implementation used to create a <see cref="T:System.IO.Stream" /> . </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Unicode byte order mark encoded in UTF-16 format, if the constructor for this instance requests a byte order mark.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the Unicode byte order mark, if the constructor for this instance requests a byte order mark. Otherwise, this method returns a byte array of length zero.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1093,7 +1096,6 @@ implementation used to create a <see cref="T:System.IO.Stream" /> . </para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>With error detection, an invalid sequence causes this method to throw a <see cref="T:System.ArgumentException" />. Without error detection, invalid sequences are ignored, and no exception is thrown.</para>
@@ -1103,6 +1105,10 @@ implementation used to create a <see cref="T:System.IO.Stream" /> . </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a range of bytes from a byte array into a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> object containing the results of decoding the specified sequence of bytes.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">

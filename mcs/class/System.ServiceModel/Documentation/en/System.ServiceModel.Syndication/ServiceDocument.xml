@@ -48,9 +48,13 @@
         <Parameter Name="workspaces" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.Workspace&gt;" />
       </Parameters>
       <Docs>
-        <param name="workspaces">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> class, initializing it with the specified collection of <see cref="T:System.ServiceModel.Syndication.Workspace" /> instances.</para>
+        </summary>
+        <param name="workspaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of workspaces.</param>
       </Docs>
     </Member>
     <Member MemberName="AttributeExtensions">
@@ -103,12 +107,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.Workspace" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+A new workspace.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">
@@ -146,12 +155,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+A <see cref="T:System.ServiceModel.Syndication.ServiceDocumentFormatter" /> instance.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Language">
@@ -187,12 +201,17 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a service document from the specified <see cref="T:System.Xml.XmlReader" /> into a <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+A <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> instance.
+</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read the service document from.</param>
       </Docs>
@@ -219,15 +238,19 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <typeparam name="TServiceDocument">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a service document from the specified <see cref="T:System.Xml.XmlReader" /> into a <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> derived instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A<see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> instance.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read the service document from.</param>
+        <typeparam name="TServiceDocument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the service document.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -270,12 +293,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is successfully parsed; otherwise, false.
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
         <param name="ns">
@@ -301,12 +329,15 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element is successfully parsed; otherwise, false.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="version">

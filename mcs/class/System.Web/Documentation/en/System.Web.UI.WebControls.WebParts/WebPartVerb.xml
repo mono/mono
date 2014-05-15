@@ -493,7 +493,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -503,6 +502,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> object's view-state changes that occurred since the page was last posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the state data to be saved.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -595,7 +598,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface. The method simply calls the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartVerb.SaveViewState" /> method on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> class.</para>
@@ -604,6 +606,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="M:System.Web.UI.IStateManager.SaveViewState" /> method by calling the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartVerb" /> class's own <see cref="M:System.Web.UI.WebControls.WebParts.WebPartVerb.SaveViewState" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Object" /> containing the control's current view state. If no view state is associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">

@@ -137,7 +137,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -150,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the site map information from an XML file and builds it in memory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the root <see cref="T:System.Web.SiteMapNode" /> of the site map navigation structure.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -235,7 +238,6 @@
         <Parameter Name="rawUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -248,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object that represents the page at the specified URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="rawURL" />.</para>
+        </returns>
         <param name="rawUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />A URL that identifies the page for which to retrieve a <see cref="T:System.Web.SiteMapNode" />. </param>
       </Docs>
@@ -265,7 +271,6 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -277,6 +282,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.SiteMapNode" /> object based on a specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the page identified by <paramref name="key" />; otherwise, null, if security trimming is enabled and the node cannot be shown to the current user or the node is not found by <paramref name="key" /> in the node collection.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />A lookup key with which to search for a <see cref="T:System.Web.SiteMapNode" />.</param>
       </Docs>
@@ -295,7 +304,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.XmlSiteMapProvider.GetRootNodeCore" /> method calls the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method to retrieve the top-level node in the site map. Therefore, any exceptions that occur for the <see cref="M:System.Web.XmlSiteMapProvider.BuildSiteMap" /> method can also occur when calling the <see cref="M:System.Web.XmlSiteMapProvider.GetRootNodeCore" /> method.</para>
@@ -304,6 +312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the top-level node of the current site map data structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.SiteMapNode" /> that represents the top-level node in the current site map data structure.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Initialize">

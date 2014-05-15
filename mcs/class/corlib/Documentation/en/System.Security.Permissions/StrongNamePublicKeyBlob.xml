@@ -70,12 +70,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets or sets a value indicating whether the current public key blob is equal to the specified public key blob.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the public key blob of the current object is equal to the public key blob of the <paramref name="obj" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object containing a public key blob. </param>
       </Docs>
@@ -94,7 +97,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Hash functions map binary strings of an arbitrary length to small binary strings of a fixed length, known as hash values.</para>
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code based on the public key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code based on the public key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -119,12 +125,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a string representation of the public key blob.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hexadecimal version of the public key blob.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

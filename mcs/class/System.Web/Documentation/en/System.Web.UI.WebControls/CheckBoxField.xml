@@ -205,7 +205,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -215,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty <see cref="T:System.Web.UI.WebControls.CheckBoxField" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -303,7 +306,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -313,6 +315,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value used for the field's value when rendering the <see cref="T:System.Web.UI.WebControls.CheckBoxField" /> object in a designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

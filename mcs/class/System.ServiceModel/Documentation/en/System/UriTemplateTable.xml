@@ -56,9 +56,13 @@
         <Parameter Name="keyValuePairs" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.UriTemplate,System.Object&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="keyValuePairs">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class with the specified collection of key/value pairs.</para>
+        </summary>
+        <param name="keyValuePairs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that consist of URI templates and associated data.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -93,10 +97,15 @@
         <Parameter Name="keyValuePairs" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.UriTemplate,System.Object&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="baseAddress">To be added.</param>
-        <param name="keyValuePairs">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplateTable" /> class with the specified base address and collection of key/value pairs.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> instance that contains the base address.</param>
+        <param name="keyValuePairs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of key/value pairs that consist of URI templates and associated data.</param>
       </Docs>
     </Member>
     <Member MemberName="BaseAddress">
@@ -214,7 +223,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method may return multiple matches.</para>
@@ -223,6 +231,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.UriTemplateMatch" /> instances.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
       </Docs>
@@ -241,7 +253,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns, at most, one match. If more than one match is found, a <see cref="T:System.UriTemplateMatchException" /> is thrown.</para>
@@ -250,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single <see cref="T:System.UriTemplateMatch" /> instance.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
       </Docs>

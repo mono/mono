@@ -60,9 +60,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> with the same state as the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is a copy of this instance of <see cref="T:System.CharEnumerator" /> and its current state. This is useful for saving your state while iterating through a <see cref="T:System.String" /> object.</para>
@@ -76,6 +73,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the current <see cref="T:System.CharEnumerator" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that is a copy of the current <see cref="T:System.CharEnumerator" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -156,11 +157,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the enumerator was successfully
-   advanced to the next element; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.CharEnumerator" /> class maintains an internal index to the enumerated string, and the <see cref="M:System.CharEnumerator.MoveNext" /> method increments the index by one. Call <see cref="M:System.CharEnumerator.MoveNext" /> after calling <see cref="M:System.String.GetEnumerator" /> or <see cref="M:System.CharEnumerator.Reset" /> to increment the current character position to the first character in the enumerated string. Check that the return value is true to determine that the current character position is valid.</para>
@@ -171,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Increments the internal index of the current <see cref="T:System.CharEnumerator" /> object to the next character of the enumerated string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the index is successfully incremented and within the enumerated string; otherwise, false.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

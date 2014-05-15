@@ -213,7 +213,6 @@
         <Parameter Name="defaultValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string <paramref name="valueName" /> is not case-sensitive.</para>
@@ -233,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value associated with the specified name, in the specified registry key. If the name is not found in the specified key, returns a default value that you provide, or null if the specified key does not exist. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>null if the subkey specified by <paramref name="keyName" /> does not exist; otherwise, the value associated with <paramref name="valueName" />, or <paramref name="defaultValue" /> if <paramref name="valueName" /> is not found.</para>
+        </returns>
         <param name="keyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The full registry path of the key, beginning with a valid registry root, such as "HKEY_CURRENT_USER".</param>
         <param name="valueName">

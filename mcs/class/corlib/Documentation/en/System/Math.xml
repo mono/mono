@@ -41,9 +41,6 @@
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Decimal" /> containing the absolute value of <paramref name="value" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Math.Abs(System.SByte)" />(<see cref="T:System.Decimal" />) method.</para>
           <code lang="C#">
@@ -74,6 +71,10 @@ public class MathAbsExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a <see cref="T:System.Decimal" /> number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal number, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Decimal.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than or equal to <see cref="F:System.Decimal.MinValue" />, but less than or equal to <see cref="F:System.Decimal.MaxValue" />. </param>
       </Docs>
@@ -96,11 +97,6 @@ public class MathAbsExample
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the absolute value of <paramref name="value" />. If <paramref name="value " />
-is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />,
-returns <see cref="F:System.Double.PositiveInfinity" />. If value is equal to <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The absolute value of a <see cref="T:System.Double" /> is its numeric value without its sign. For example, the absolute value of both 1.2e-03 and -1.2e03 is 1.2e03.</para>
@@ -110,6 +106,10 @@ returns <see cref="F:System.Double.PositiveInfinity" />. If value is equal to <s
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Double.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than or equal to <see cref="F:System.Double.MinValue" />, but less than or equal to <see cref="F:System.Double.MaxValue" />.</param>
       </Docs>
@@ -132,10 +132,6 @@ returns <see cref="F:System.Double.PositiveInfinity" />. If value is equal to <s
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int16" />
-containing the absolute value of <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">
           <paramref name="value" /> equals <see cref="F:System.Int16.MinValue" />.</exception>
         <remarks>
@@ -146,6 +142,10 @@ containing the absolute value of <paramref name="value" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a 16-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Int16.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than <see cref="F:System.Int16.MinValue" />, but less than or equal to <see cref="F:System.Int16.MaxValue" />.</param>
       </Docs>
@@ -168,9 +168,6 @@ containing the absolute value of <paramref name="value" />.</para>
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the absolute value of <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">
           <paramref name="value " /> equals <see cref="F:System.Int32.MinValue" />.</exception>
         <remarks>
@@ -181,6 +178,10 @@ containing the absolute value of <paramref name="value" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Int32.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than <see cref="F:System.Int32.MinValue" />, but less than or equal to <see cref="F:System.Int32.MaxValue" />.</param>
       </Docs>
@@ -203,9 +204,6 @@ containing the absolute value of <paramref name="value" />.</para>
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> containing the absolute value of <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">
           <paramref name="value " /> equals <see cref="F:System.Int64.MinValue" />.</exception>
         <remarks>
@@ -216,6 +214,10 @@ containing the absolute value of <paramref name="value" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Int64.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than <see cref="F:System.Int64.MinValue" />, but less than or equal to <see cref="F:System.Int64.MaxValue" />.</param>
       </Docs>
@@ -243,9 +245,6 @@ containing the absolute value of <paramref name="value" />.</para>
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.SByte" /> containing the absolute value of <paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.OverflowException">
           <paramref name="value" /> equals <see cref="F:System.SByte.MinValue" />.</exception>
         <remarks>
@@ -256,6 +255,10 @@ containing the absolute value of <paramref name="value" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of an 8-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-bit signed integer, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.SByte.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than <see cref="F:System.SByte.MinValue" />, but less than or equal to <see cref="F:System.SByte.MaxValue" />.</param>
       </Docs>
@@ -278,12 +281,6 @@ containing the absolute value of <paramref name="value" />.</para>
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Single" />
-containing the absolute value of <paramref name="value" />. If <paramref name="value " /> is equal to <see cref="F:System.Single.NegativeInfinity" />
-or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.Single.PositiveInfinity" />. If <paramref name="value" /> is equal to <see cref="F:System.Single.NaN" />, returns
-<see cref="F:System.Single.NaN" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The absolute value of a <see cref="T:System.Single" /> is its numeric value without its sign. For example, the absolute value of both 1.2e-03 and -1.2e03 is 1.2e03.</para>
@@ -293,6 +290,10 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the absolute value of a single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single-precision floating-point number, x, such that 0 <math>≤</math> x <math>≤</math> <see cref="F:System.Single.MaxValue" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number that is greater than or equal to <see cref="F:System.Single.MinValue" />, but less than or equal to <see cref="F:System.Single.MaxValue" />.</param>
       </Docs>
@@ -315,12 +316,6 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Double" /> containing the 
-   value of an angle, <theta />, measured in radians, for which <paramref name="d" />
-   is the cosine, such that 0 &lt;= <theta /> &lt;= <pi />. If
-<paramref name="d" /> &lt; -1, <paramref name="d" /> &gt; 1, or <paramref name="d" /> = <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiply the return value by 180/<see cref="F:System.Math.PI" /> to convert from radians to degrees.</para>
@@ -329,6 +324,13 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the angle whose cosine is the specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An angle, <math>θ</math>, measured in radians, such that 0 <math>≤</math> <math>θ</math> <math>≤</math> <math>π</math> </para>
+          <para>-or- </para>
+          <para>
+            <see cref="F:System.Double.NaN" /> if <paramref name="d" /> &lt; -1 or <paramref name="d" /> &gt; 1 or <paramref name="d" /> equals <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number representing a cosine, where <paramref name="d" /> must be greater than or equal to -1, but less than or equal to 1. </param>
       </Docs>
@@ -351,15 +353,6 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the 
-   value of an angle, <theta />, measured in radians, for which <paramref name="d" /> is the sine, such that -<pi />/2 &lt;= <theta /> &lt;=
-   <pi />/2. If <paramref name="d" /> &lt; -1, <paramref name="d" /> &gt; 1, or <paramref name="d" /> =
-   
-<see cref="F:System.Double.NaN" />, returns
-<see cref="F:System.Double.NaN" />
-.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A positive return value represents a counterclockwise angle from the x-axis; a negative return value represents a clockwise angle.</para>
@@ -369,6 +362,13 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the angle whose sine is the specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An angle, <math>θ</math>, measured in radians, such that -<math>π</math>/2 <math>≤</math> <math>θ</math> <math>≤</math> <math>π</math>/2 </para>
+          <para>-or- </para>
+          <para>
+            <see cref="F:System.Double.NaN" /> if <paramref name="d" /> &lt; -1 or <paramref name="d" /> &gt; 1 or <paramref name="d" /> equals <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number representing a sine, where <paramref name="d" /> must be greater than or equal to -1, but less than or equal to 1. </param>
       </Docs>
@@ -391,40 +391,6 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the 
-   value of the angle, <theta />, measured in radians, for which <paramref name="d" /> is the tangent, such that -<pi />/2 &lt;=
-   <theta /> &lt;=
-   
-   <pi />/2.</para>
-          <para> The
-   following table specifies the return value if d is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
-   or <see cref="F:System.Double.PositiveInfinity" /> .</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Condition</description>
-            </listheader>
-            <item>
-              <term>
-                <see cref="F:System.Double.NaN" />
-              </term>
-              <description>
-                <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />.</description>
-            </item>
-            <item>
-              <term> -<pi />/2 rounded to double precision (-1.5707963267949)</term>
-              <description>
-                <paramref name="d" /> is equal to <see cref="F:System.Double.NegativeInfinity" />.</description>
-            </item>
-            <item>
-              <term>
-                <pi />/2 rounded to double precision (1.5707963267949)</term>
-              <description>
-                <paramref name="d" /> is equal to <see cref="F:System.Double.PositiveInfinity" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A positive return value represents a counterclockwise angle from the x-axis; a negative return value represents a clockwise angle.</para>
@@ -434,6 +400,13 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the angle whose tangent is the specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An angle, <math>θ</math>, measured in radians, such that -<math>π</math>/2 <math>≤</math> <math>θ</math> <math>≤</math> <math>π</math>/2.</para>
+          <para>-or- </para>
+          <para>
+            <see cref="F:System.Double.NaN" /> if <paramref name="d" /> equals <see cref="F:System.Double.NaN" />, -<math>π</math>/2 rounded to double precision (-1.5707963267949) if <paramref name="d" /> equals <see cref="F:System.Double.NegativeInfinity" />, or <math>π</math>/2 rounded to double precision (1.5707963267949) if <paramref name="d" /> equals <see cref="F:System.Double.PositiveInfinity" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number representing a tangent. </param>
       </Docs>
@@ -457,86 +430,6 @@ or <see cref="F:System.Single.PositiveInfinity" />, returns <see cref="F:System.
         <Parameter Name="x" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the 
-   value of an angle, <theta />, measured in radians, such that -<pi /> &lt;=
-   <theta /> &lt;=
-   
-   <pi /> and tan<theta /> =
-   
-<paramref name="y/x" />, where (<paramref name="x, y" />) is a 
-   point in the Cartesian plane.</para>
-          <para>If both <paramref name="x" /> and <paramref name="y" /> are any combination of <see cref="F:System.Double.NegativeInfinity" /> and <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NaN" /> is
-returned.</para>
-          <para>If either <paramref name="x" /> or <paramref name="y" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is
-returned.</para>
-          <para>The following table specifies the return value if
-<paramref name="x" /> or <paramref name="y" /> 
-is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Condition</term>
-              <description>Return Value</description>
-            </listheader>
-            <item>
-              <term>
-                <para>
-                  <paramref name="y " /> is equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />, and</para>
-                <para>
-                  <paramref name="x " /> is equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Double.NaN" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="y " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and</para>
-                <para>
-                  <paramref name="x " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
-              </term>
-              <description>-<see cref="F:System.Math.PI" />/2.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="y " /> is equal to <see cref="F:System.Double.PositiveInfinity" />, and</para>
-                <para>
-                  <paramref name="x " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Math.PI" />/2.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="x " /> is equal to <see cref="F:System.Double.PositiveInfinity" />, and</para>
-                <para>
-                  <paramref name="y " /> is not equal to <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />.</para>
-              </term>
-              <description>0.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="x " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and </para>
-                <para>
-                  <paramref name="y " /> &gt;= 0 and not equal to <see cref="F:System.Double.PositiveInfinity" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Math.PI" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="x " /> is equal to <see cref="F:System.Double.NegativeInfinity" />, and </para>
-                <para>
-                  <paramref name="y " /> &lt; 0 and not equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
-              </term>
-              <description>-<see cref="F:System.Math.PI" />.</description>
-            </item>
-          </list>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Atan2(System.Double,System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -570,6 +463,43 @@ public class MathAtan2Example
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the angle whose tangent is the quotient of two specified numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An angle, <math>θ</math>, measured in radians, such that -<math>π</math> <math>≤</math> <math>θ</math> <math>≤</math> <math>π</math>, and tan(<math>θ</math>) = <paramref name="y" /> / <paramref name="x" />, where (<paramref name="x" />, <paramref name="y" />) is a point in the Cartesian plane. Observe the following: </para>
+          <list type="bullet">
+            <item>
+              <para>For (<paramref name="x" />, <paramref name="y" />) in quadrant 1, 0 &lt; <math>θ</math> &lt; <math>π</math>/2.</para>
+            </item>
+            <item>
+              <para>For (<paramref name="x" />, <paramref name="y" />) in quadrant 2, <math>π</math>/2 &lt; <math>θ</math> <math>≤</math> <math>π</math>.</para>
+            </item>
+            <item>
+              <para>For (<paramref name="x" />, <paramref name="y" />) in quadrant 3, -<math>π</math> &lt; <math>θ</math> &lt; -<math>π</math>/2.</para>
+            </item>
+            <item>
+              <para>For (<paramref name="x" />, <paramref name="y" />) in quadrant 4, -<math>π</math>/2 &lt; <math>θ</math> &lt; 0.</para>
+            </item>
+          </list>
+          <para>For points on the boundaries of the quadrants, the return value is the following:</para>
+          <list type="bullet">
+            <item>
+              <para>If y is 0 and x is not negative, θ = 0.</para>
+            </item>
+            <item>
+              <para>If y is 0 and x is negative, θ = π.</para>
+            </item>
+            <item>
+              <para>If y is positive and x is 0, θ = π/2.</para>
+            </item>
+            <item>
+              <para>If y is negative and x is 0, θ = -π/2.</para>
+            </item>
+            <item>
+              <para>If y is 0 and x is 0, θ = 0. </para>
+            </item>
+          </list>
+          <para>If <paramref name="x" /> or <paramref name="y" /> is <see cref="F:System.Double.NaN" />, or if <paramref name="x" /> and <paramref name="y" /> are either <see cref="F:System.Double.PositiveInfinity" /> or <see cref="F:System.Double.NegativeInfinity" />, the method returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="y">
           <attribution license="cc4" from="Microsoft" modified="false" />The y coordinate of a point. </param>
         <param name="x">
@@ -595,15 +525,15 @@ public class MathAtan2Example
         <Parameter Name="b" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int64" /> containing the product of the specified numbers. 
-      </para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the full product of two 32-bit numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number containing the product of the specified numbers.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The first number to multiply. </param>
         <param name="b">
@@ -626,7 +556,6 @@ public class MathAtan2Example
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -636,6 +565,10 @@ public class MathAtan2Example
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smallest integral value that is greater than or equal to the specified decimal number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smallest integral value that is greater than or equal to <paramref name="d" />. Note that this method returns a <see cref="T:System.Decimal" /> instead of an integral type.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number. </param>
       </Docs>
@@ -657,13 +590,6 @@ public class MathAtan2Example
         <Parameter Name="a" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the smallest integer greater
-   than or equal to <paramref name="a" />. If <paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
-   or <see cref="F:System.Double.PositiveInfinity" />
-   , that value
-   is returned.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Ceiling(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -697,6 +623,10 @@ public class MathCeilingExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smallest integral value that is greater than or equal to the specified double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smallest integral value that is greater than or equal to <paramref name="a" />. If <paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, that value is returned. Note that this method returns a <see cref="T:System.Double" /> instead of an integral type.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -719,11 +649,6 @@ public class MathCeilingExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the cosine of <paramref name="d" />. If
-<paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, 
-   returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The angle, <paramref name="d" />, must be in radians. Multiply by <see cref="F:System.Math.PI" />/180 to convert degrees to radians.</para>
@@ -733,6 +658,10 @@ public class MathCeilingExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the cosine of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cosine of <paramref name="d" />. If <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, this method returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -755,12 +684,6 @@ public class MathCeilingExample
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The hyperbolic cosine of <paramref name="value" />. If
-<paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />, 
-   returns <see cref="F:System.Double.PositiveInfinity" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />, returns
-<see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The angle, <paramref name="value" />, must be in radians. Multiply by <see cref="F:System.Math.PI" />/180 to convert degrees to radians.</para>
@@ -769,6 +692,10 @@ public class MathCeilingExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hyperbolic cosine of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic cosine of <paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" /> or <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.PositiveInfinity" /> is returned. If <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is returned.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -888,12 +815,6 @@ public class MathCeilingExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Double" /> equal to the number <see langword="e" /> raised to the power of
-<paramref name="d" />. If <paramref name="d " />equals <see cref="F:System.Double.NaN" /> or <see cref="F:System.Double.PositiveInfinity" />, 
-   returns that value. If <paramref name="d " />equals <see cref="F:System.Double.NegativeInfinity" />,
-   returns 0.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Math.Pow(System.Double,System.Double)" /> method to calculate powers of other bases.</para>
@@ -904,6 +825,10 @@ public class MathCeilingExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns e raised to the specified power.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number e raised to the power <paramref name="d" />. If <paramref name="d" /> equals <see cref="F:System.Double.NaN" /> or <see cref="F:System.Double.PositiveInfinity" />, that value is returned. If <paramref name="d" /> equals <see cref="F:System.Double.NegativeInfinity" />, 0 is returned.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number specifying a power. </param>
       </Docs>
@@ -924,7 +849,6 @@ public class MathCeilingExample
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -934,6 +858,10 @@ public class MathCeilingExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the largest integer less than or equal to the specified decimal number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The largest integer less than or equal to <paramref name="d" />.  Note that the method returns an integral value of type <see cref="T:System.Math" />. </para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number. </param>
       </Docs>
@@ -955,11 +883,6 @@ public class MathCeilingExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Double" /> containing the value of the largest integer less than or
-   equal to <paramref name="d" />. If <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />,
-   or <see cref="F:System.Double.PositiveInfinity" />, that value is returned..</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Floor(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -993,6 +916,10 @@ public class MathFloorExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the largest integer less than or equal to the specified double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The largest integer less than or equal to <paramref name="d" />. If <paramref name="d" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, that value is returned.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number. </param>
       </Docs>
@@ -1016,42 +943,6 @@ public class MathFloorExample
         <Parameter Name="y" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" />
-whose value is as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="x" /> - (<paramref name="y" />
-      Q),</term>
-              <description>Q is the quotient of <paramref name="x/y" /> rounded to
-   the nearest integer (if <paramref name="x/y" /> is exactly halfway between two
-   integers, the even integer is returned).</description>
-            </item>
-            <item>
-              <term> +0</term>
-              <description>Q is the quotient of <paramref name="x/y" /> rounded to the nearest integer (if
-<paramref name="x/y" /> is exactly halfway between two integers, the even integer is 
-   returned), <paramref name="x" /> - (y Q) is zero, and <paramref name="x" /> is positive.</description>
-            </item>
-            <item>
-              <term> -0</term>
-              <description>Q is the quotient of <paramref name="x/y" /> rounded to the nearest integer (if
-<paramref name="x/y" /> is exactly halfway between two integers, the even integer is 
-   returned), <paramref name="x" /> - (y Q) is zero, and <paramref name="x" /> is negative.</description>
-            </item>
-            <item>
-              <term>
-                <see cref="F:System.Double.NaN" />
-              </term>
-              <description>y = 0.</description>
-            </item>
-          </list>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.IEEERemainder(System.Double,System.Double)" /> 
 method.</para>
@@ -1098,6 +989,12 @@ public class MathIEEERemainderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the remainder resulting from the division of a specified number by another specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number equal to <paramref name="x" /> - (<paramref name="y" /> Q), where Q is the quotient of <paramref name="x" /> / <paramref name="y" /> rounded to the nearest integer (if <paramref name="x" /> / <paramref name="y" /> falls halfway between two integers, the even integer is returned).</para>
+          <para>If <paramref name="x" /> - (<paramref name="y" /> Q) is zero, the value +0 is returned if <paramref name="x" /> is positive, or -0 if <paramref name="x" /> is negative.</para>
+          <para>If <paramref name="y" /> = 0, <see cref="F:System.Double.NaN" /> is returned.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />A dividend. </param>
         <param name="y">
@@ -1122,52 +1019,6 @@ public class MathIEEERemainderExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> Returns a <see cref="T:System.Double" /> whose value is as
-   follows.</para>
-          <list type="table">
-            <listheader>
-              <term>Condition</term>
-              <description>Returns</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="d" />
-   
-   &gt;
-   0.</term>
-              <description> The value of the natural logarithm of <paramref name="d" />.</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="d" /> == 0.</term>
-              <description>
-                <see cref="F:System.Double.NegativeInfinity" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="d " /> &lt;
-      0.</para>
-                <para>-or-</para>
-                <para>
-                  <paramref name="d " /> is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
-                <para>-or-</para>
-                <para>
-                  <paramref name="d " /> is equal to <see cref="F:System.Double.NaN" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Double.NaN" />.</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="d" />
-is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parameter <paramref name="d" /> is specified as a base 10 number.</para>
@@ -1176,6 +1027,69 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the natural (base e) logarithm of a specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the values in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="d" /> parameter</para>
+                </term>
+                <description>
+                  <para>Return value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Positive </para>
+              </term>
+              <description>
+                <para>The natural logarithm of <paramref name="d" />; that is, ln <paramref name="d" />, or log <subscript>e</subscript> <paramref name="d" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NegativeInfinity" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Negative </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equal to <see cref="F:System.Double.NaN" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equal to <see cref="F:System.Double.PositiveInfinity" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The number whose logarithm is to be found. </param>
       </Docs>
@@ -1199,103 +1113,208 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="newBase" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a <see cref="T:System.Double" /> whose value is as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Condition</term>
-              <description>Returns</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="a" /> &gt; 0, <paramref name="newBase" /> &gt; 0, but <paramref name="newBase" /> != 1</term>
-              <description>log<sub><paramref name="newBase" /></sub><paramref name="a" /></description>
-            </item>
-            <item>
-              <term>
-                <paramref name="a " /> &lt; 0</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> &lt; 0</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> == 0, <paramref name="a" />  != 1</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> == 0, <paramref name="a" /> == 1</term>
-              <description>Zero</description>
-            </item>
-            <item>
-              <term>0 &lt; <paramref name="newBase" /> &lt; 1, <paramref name="a" /> == 0</term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>0 &lt; <paramref name="newBase" /> &lt; 1, <paramref name="a" /> == +infinity</term>
-              <description>
-                <see cref="F:System.Double.NegativeInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> == 1</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> &gt; 1, <paramref name="a" /> == 0</term>
-              <description>
-                <see cref="F:System.Double.NegativeInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> &gt; 1, <paramref name="a" /> == +infinity</term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> == +infinity, <paramref name="a" /> != 1</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="newBase" /> == +infinity, <paramref name="a" /> == 1</term>
-              <description>Zero</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="a" /> == NaN or <paramref name="newBase" /> == NaN</term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logarithm of a specified number in a specified base.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the values in the following table. (+Infinity denotes <see cref="F:System.Double.PositiveInfinity" />, -Infinity denotes <see cref="F:System.Double.NegativeInfinity" />, and NaN denotes <see cref="F:System.Double.NaN" />.)</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="a" />
+                  </para>
+                </term>
+                <description>
+                  <para>
+                    <paramref name="newBase" />
+                  </para>
+                </description>
+                <description>
+                  <para>Return value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> <math>&gt;</math> 0</para>
+              </term>
+              <description>
+                <para>(0 <math>&lt;</math> <paramref name="newBase" /> <math>&lt;</math> 1) -or-(<paramref name="newBase" /> <math>&gt;</math> 1)</para>
+              </description>
+              <description>
+                <para>log<subscript>newBase</subscript>(a)</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> <math>&lt;</math> 0</para>
+              </term>
+              <description>
+                <para>(any value)</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>(any value)</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> <math>&lt;</math> 0</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> != 1</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = 0</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> != 1</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = +Infinity</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> = NaN</para>
+              </term>
+              <description>
+                <para>(any value)</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>(any value)</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = NaN</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>(any value)</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = 1</para>
+              </description>
+              <description>
+                <para>NaN</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> = 0</para>
+              </term>
+              <description>
+                <para>0 <math>&lt;</math> <paramref name="newBase" /> <math>&lt;</math> 1 </para>
+              </description>
+              <description>
+                <para>+Infinity</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> = 0</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> <math>&gt;</math> 1</para>
+              </description>
+              <description>
+                <para>-Infinity</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> =  +Infinity</para>
+              </term>
+              <description>
+                <para>0 <math>&lt;</math> <paramref name="newBase" /> <math>&lt;</math> 1</para>
+              </description>
+              <description>
+                <para>-Infinity</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> =  +Infinity</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> <math>&gt;</math> 1</para>
+              </description>
+              <description>
+                <para>+Infinity</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> = 1</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = 0</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <paramref name="a" /> = 1</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="newBase" /> = +Infinity</para>
+              </description>
+              <description>
+                <para>0</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The number whose logarithm is to be found. </param>
         <param name="newBase">
@@ -1320,54 +1339,6 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>Returns a <see cref="T:System.Double" /> as indicated by the following table.</para>
-          <list type="table">
-            <listheader>
-              <term>Condition</term>
-              <description>Returns</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="d" /> &gt;
-      0.</term>
-              <description>A
-   <see cref="T:System.Double" />
-   containing the value of log<sub>10</sub><paramref name="d" />.</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="d" /> == 0.</term>
-              <description>
-                <see cref="F:System.Double.NegativeInfinity" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="d " /> &lt;
-      0. </para>
-                <para>-or-</para>
-                <para>
-                  <paramref name="d " />is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
-                <para>-or-</para>
-                <para>
-                  <paramref name="d " />is equal to <see cref="F:System.Double.NaN" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Double.NaN" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="d" /> is equal to
-   <see cref="F:System.Double.PositiveInfinity" />.
-      </para>
-              </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parameter <paramref name="d" /> is specified as a base 10 number.</para>
@@ -1376,6 +1347,69 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the base 10 logarithm of a specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the values in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="d" /> parameter </para>
+                </term>
+                <description>
+                  <para>Return value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Positive </para>
+              </term>
+              <description>
+                <para>The base 10 log of <paramref name="d" />; that is, log <subscript>10</subscript> <paramref name="d" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NegativeInfinity" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Negative </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equal to <see cref="F:System.Double.NaN" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equal to <see cref="F:System.Double.PositiveInfinity" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number whose logarithm is to be found. </param>
       </Docs>
@@ -1404,17 +1438,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Byte" /> that 
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value
-   is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 8-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 8-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -1445,15 +1477,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Decimal" /> that is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or 
-   equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two decimal numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two decimal numbers to compare. </param>
         <param name="val2">
@@ -1484,16 +1516,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
-<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" /> , <paramref name="val2" />, or both 
-   are equal to <see cref="F:System.Double.NaN" /> , <see cref="F:System.Double.NaN" /> is returned.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two double-precision floating-point numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger. If <paramref name="val1" />, <paramref name="val2" />, or both <paramref name="val1" /> and <paramref name="val2" /> are equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is returned.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two double-precision floating-point numbers to compare. </param>
         <param name="val2">
@@ -1524,18 +1555,19 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="val1">To be added.</param>
-        <param name="val2">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int16" /> that 
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
+        <param name="val1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit signed integers to compare. </param>
+        <param name="val2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second of two 16-bit signed integers to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 16-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit signed integers to compare. </param>
         <param name="val2">
@@ -1566,16 +1598,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that 
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 32-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 32-bit signed integers to compare. </param>
         <param name="val2">
@@ -1606,16 +1637,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> that 
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 64-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 64-bit signed integers to compare. </param>
         <param name="val2">
@@ -1649,12 +1679,6 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.SByte" /> that
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value
-   is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int16" />, <see cref="T:System.Int16" />).</para>
@@ -1663,6 +1687,10 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 8-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 8-bit signed integers to compare. </param>
         <param name="val2">
@@ -1693,18 +1721,15 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Single" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
-<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, <paramref name="val2" />, or 
-both are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is
-returned.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two single-precision floating-point numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger. If <paramref name="val1" />, or <paramref name="val2" />, or both <paramref name="val1" /> and <paramref name="val2" /> are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is returned.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two single-precision floating-point numbers to compare. </param>
         <param name="val2">
@@ -1738,11 +1763,6 @@ returned.</para>
         <Parameter Name="val2" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt16" /> that
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int32" />).</para>
@@ -1751,6 +1771,10 @@ returned.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 16-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -1784,11 +1808,6 @@ returned.</para>
         <Parameter Name="val2" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt32" /> that
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Int64" />, <see cref="T:System.Int64" />).</para>
@@ -1797,6 +1816,10 @@ returned.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 32-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 32-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -1830,11 +1853,6 @@ returned.</para>
         <Parameter Name="val2" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>
-   A <see cref="T:System.UInt64" />
-   equal to <paramref name="val1" /> if <paramref name="val1" /> is greater than or equal to
-<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.
-</returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant alternative, use
    <see cref="M:System.Math.Max(System.SByte,System.SByte)" />(<see cref="T:System.Decimal" />, <see cref="T:System.Decimal" />).</para>
@@ -1843,6 +1861,10 @@ returned.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 64-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is larger.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 64-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -1873,17 +1895,15 @@ returned.</para>
         <Parameter Name="val2" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Byte" /> equal
-   to
-<paramref name="val1" /> if <paramref name="val1" /> is less than or equal
-   to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 8-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 8-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -1914,15 +1934,15 @@ returned.</para>
         <Parameter Name="val2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Decimal" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to
-<paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two decimal numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two decimal numbers to compare. </param>
         <param name="val2">
@@ -1953,19 +1973,15 @@ returned.</para>
         <Parameter Name="val2" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to
-<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, 
-<paramref name="val2" />, or both 
-are equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is
-returned.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two double-precision floating-point numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller. If <paramref name="val1" />, <paramref name="val2" />, or both <paramref name="val1" /> and <paramref name="val2" /> are equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NaN" /> is returned.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two double-precision floating-point numbers to compare. </param>
         <param name="val2">
@@ -1996,16 +2012,15 @@ returned.</para>
         <Parameter Name="val2" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int16" /> that 
-   is equal to <paramref name="val1 " />if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal
-   to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 16-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit signed integers to compare. </param>
         <param name="val2">
@@ -2036,15 +2051,15 @@ returned.</para>
         <Parameter Name="val2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> 
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 32-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 32-bit signed integers to compare. </param>
         <param name="val2">
@@ -2075,15 +2090,15 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="val2" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> 
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 64-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 64-bit signed integers to compare. </param>
         <param name="val2">
@@ -2117,10 +2132,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="val2" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.SByte" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int16" />, <see cref="T:System.Int16" />).</para>
@@ -2129,6 +2140,10 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 8-bit signed integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 8-bit signed integers to compare. </param>
         <param name="val2">
@@ -2159,18 +2174,15 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="val2" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Single" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to
-<paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />. If <paramref name="val1" />, <paramref name="val2" />, or both 
-are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is
-returned.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two single-precision floating-point numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller. If <paramref name="val1" />, <paramref name="val2" />, or both <paramref name="val1" /> and <paramref name="val2" /> are equal to <see cref="F:System.Single.NaN" />, <see cref="F:System.Single.NaN" /> is returned.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two single-precision floating-point numbers to compare. </param>
         <param name="val2">
@@ -2204,10 +2216,6 @@ returned.</para>
         <Parameter Name="val2" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt16" /> equal to <paramref name="val1" /> if <paramref name="val1" /> is less
-   than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" /> .</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int32" />, <see cref="T:System.Int32" />).</para>
@@ -2216,6 +2224,10 @@ returned.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 16-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -2249,10 +2261,6 @@ returned.</para>
         <Parameter Name="val2" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt32" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Int64" />, <see cref="T:System.Int64" />).</para>
@@ -2261,6 +2269,10 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 32-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 32-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -2294,10 +2306,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="val2" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.UInt64" />
-equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or equal to <paramref name="val2" />; otherwise, the return value is equal to <paramref name="val2" />.</para>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant
       alternative, use <see cref="M:System.Math.Min(System.SByte,System.SByte)" />(<see cref="T:System.Decimal" />, <see cref="T:System.Decimal" />).</para>
@@ -2306,6 +2314,10 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two 64-bit unsigned integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter <paramref name="val1" /> or <paramref name="val2" />, whichever is smaller.</para>
+        </returns>
         <param name="val1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first of two 64-bit unsigned integers to compare. </param>
         <param name="val2">
@@ -2358,143 +2370,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="y" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Double" /> equal to <paramref name="x" /> raised to the power <paramref name="y" />.
-   The following table specifies the results if <paramref name="x" /> or <paramref name="y" />
-   is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Parameter Values</term>
-              <description>Returns</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="x" /> or <paramref name="y" /> == NaN
-   </term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == any value except NaN, <paramref name="y" /> == 0
-   </term>
-              <description>1</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == -infinity, <paramref name="y" /> &lt; 0
-   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == -infinity, <paramref name="y" /> is a positive odd integer
-   </term>
-              <description>
-                <see cref="F:System.Double.NegativeInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == -infinity, <paramref name="y" /> is not 0 or a positive odd integer
-   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> &lt; 0, (-1 &lt; <paramref name="y" /> &lt; 0) or (0 &lt; <paramref name="y" /> &lt; 1) </term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> &lt; -1, <paramref name="y" /> == -infinity   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> &lt; -1, <paramref name="y" /> == +infinity   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == -1, <paramref name="y" /> == -infinity or +infinity </term>
-              <description>
-                <see cref="F:System.Double.NaN" />
-              </description>
-            </item>
-            <item>
-              <term>(-1 &lt; <paramref name="x" /> &lt;= 0), <paramref name="y" /> == -infinity   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>(-1 &lt; <paramref name="x" /> &lt;= 0), <paramref name="y" /> == +infinity   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == 0, <paramref name="y" /> &lt; 0
-   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == 0, <paramref name="y" /> &gt; 0
-   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>(0 &lt; <paramref name="x" /> &lt; 1), <paramref name="y" /> == -infinity   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>(0 &lt; <paramref name="x" /> &lt; 1), <paramref name="y" /> == +infinity   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == 1 <paramref name="y" /> == any value except NaN 
-   </term>
-              <description>1</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> &gt; 1, <paramref name="y" /> == -infinity   </term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> &gt; 1, <paramref name="y" /> == +infinity   </term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == +infinity <paramref name="y" />   &lt; 0</term>
-              <description>0</description>
-            </item>
-            <item>
-              <term>
-                <paramref name="x" /> == +infinity <paramref name="y" />   &gt; 0</term>
-              <description>
-                <see cref="F:System.Double.PositiveInfinity" />
-              </description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table indicates the return value when various values or ranges of values are specified for the <paramref name="x" /> and <paramref name="y" /> parameters. For more information, see <see cref="F:System.Double.PositiveInfinity" />, <see cref="F:System.Double.NegativeInfinity" />, and <see cref="F:System.Double.NaN" />.</para>
@@ -2657,6 +2532,10 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a specified number raised to the specified power.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number <paramref name="x" /> raised to the power <paramref name="y" />.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to be raised to a power. </param>
         <param name="y">
@@ -2681,10 +2560,6 @@ equal to <paramref name="val1" /> if <paramref name="val1" /> is less than or eq
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Decimal" /> containing the value of the integer nearest <paramref name="d" />. If <paramref name="d" />
-is exactly halfway between two integers, one of which is even and the other odd, then the even integer is returned.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Round(System.Double)" />(<see cref="T:System.Decimal" />) method.</para>
           <code lang="C#">using System;
@@ -2723,6 +2598,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to the nearest integral value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer nearest parameter <paramref name="d" />. If the fractional component of <paramref name="d" /> is halfway between two integers, one of which is even and the other odd, the even number is returned. Note that this method returns a <see cref="T:System.Decimal" /> instead of an integral type.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to be rounded. </param>
       </Docs>
@@ -2745,10 +2624,6 @@ public class MathRoundExample
         <Parameter Name="a" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Double" /> containing the value of the integer nearest <paramref name="a" />.
-   If <paramref name="a" /> is exactly halfway between two integers, one of which is even and the other odd, then the even integer is returned.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Round(System.Double)" />(<see cref="T:System.Double" />) method.</para>
           <code lang="C#">using System;
@@ -2787,6 +2662,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a double-precision floating-point value to the nearest integral value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer nearest <paramref name="a" />. If the fractional component of <paramref name="a" /> is halfway between two integers, one of which is even and the other odd, then the even number is returned. Note that this method returns a <see cref="T:System.Double" /> instead of an integral type.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to be rounded. </param>
       </Docs>
@@ -2809,7 +2688,6 @@ public class MathRoundExample
         <Parameter Name="decimals" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2820,6 +2698,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to a specified number of fractional digits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number nearest to <paramref name="d" /> that contains a number of fractional digits equal to <paramref name="decimals" />. </para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to be rounded. </param>
         <param name="decimals">
@@ -2842,7 +2724,6 @@ public class MathRoundExample
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2854,6 +2735,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to the nearest integer. A parameter specifies how to round the value if it is midway between two numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer nearest <paramref name="d" />. If <paramref name="d" /> is halfway between two numbers, one of which is even and the other odd, then <paramref name="mode" /> determines which of the two is returned. </para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to be rounded. </param>
         <param name="mode">
@@ -2878,20 +2763,6 @@ public class MathRoundExample
         <Parameter Name="digits" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="digits">To be added.</param>
-        <returns>
-          <para> A <see cref="T:System.Double" /> containing the value of the number
-   nearest <paramref name="value" /> with a precision
-   equal to <paramref name="digits" /> . If the digit
-   in <paramref name="value" /> that is in the 10<sup>-(<paramref name="digits " /> + 1)</sup> place is equal
-to 5 and there are no non-zero numbers in any less significant place, then the
-digit in the 10<sup>-<paramref name="digits" /></sup> place will be unchanged if it is even, else it
-will be set to the closest even integer value in the direction of the digit in
-the 10<sup>-(<paramref name="digits" /> + 1)</sup> place. If the precision of <paramref name="value" /> is less
-than <paramref name="digits" />, then <paramref name="value" /> is returned unchanged. If
-<paramref name="digits" /> is zero, this method behaves in the same manner as <see cref="M:System.Math.Round(System.Double)" /> 
-(<paramref name="value" /> ).</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="digits" /> &lt; 0</para>
@@ -2927,6 +2798,8 @@ public class MathRoundExample
             <para>Math.Round(3.55, 1) returns 3.6</para>
           </c>
         </example>
+        <param name="digits">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of fractional digits in the return value. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2937,6 +2810,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a double-precision floating-point value to a specified number of fractional digits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number nearest to <paramref name="value" /> that contains a number of fractional digits equal to <paramref name="digits" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to be rounded. </param>
         <param name="digits">
@@ -2960,7 +2837,6 @@ public class MathRoundExample
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2972,6 +2848,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a double-precision floating-point value to the nearest integer. A parameter specifies how to round the value if it is midway between two numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integer nearest <paramref name="value" />. If <paramref name="value" /> is halfway between two integers, one of which is even and the other odd, then <paramref name="mode" /> determines which of the two is returned.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to be rounded. </param>
         <param name="mode">
@@ -2995,7 +2875,6 @@ public class MathRoundExample
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3007,6 +2886,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a decimal value to a specified number of fractional digits. A parameter specifies how to round the value if it is midway between two numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number nearest to <paramref name="d" /> that contains a number of fractional digits equal to <paramref name="decimals" />. If <paramref name="d" /> has fewer fractional digits than <paramref name="decimals" />, <paramref name="d" /> is returned unchanged.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A decimal number to be rounded. </param>
         <param name="decimals">
@@ -3032,7 +2915,6 @@ public class MathRoundExample
         <Parameter Name="mode" Type="System.MidpointRounding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3044,6 +2926,10 @@ public class MathRoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rounds a double-precision floating-point value to a specified number of fractional digits. A parameter specifies how to round the value if it is midway between two numbers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number nearest to <paramref name="value" /> that has a number of fractional digits equal to <paramref name="digits" />. If <paramref name="value" /> has fewer fractional digits than <paramref name="digits" />, <paramref name="value" /> is returned unchanged.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A double-precision floating-point number to be rounded. </param>
         <param name="digits">
@@ -3069,36 +2955,54 @@ public class MathRoundExample
         <Parameter Name="value" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a decimal number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed decimal number. </param>
       </Docs>
@@ -3121,32 +3025,6 @@ public class MathRoundExample
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-indicating the sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArithmeticException">
           <paramref name="value " />is equal to <see cref="F:System.Double.NaN" />.</exception>
@@ -3182,6 +3060,49 @@ public class MathSignExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a double-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3204,36 +3125,54 @@ public class MathSignExample
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a 16-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3256,36 +3195,54 @@ public class MathSignExample
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a 32-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3308,36 +3265,54 @@ public class MathSignExample
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3365,32 +3340,6 @@ public class MathSignExample
         <Parameter Name="value" Type="System.SByte" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the
-   sign of <paramref name="value" />.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>
           <para>This method is not CLS-compliant. For a CLS-compliant alternative, use
    <see cref="M:System.Math.Sign(System.SByte)" />(<see cref="T:System.Int16" />).</para>
@@ -3399,6 +3348,49 @@ public class MathSignExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of an 8-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3421,31 +3413,6 @@ public class MathSignExample
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> indicating the sign of value.</para>
-          <list type="table">
-            <listheader>
-              <term>Number</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> -1</term>
-              <description>
-                <paramref name="value" /> &lt;
-      0.</description>
-            </item>
-            <item>
-              <term> 0</term>
-              <description>
-                <paramref name="value" /> == 0.</description>
-            </item>
-            <item>
-              <term> 1</term>
-              <description>
-                <paramref name="value" /> &gt; 0.</description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArithmeticException">
           <paramref name="value" /> is equal to <see cref="F:System.Single.NaN" />.</exception>
@@ -3453,6 +3420,49 @@ public class MathSignExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the sign of a single-precision floating-point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that indicates the sign of <paramref name="value" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is less than zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is equal to zero. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="value" /> is greater than zero. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A signed number. </param>
       </Docs>
@@ -3475,11 +3485,6 @@ public class MathSignExample
         <Parameter Name="a" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the sine of <paramref name="a" />. If
-<paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, 
-   returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Sin(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -3514,6 +3519,10 @@ public class MathSinExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the sine of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sine of <paramref name="a" />. If <paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, this method returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -3536,11 +3545,6 @@ public class MathSinExample
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the hyperbolic sine of
-<paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, 
-<see cref="F:System.Double.PositiveInfinity" />, or <see cref="F:System.Double.NaN" />, returns a <see cref="T:System.Double" /> equal to <paramref name="value" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Sinh(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -3574,6 +3578,10 @@ public class MathSinhExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hyperbolic sine of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic sine of <paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, <see cref="F:System.Double.PositiveInfinity" />, or <see cref="F:System.Double.NaN" />, this method returns a <see cref="T:System.Double" /> equal to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -3601,47 +3609,6 @@ public class MathSinhExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> whose value is indicated as
-   follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Condition</term>
-              <description>Returns</description>
-            </listheader>
-            <item>
-              <term>
-                <paramref name="d" /> &gt;=
-      0</term>
-              <description>A
-   <see cref="T:System.Double" />
-   containing the positive square root of <paramref name="d" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="d" /> &lt;
-      0</para>
-                <para>
-                  <paramref name="d " />is equal to <see cref="F:System.Double.NegativeInfinity" />.</para>
-                <para>
-                  <paramref name="d " />is equal to <see cref="F:System.Double.NaN" />.</para>
-              </term>
-              <description>
-                <see cref="F:System.Double.NaN" />.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <paramref name="d " />is equal to <see cref="F:System.Double.PositiveInfinity" /></para>
-              </term>
-              <description>
-                <para>
-                  <see cref="F:System.Double.PositiveInfinity" />.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <remarks>To be added.</remarks>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Sqrt(System.Double)" /> method.</para>
@@ -3675,6 +3642,60 @@ public class MathSqrtExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the square root of a specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the values in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="d" /> parameter </para>
+                </term>
+                <description>
+                  <para>Return value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Zero or positive </para>
+              </term>
+              <description>
+                <para>The positive square root of <paramref name="d" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Negative </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" /> </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equals <see cref="F:System.Double.NaN" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Equals <see cref="F:System.Double.PositiveInfinity" /></para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />The number whose square root is to be found. </param>
       </Docs>
@@ -3697,11 +3718,6 @@ public class MathSqrtExample
         <Parameter Name="a" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the tangent of <paramref name="a" />. If a
-   is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />,
-   returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Tan(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -3735,6 +3751,10 @@ public class MathTanExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the tangent of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tangent of <paramref name="a" />. If <paramref name="a" /> is equal to <see cref="F:System.Double.NaN" />, <see cref="F:System.Double.NegativeInfinity" />, or <see cref="F:System.Double.PositiveInfinity" />, this method returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -3757,11 +3777,6 @@ public class MathTanExample
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Double" /> containing the value of the hyperbolic tangent of
-<paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, returns -1. If value is equal to <see cref="F:System.Double.PositiveInfinity" />,
-   returns 1. If value is equal to <see cref="F:System.Double.NaN" />, returns <see cref="F:System.Double.NaN" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates using the <see cref="M:System.Math.Tanh(System.Double)" /> method.</para>
           <code lang="C#">using System;
@@ -3795,6 +3810,10 @@ public class MathTanhExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hyperbolic tangent of the specified angle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hyperbolic tangent of <paramref name="value" />. If <paramref name="value" /> is equal to <see cref="F:System.Double.NegativeInfinity" />, this method returns -1. If value is equal to <see cref="F:System.Double.PositiveInfinity" />, this method returns 1. If <paramref name="value" /> is equal to <see cref="F:System.Double.NaN" />, this method returns <see cref="F:System.Double.NaN" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An angle, measured in radians. </param>
       </Docs>
@@ -3815,7 +3834,6 @@ public class MathTanhExample
         <Parameter Name="d" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3826,6 +3844,10 @@ public class MathTanhExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the integral part of a specified decimal number. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integral part of <paramref name="d" />; that is, the number that remains after any fractional digits have been discarded.</para>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number to truncate.</param>
       </Docs>
@@ -3845,7 +3867,6 @@ public class MathTanhExample
         <Parameter Name="d" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3856,6 +3877,60 @@ public class MathTanhExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the integral part of a specified double-precision floating-point number. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integral part of <paramref name="d" />; that is, the number that remains after any fractional digits have been discarded, or one of the values listed in the following table. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <paramref name="d" />
+                  </para>
+                </term>
+                <description>
+                  <para>Return value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Double.NaN" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NaN" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Double.NegativeInfinity" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.NegativeInfinity" />
+                </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />
+                </para>
+              </term>
+              <description>
+                <para>
+                  <see cref="F:System.Double.PositiveInfinity" />
+                </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="d">
           <attribution license="cc4" from="Microsoft" modified="false" />A number to truncate.</param>
       </Docs>

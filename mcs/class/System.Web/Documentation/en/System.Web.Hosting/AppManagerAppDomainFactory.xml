@@ -49,13 +49,16 @@
         <Parameter Name="appPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new application domain for the specified Web application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new application domain for the specified Web application.</para>
+        </returns>
         <param name="appId">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique identifier for the new Web application.</param>
         <param name="appPath">

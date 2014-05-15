@@ -65,12 +65,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new a custom binding element object based on the setting of this configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom <see cref="T:System.ServiceModel.Channels.BindingElement" /> object whose properties are based on the setting of this configuration element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Properties">

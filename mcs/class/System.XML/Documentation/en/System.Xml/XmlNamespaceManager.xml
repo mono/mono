@@ -218,13 +218,14 @@ while (reader.Read())
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="prefix" /> is "xml" or "xmlns".</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</para>
         </exception>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to add. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -327,9 +328,6 @@ while (reader.Read())
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" qualify="true" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following code shows how to use the <see cref="T:System.Collections.IEnumerator" /> to view all the namespace pairs stored in the <see cref="T:System.Xml.XmlNamespaceManager" /> object.</para>
@@ -344,6 +342,10 @@ Loop</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator to use to iterate through the namespaces in the <see cref="T:System.Xml.XmlNamespaceManager" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> containing the prefixes stored by the <see cref="T:System.Xml.XmlNamespaceManager" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -362,7 +364,6 @@ Loop</code>
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -433,6 +434,10 @@ Loop</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of namespace names keyed by prefix which can be used to enumerate the namespaces currently in scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of namespace and prefix pairs currently in scope.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumeration value that specifies the type of namespace nodes to return.</param>
       </Docs>
@@ -454,10 +459,6 @@ Loop</code>
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates there is a
-   namespace defined; otherwise, <see langword="false" />. If <paramref name="prefix" /> is <see langword="null" />, returns <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine whether there is a default empty namespace defined, set <paramref name="prefix" /> to String.Empty. A return value of true indicates that there is a default namespace defined in the current scope; false indicates that no default namespace is defined.</para>
@@ -469,6 +470,10 @@ Loop</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the supplied prefix has a namespace defined for the current pushed scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a namespace defined; otherwise, false.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the namespace you want to find. </param>
       </Docs>
@@ -491,11 +496,6 @@ Loop</code>
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the namespace URI for <paramref name="prefix" />, or <see langword="null" />
-if there is
-no mapped namespace.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> As described above. </block>
@@ -512,6 +512,11 @@ no mapped namespace.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespace URI for the specified prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the namespace URI for <paramref name="prefix" /> or null if there is no mapped namespace. The returned string is atomized.</para>
+          <para>For more information on atomized strings, see the <see cref="T:System.Xml.XmlNameTable" /> class.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to resolve. To match the default namespace, pass String.Empty. </param>
       </Docs>
@@ -534,13 +539,6 @@ no mapped namespace.</para>
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   matching prefix. If there is no mapped prefix, this method returns
-<see langword="null" />. If a <see langword="null" /> 
-value is supplied, then
-<see langword="null" /> is returned.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method finds the mapped prefix by walking the stack (that is, it looks globally). The supplied string must be atomized for the lookup to succeed. In other words, the supplied string object must exist in the namespace manager's name table (<see cref="P:System.Xml.XmlNamespaceManager.NameTable" />).</para>
@@ -550,6 +548,10 @@ value is supplied, then
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the prefix declared for the given namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching prefix. If there is no mapped prefix, the method returns String.Empty. If a null value is supplied, then null is returned.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve for the prefix. </param>
       </Docs>
@@ -599,11 +601,6 @@ value is supplied, then
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates a namespace
-   scope was popped off the stack; <see langword="false" /> indicates there were no namespaces
-   scopes to pop.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you call this method, all namespaces which were added to <see cref="T:System.Xml.XmlNamespaceManager" /> (by calling <see cref="M:System.Xml.XmlNamespaceManager.AddNamespace(System.String,System.String)" />) since the last call to <see cref="M:System.Xml.XmlNamespaceManager.PopScope" /> are removed.</para>
@@ -612,6 +609,10 @@ value is supplied, then
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Pops a namespace scope off the stack.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are namespace scopes left on the stack; false if there are no more namespaces to pop.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -659,7 +660,6 @@ value is supplied, then
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> As described above. </block>
@@ -680,6 +680,8 @@ value is supplied, then
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</exception>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to remove for the given prefix. The namespace removed is from the current namespace scope. Namespaces outside the current scope are ignored. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the given namespace for the given prefix.</para>

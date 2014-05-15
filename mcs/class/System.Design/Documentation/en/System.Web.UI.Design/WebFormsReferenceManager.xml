@@ -63,12 +63,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the register directives for the current project document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of strings representing the register directives defined in the current document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTagPrefix">
@@ -84,12 +87,15 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the tag prefix for the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tag prefix for the specified object type, if found; otherwise, null.</para>
+        </returns>
         <param name="objectType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the object.</param>
       </Docs>
@@ -108,12 +114,15 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object type with the specified tag prefix and tag name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the object with the specified tag prefix and name, if found; otherwise, null.</para>
+        </returns>
         <param name="tagPrefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag prefix of the type to retrieve.</param>
         <param name="tagName">
@@ -134,7 +143,6 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -144,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the relative URL path for the user control with the specified tag prefix and tag name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the relative URL path for the specified user control, if found; otherwise, null.</para>
+        </returns>
         <param name="tagPrefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag prefix of the user control to retrieve.</param>
         <param name="tagName">
@@ -163,7 +175,6 @@
         <Parameter Name="objectType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the tag prefix already exists, then a new register directive is not added.</para>
@@ -172,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a tag prefix for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tag prefix string.</para>
+        </returns>
         <param name="objectType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to add a tag prefix for in the current document.</param>
       </Docs>

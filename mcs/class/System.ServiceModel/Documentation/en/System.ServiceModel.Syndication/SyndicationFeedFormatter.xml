@@ -79,7 +79,6 @@
       </Parameters>
       <Docs>
         <param name="reader">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method verifies whether the start element name and namespace match the start element name and namespace of the RSS 2.0 or Atom 1.0 specification.</para>
@@ -88,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies whether the specified <see cref="T:System.Xml.XmlReader" /> contains a valid syndication feed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the XML reader contains a valid syndication feed, otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCategory">
@@ -105,7 +108,6 @@
       </Parameters>
       <Docs>
         <param name="feed">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
@@ -114,6 +116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCategory">
@@ -131,7 +137,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
@@ -140,6 +145,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFeedInstance">
@@ -154,7 +163,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance used to create it.</para>
@@ -163,6 +171,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateItem">
@@ -180,7 +192,6 @@
       </Parameters>
       <Docs>
         <param name="feed">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance used to create it.</para>
@@ -189,6 +200,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> class using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateLink">
@@ -206,7 +221,6 @@
       </Parameters>
       <Docs>
         <param name="feed">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
@@ -215,6 +229,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateLink">
@@ -232,7 +250,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
@@ -241,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> class with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreatePerson">
@@ -258,7 +279,6 @@
       </Parameters>
       <Docs>
         <param name="feed">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance used to create it.</para>
@@ -267,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreatePerson">
@@ -284,7 +308,6 @@
       </Parameters>
       <Docs>
         <param name="item">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The newly created <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance is not automatically added to the <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance used to create it.</para>
@@ -293,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance with the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Feed">
@@ -524,12 +551,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string representation of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Syndication.SyndicationFeedFormatter" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -555,7 +585,6 @@
         <param name="value">To be added.</param>
         <param name="category">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
@@ -564,6 +593,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -589,7 +622,6 @@
         <param name="value">To be added.</param>
         <param name="feed">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
@@ -598,6 +630,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -623,7 +659,6 @@
         <param name="value">To be added.</param>
         <param name="item">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
@@ -632,6 +667,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -657,7 +696,6 @@
         <param name="value">To be added.</param>
         <param name="link">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
@@ -666,6 +704,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseAttribute">
@@ -691,7 +733,6 @@
         <param name="value">To be added.</param>
         <param name="person">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how attribute extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseAttribute(System.String,System.String,System.String,System.String)" /> method.</para>
@@ -700,6 +741,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseContent">
@@ -749,7 +794,6 @@
         <param name="reader">To be added.</param>
         <param name="category">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationCategory.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
@@ -758,6 +802,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -779,7 +827,6 @@
         <param name="reader">To be added.</param>
         <param name="feed">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationFeed.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
@@ -788,6 +835,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -809,7 +860,6 @@
         <param name="reader">To be added.</param>
         <param name="item">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationItem.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
@@ -818,6 +868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -839,7 +893,6 @@
         <param name="reader">To be added.</param>
         <param name="link">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationLink.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
@@ -848,6 +901,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationLink" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParseElement">
@@ -869,7 +926,6 @@
         <param name="reader">To be added.</param>
         <param name="person">To be added.</param>
         <param name="version">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To control how element extensions are parsed, derive your own class from <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> and override the <see cref="M:System.ServiceModel.Syndication.SyndicationPerson.TryParseElement(System.Xml.XmlReader,System.String)" /> method.</para>
@@ -878,6 +934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension using the specified <see cref="T:System.ServiceModel.Syndication.SyndicationPerson" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element was parsed successfully; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">

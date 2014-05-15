@@ -944,7 +944,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -960,6 +959,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a delete operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteMethod" /> property with any parameters that are in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DeleteParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows deleted from the underlying data storage, if the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.AffectedRows" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> is set in the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> event; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1269,7 +1272,6 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1280,6 +1282,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the named data source view that is associated with the data source control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> named DefaultView that is associated with the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" />.</para>
+        </returns>
         <param name="viewName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the view to retrieve. Because the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> supports only one view, <paramref name="viewName" /> is ignored. </param>
       </Docs>
@@ -1295,7 +1301,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1306,6 +1311,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a collection of names representing the list of view objects that are associated with the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> that contains the names of the views associated with the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1319,7 +1328,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1335,6 +1343,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an insert operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertMethod" /> property and any parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.InsertParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows inserted into the underlying data storage.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1674,13 +1686,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the state of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server control's current view state; otherwise, returns null, if there is no view state associated with the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1694,7 +1709,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1776,6 +1790,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the underlying data storage by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectMethod" /> property with the parameters in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2157,7 +2175,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2177,6 +2194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an update operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateMethod" /> property and any parameters that are in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.UpdateParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows updated in the underlying data storage.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

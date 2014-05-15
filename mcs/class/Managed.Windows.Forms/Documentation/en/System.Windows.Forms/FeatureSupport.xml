@@ -52,7 +52,6 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Version numbers consist of three parts: major, minor, and build. Typically, a version number is displayed as "major number.minor number.build number".</para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the version of the specified feature that is available on the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Version" /> representing the version number of the specified feature available on the system; or null if the feature is not installed.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature whose version is requested. </param>
       </Docs>
@@ -80,7 +83,6 @@
         <Parameter Name="featureConstName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Version numbers consist of three parts: major, minor, and build. Typically, a version number is displayed as "major number.minor number.build number".</para>
@@ -90,6 +92,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the version of the specified feature that is available on the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Version" /> with the version number of the specified feature available on the system; or null if the feature is not installed.</para>
+        </returns>
         <param name="featureClassName">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the class to query for information about the specified feature. This class must implement the <see cref="T:System.Windows.Forms.IFeatureSupport" /> interface or inherit from a class that implements this interface. </param>
         <param name="featureConstName">
@@ -110,12 +116,15 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any version of the specified feature is installed in the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is present; otherwise, false.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature to look for. </param>
       </Docs>
@@ -135,12 +144,15 @@
         <Parameter Name="minimumVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified or newer version of the specified feature is installed in the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is present and its version number is greater than or equal to the specified minimum version number; false if the feature is not installed or its version number is below the specified minimum number.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature to look for. </param>
         <param name="minimumVersion">
@@ -162,7 +174,6 @@
         <Parameter Name="featureConstName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the documentation for the product containing the feature to determine the names to pass to the <paramref name="featureClassName" /> and the <paramref name="featureConstName" /> parameters.</para>
@@ -171,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any version of the specified feature is installed in the system. This method is static.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified feature is present; false if the specified feature is not present or if the product containing the feature is not installed.</para>
+        </returns>
         <param name="featureClassName">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the class to query for information about the specified feature. This class must implement the <see cref="T:System.Windows.Forms.IFeatureSupport" /> interface or inherit from a class that implements this interface. </param>
         <param name="featureConstName">
@@ -193,7 +208,6 @@
         <Parameter Name="minimumVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the documentation for the product containing the feature to determine the names to pass to the <paramref name="featureClassName" /> and the <paramref name="featureConstName" /> parameters.</para>
@@ -202,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified or newer version of the specified feature is installed in the system. This method is static.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is present and its version number is greater than or equal to the specified minimum version number; false if the feature is not installed or its version number is below the specified minimum number.</para>
+        </returns>
         <param name="featureClassName">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified name of the class to query for information about the specified feature. This class must implement the <see cref="T:System.Windows.Forms.IFeatureSupport" /> interface or inherit from a class that implements this interface. </param>
         <param name="featureConstName">

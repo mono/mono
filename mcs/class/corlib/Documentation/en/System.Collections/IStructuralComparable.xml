@@ -39,7 +39,6 @@
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method supports custom structural comparison and sorting of array and tuple objects. The <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method calls the <paramref name="comparer" /> object's <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> method to compare individual array elements or tuple components, starting with the first element or component. The individual calls to <see cref="M:System.Collections.IComparer.Compare(System.Object,System.Object)" /> end and the <see cref="M:System.Collections.IStructuralComparable.CompareTo(System.Object,System.Collections.IComparer)" /> method returns a value when one of the following conditions becomes true:</para>
@@ -59,6 +58,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current collection object precedes, occurs in the same position as, or follows another object in the sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that indicates the relationship of the current collection object to <paramref name="other" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1</para>
+              </term>
+              <description>
+                <para>The current instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>The current instance and <paramref name="other" /> are equal.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>The current instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance.</param>
         <param name="comparer">

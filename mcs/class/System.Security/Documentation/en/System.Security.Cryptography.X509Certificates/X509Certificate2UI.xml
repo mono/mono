@@ -100,7 +100,6 @@
         <Parameter Name="selectionFlag" Type="System.Security.Cryptography.X509Certificates.X509SelectionFlag" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a dialog box for selecting an X.509 certificate from a certificate collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object that contains the selected certificate or certificates.</para>
+        </returns>
         <param name="certificates">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of X.509 certificates to select from.</param>
         <param name="title">
@@ -139,7 +142,6 @@
         <Parameter Name="hwndParent" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a dialog box for selecting an X.509 certificate from a certificate collection using a handle to a parent window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2Collection" /> object that contains the selected certificate or certificates.</para>
+        </returns>
         <param name="certificates">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of X.509 certificates to select from.</param>
         <param name="title">

@@ -405,7 +405,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When a process is executing, its message loop is in a wait state. The message loop executes every time a Windows message is sent to the process by the operating system. Calling <see cref="M:System.Diagnostics.Process.CloseMainWindow" /> sends a request to close to the main window, which, in a well-formed application, closes child windows and revokes all running message loops for the application. The request to exit the process by calling <see cref="M:System.Diagnostics.Process.CloseMainWindow" /> does not force the application to quit. The application can ask for user verification before quitting, or it can refuse to quit. To force the application to quit, use the <see cref="M:System.Diagnostics.Process.Kill" /> method. The behavior of <see cref="M:System.Diagnostics.Process.CloseMainWindow" /> is identical to that of a user closing an application's main window using the system menu. Therefore, the request to exit the process by closing the main window does not force the application to quit immediately.</para>
@@ -416,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Closes a process that has a user interface by sending a close message to its main window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the close message was successfully sent; false if the associated process does not have a main window or if the main window is disabled (for example if a modal dialog is being shown).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -699,7 +702,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Process'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a new <see cref="T:System.Diagnostics.Process" /> instance and associate it with the process resource on the local computer.</para>
@@ -709,6 +711,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a new <see cref="T:System.Diagnostics.Process" /> component and associates it with the currently active process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component associated with the process resource that is running the calling application.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProcessById">
@@ -727,7 +733,6 @@
         <Parameter Name="processId" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Process'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a new <see cref="T:System.Diagnostics.Process" /> component and associate it with a process resource on the local computer. The process resource must already exist on the computer, because <see cref="M:System.Diagnostics.Process.GetProcessById(System.Int32)" /> does not create a system resource, but rather associates a resource with an application-generated <see cref="T:System.Diagnostics.Process" /> component. A process <see cref="P:System.Diagnostics.Process.Id" /> can be retrieved only for a process that is currently running on the computer. After the process terminates, <see cref="M:System.Diagnostics.Process.GetProcessById(System.Int32)" /> throws an exception if you pass it an expired identifier.</para>
@@ -737,6 +742,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Diagnostics.Process" /> component, given the identifier of a process on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Process" /> component that is associated with the local process resource identified by the <paramref name="processId" /> parameter.</para>
+        </returns>
         <param name="processId">
           <attribution license="cc4" from="Microsoft" modified="false" />The system-unique identifier of a process resource. </param>
       </Docs>
@@ -763,7 +772,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Process'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a new <see cref="T:System.Diagnostics.Process" /> component and associate it with a process resource on a remote computer on the network. The process resource must already exist on the specified computer, because <see cref="M:System.Diagnostics.Process.GetProcessById(System.Int32,System.String)" /> does not create a system resource, but rather associates a resource with an application-generated <see cref="T:System.Diagnostics.Process" /> component. A process <see cref="P:System.Diagnostics.Process.Id" /> can be retrieved only for a process that is currently running on the computer. After the process terminates, <see cref="M:System.Diagnostics.Process.GetProcessById(System.Int32,System.String)" /> throws an exception if you pass it an expired identifier.</para>
@@ -774,6 +782,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Diagnostics.Process" /> component, given a process identifier and the name of a computer on the network.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.Process" /> component that is associated with a remote process resource identified by the <paramref name="processId" /> parameter.</para>
+        </returns>
         <param name="processId">
           <attribution license="cc4" from="Microsoft" modified="false" />The system-unique identifier of a process resource. </param>
         <param name="machineName">
@@ -794,7 +806,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Process []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an array of new <see cref="T:System.Diagnostics.Process" /> components and associate them with all the process resources on the local computer. The process resources must already exist on the local computer, because <see cref="M:System.Diagnostics.Process.GetProcesses" /> does not create system resources but rather associates resources with application-generated <see cref="T:System.Diagnostics.Process" /> components. Because the operating system itself is running background processes, this array is never empty.</para>
@@ -804,6 +815,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Diagnostics.Process" /> component for each process resource on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.Process" /> that represents all the process resources running on the local computer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetProcesses">
@@ -827,7 +842,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Process []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an array of new <see cref="T:System.Diagnostics.Process" /> components and associate them with all the process resources on the specified (usually remote) computer. The process resources must already exist on the local computer, because <see cref="M:System.Diagnostics.Process.GetProcesses" /> does not create system resources but rather associates resources with application-generated <see cref="T:System.Diagnostics.Process" /> components. Because the operating system itself is running background processes, this array is never empty.</para>
@@ -838,6 +852,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Diagnostics.Process" /> component for each process resource on the specified computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.Process" /> that represents all the process resources running on the specified computer.</para>
+        </returns>
         <param name="machineName">
           <attribution license="cc4" from="Microsoft" modified="false" />The computer from which to read the list of processes. </param>
       </Docs>
@@ -858,7 +876,6 @@
         <Parameter Name="processName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Process []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an array of new <see cref="T:System.Diagnostics.Process" /> components and associate them with all the process resources that are running the same executable file on the local computer. The process resources must already exist on the computer, because <see cref="M:System.Diagnostics.Process.GetProcessesByName(System.String)" /> does not create system resources but rather associates them with application-generated <see cref="T:System.Diagnostics.Process" /> components. A <paramref name="processName" /> can be specified for an executable file that is not currently running on the local computer, so the array the method returns can be empty.</para>
@@ -869,6 +886,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array of new <see cref="T:System.Diagnostics.Process" /> components and associates them with all the process resources on the local computer that share the specified process name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.Process" /> that represents the process resources running the specified application or file.</para>
+        </returns>
         <param name="processName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the process. </param>
       </Docs>
@@ -895,7 +916,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Process []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an array of new <see cref="T:System.Diagnostics.Process" /> components and associate them with all the process resources that are running the same executable file on the specified computer. The process resources must already exist on the computer, because <see cref="M:System.Diagnostics.Process.GetProcessesByName(System.String)" /> does not create system resources but rather associates them with application-generated <see cref="T:System.Diagnostics.Process" /> components. A <paramref name="processName" /> can be specified for an executable file that is not currently running on the local computer, so the array the method returns can be empty.</para>
@@ -908,6 +928,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array of new <see cref="T:System.Diagnostics.Process" /> components and associates them with all the process resources on a remote computer that share the specified process name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.Process" /> that represents the process resources running the specified application or file.</para>
+        </returns>
         <param name="processName">
           <attribution license="cc4" from="Microsoft" modified="false" />The friendly name of the process. </param>
         <param name="machineName">
@@ -2543,7 +2567,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Boolean value representing how process was started. This is true when a new process is created, and false when an existing process is reused.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to start a process resource and associate it with the current <see cref="T:System.Diagnostics.Process" /> component. The return value true indicates that a new process resource was started. If the process resource specified by the <see cref="P:System.Diagnostics.ProcessStartInfo.FileName" /> member of the <see cref="P:System.Diagnostics.Process.StartInfo" /> property is already running on the computer, no additional process resource is started. Instead, the running process resource is reused and false is returned.</para>
@@ -2566,6 +2589,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts (or reuses) the process resource that is specified by the <see cref="P:System.Diagnostics.Process.StartInfo" /> property of this <see cref="T:System.Diagnostics.Process" /> component and associates it with the component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a process resource is started; false if no new process resource is started (for example, if an existing process is reused).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Start">
@@ -2584,7 +2611,6 @@
         <Parameter Name="startInfo" Type="System.Diagnostics.ProcessStartInfo" />
       </Parameters>
       <Docs>
-        <returns>This method is useful for creating a new <see cref="T:System.Diagnostics.Process" /> object and starting it.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to start a process resource by specifying a <see cref="T:System.Diagnostics.ProcessStartInfo" /> instance. The overload associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component. If the process is already running, no additional process resource is started. Instead, the existing process resource is reused and no new <see cref="T:System.Diagnostics.Process" /> component is created. In such a case, instead of returning a new <see cref="T:System.Diagnostics.Process" /> component, <see cref="M:System.Diagnostics.Process.Start" /> returns null to the calling procedure.</para>
@@ -2607,6 +2633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts the process resource that is specified by the parameter containing process start information (for example, the file name of the process to start) and associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component that is associated with the process resource, or null if no process resource is started (for example, if an existing process is reused).</para>
+        </returns>
         <param name="startInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.ProcessStartInfo" /> that contains the information that is used to start the process, including the file name and any command-line arguments. </param>
       </Docs>
@@ -2627,7 +2657,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>Process for the specified commandline.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to start a process resource by specifying its file name. The overload associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component. If the process is already running, no additional process resource is started. Instead, the existing process resource is reused and no new <see cref="T:System.Diagnostics.Process" /> component is created. In such a case, instead of returning a new <see cref="T:System.Diagnostics.Process" /> component, <see cref="M:System.Diagnostics.Process.Start" /> returns null to the calling procedure.</para>
@@ -2650,6 +2679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a process resource by specifying the name of a document or application file and associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component that is associated with the process resource, or null, if no process resource is started (for example, if an existing process is reused).</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a document or application file to run in the process. </param>
       </Docs>
@@ -2671,7 +2704,6 @@
         <Parameter Name="arguments" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>Process for the specified commandline.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to start a process resource by specifying its file name and command-line arguments. The overload associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component. If the process is already running, no additional process is started. Instead, the existing process resource is reused and no new <see cref="T:System.Diagnostics.Process" /> component is created. In such a case, instead of returning a new <see cref="T:System.Diagnostics.Process" /> component, <see cref="M:System.Diagnostics.Process.Start" /> returns null to the calling procedure.</para>
@@ -2692,6 +2724,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a process resource by specifying the name of an application and a set of command-line arguments, and associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component that is associated with the process, or null, if no process resource is started (for example, if an existing process is reused).</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of an application file to run in the process. </param>
         <param name="arguments">
@@ -2717,7 +2753,6 @@
       </Parameters>
       <Docs>
         <param name="username">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to create a new process and its primary thread by specifying its file name, user name, password, and domain. The new process then runs the specified executable file in the security context of the specified credentials (user, domain, and password). </para>
@@ -2738,6 +2773,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a process resource by specifying the name of an application, a user name, a password, and a domain and associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component that is associated with the process resource, or null if no process resource is started (for example, if an existing process is reused).</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of an application file to run in the process.</param>
         <param name="password">
@@ -2766,7 +2805,6 @@
       </Parameters>
       <Docs>
         <param name="username">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload to create a new process and its primary thread by specifying its file name, command-line arguments, user name, password, and domain. The new process then runs the specified executable file in the security context of the specified credentials (user, domain, and password). </para>
@@ -2787,6 +2825,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a process resource by specifying the name of an application, a set of command-line arguments, a user name, a password, and a domain and associates the resource with a new <see cref="T:System.Diagnostics.Process" /> component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Diagnostics.Process" /> component that is associated with the process resource, or null if no process resource is started (for example, if an existing process is reused).</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of an application file to run in the process. </param>
         <param name="arguments">
@@ -2960,12 +3002,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats the process's name as a string, combined with the parent component type, if applicable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Diagnostics.Process.ProcessName" />, combined with the base component's <see cref="M:System.Object.ToString" /> return value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TotalProcessorTime">
@@ -3139,7 +3184,6 @@
         <Parameter Name="milliseconds" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" /> overload is used to make the current thread wait until the associated process terminates. This overload instructs the <see cref="T:System.Diagnostics.Process" /> component to wait a finite amount of time for the process to exit. If the associated process does not exit by the end of the interval because the request to terminate is denied, false is returned to the calling procedure. You can specify a negative number (<see cref="F:System.Threading.Timeout.Infinite" />) for <paramref name="milliseconds" />, and <see cref="M:System.Diagnostics.Process.WaitForExit(System.Int32)" /> will behave the same as the <see cref="M:System.Diagnostics.Process.WaitForExit" /> overload. If you pass 0 (zero) to the method, it returns true only if the process has already exited; otherwise, it immediately returns false.</para>
@@ -3154,6 +3198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instructs the <see cref="T:System.Diagnostics.Process" /> component to wait the specified number of milliseconds for the associated process to exit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the associated process has exited; otherwise, false.</para>
+        </returns>
         <param name="milliseconds">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount of time, in milliseconds, to wait for the associated process to exit. The maximum is the largest possible value of a 32-bit integer, which represents infinity to the operating system. </param>
       </Docs>
@@ -3177,7 +3225,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Diagnostics.Process.WaitForInputIdle" /> to force the processing of your application to wait until the message loop has returned to the idle state. When a process with a user interface is executing, its message loop executes every time a Windows message is sent to the process by the operating system. The process then returns to the message loop. A process is said to be in an idle state when it is waiting for messages inside of a message loop. This state is useful, for example, when your application needs to wait for a starting process to finish creating its main window before the application communicates with that window.</para>
@@ -3188,6 +3235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes the <see cref="T:System.Diagnostics.Process" /> component to wait indefinitely for the associated process to enter an idle state. This overload applies only to processes with a user interface and, therefore, a message loop.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the associated process has reached an idle state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WaitForInputIdle">
@@ -3211,7 +3262,6 @@
         <Parameter Name="milliseconds" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Diagnostics.Process.WaitForInputIdle(System.Int32)" /> to force the processing of your application to wait until the message loop has returned to the idle state. When a process with a user interface is executing, its message loop executes every time a Windows message is sent to the process by the operating system. The process then returns to the message loop. A process is said to be in an idle state when it is waiting for messages inside of a message loop. This state is useful, for example, when your application needs to wait for a starting process to finish creating its main window before the application communicates with that window.</para>
@@ -3223,6 +3273,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes the <see cref="T:System.Diagnostics.Process" /> component to wait the specified number of milliseconds for the associated process to enter an idle state. This overload applies only to processes with a user interface and, therefore, a message loop.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the associated process has reached an idle state; otherwise, false.</para>
+        </returns>
         <param name="milliseconds">
           <attribution license="cc4" from="Microsoft" modified="false" />A value of 1 to <see cref="F:System.Int32.MaxValue" /> that specifies the amount of time, in milliseconds, to wait for the associated process to become idle. A value of 0 specifies an immediate return, and a value of -1 specifies an infinite wait. </param>
       </Docs>

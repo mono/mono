@@ -71,7 +71,6 @@
         <Parameter Name="requestedType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.MarshalByRefObject.CreateObjRef(System.Type)" /> method is called by remote object creation methods such as <see cref="M:System.AppDomain.CreateInstance(System.String,System.String)" /> and <see cref="M:System.AppDomain.CreateInstanceAndUnwrap(System.String,System.String)" />. In most cases, there is no need to override this method.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an object that contains all the relevant information required to generate a proxy used to communicate with a remote object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information required to generate a proxy.</para>
+        </returns>
         <param name="requestedType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the object that the new <see cref="T:System.Runtime.Remoting.ObjRef" /> will reference. </param>
       </Docs>
@@ -98,7 +101,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about lifetime services, see the <see cref="T:System.Runtime.Remoting.Lifetime.LifetimeServices" /> class.</para>
@@ -107,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the current lifetime service object that controls the lifetime policy for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitializeLifetimeService">
@@ -123,7 +129,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about lifetime services, see the <see cref="T:System.Runtime.Remoting.Lifetime.LifetimeServices" /> class.</para>
@@ -132,6 +137,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a lifetime service object to control the lifetime policy for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <see cref="T:System.Runtime.Remoting.Lifetime.ILease" /> used to control the lifetime policy for this instance. This is the current lifetime service object for this instance if one exists; otherwise, a new lifetime service object initialized to the value of the <see cref="P:System.Runtime.Remoting.Lifetime.LifetimeServices.LeaseManagerPollTime" /> property.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MemberwiseClone">
@@ -149,7 +158,6 @@
         <Parameter Name="cloneIdentity" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.MarshalByRefObject.MemberwiseClone(System.Boolean)" /> method creates a shallow copy by creating a new <see cref="T:System.MarshalByRefObject" /> object, and then copying the nonstatic fields of the current <see cref="T:System.MarshalByRefObject" /> object to the new object. If a field is a value type, a bit-by-bit copy of the field is performed. If a field is a reference type, the reference is copied but the referred object is not; therefore, the original object and its clone refer to the same object. </para>
@@ -160,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the current <see cref="T:System.MarshalByRefObject" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the current <see cref="T:System.MarshalByRefObject" /> object.</para>
+        </returns>
         <param name="cloneIdentity">
           <attribution license="cc4" from="Microsoft" modified="false" />false to delete the current <see cref="T:System.MarshalByRefObject" /> object's identity, which will cause the object to be assigned a new identity when it is marshaled across a remoting boundary. A value of false is usually appropriate. true to copy the current <see cref="T:System.MarshalByRefObject" /> object's identity to its clone, which will cause remoting client calls to be routed to the remote server object. </param>
       </Docs>

@@ -101,7 +101,6 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The body of a <see cref="T:System.ServiceModel.Channels.Message" /> instance can only be accessed or written once. If you want to access a <see cref="T:System.ServiceModel.Channels.Message" /> instance more than once, you should use the <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> class to completely store an entire <see cref="T:System.ServiceModel.Channels.Message" /> instance into memory. A <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance is constructed by calling <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> of a <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
@@ -113,6 +112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Stores an entire <see cref="T:System.ServiceModel.Channels.Message" /> into a memory buffer for future access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A newly created <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object.</para>
+        </returns>
         <param name="maxBufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer to be created.</param>
       </Docs>
@@ -132,7 +135,6 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -141,6 +143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message that contains a version and an action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message.</param>
         <param name="action">
@@ -163,7 +169,6 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -172,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message that contains a SOAP fault, a version and an action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message.</param>
         <param name="fault">
@@ -196,7 +205,6 @@
         <Parameter Name="body" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -206,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message with the specified version, action and body. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message. </param>
         <param name="action">
@@ -230,7 +242,6 @@
         <Parameter Name="body" Type="System.ServiceModel.Channels.BodyWriter" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An empty message is useful for an endpoint to send an alert to another endpoint without any actual content. </para>
@@ -239,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message with a body that consists of an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message. </param>
         <param name="action">
@@ -263,7 +278,6 @@
         <Parameter Name="body" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -272,6 +286,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message with the specified version, action and body.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message. </param>
         <param name="action">
@@ -296,7 +314,6 @@
         <Parameter Name="body" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -305,6 +322,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message using the specified reader, action and version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message. </param>
         <param name="action">
@@ -329,7 +350,6 @@
         <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -343,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message using the specified reader, action and version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="envelopeReader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> object to be used for reading the SOAP message.</param>
         <param name="maxSizeOfHeaders">
@@ -367,7 +391,6 @@
         <Parameter Name="version" Type="System.ServiceModel.Channels.MessageVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -381,6 +404,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message using the specified reader, action and version.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="envelopeReader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> object to be used for reading the SOAP message.</param>
         <param name="maxSizeOfHeaders">
@@ -407,7 +434,6 @@
       </Parameters>
       <Docs>
         <param name="code">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -416,6 +442,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message that contains a SOAP fault, the reason for the fault, a version and an action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message.</param>
         <param name="reason">
@@ -442,7 +472,6 @@
       </Parameters>
       <Docs>
         <param name="xmlFormatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending. </para>
@@ -452,6 +481,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message using the specified version, action, message body and serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message. </param>
         <param name="action">
@@ -479,7 +512,6 @@
       </Parameters>
       <Docs>
         <param name="code">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method is used to create a new copy of message ready for sending.</para>
@@ -488,6 +520,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a message that contains a SOAP fault, a reason and the detail for the fault, a version and an action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Message" /> object for the message created. </para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.MessageVersion" /> object that specifies the SOAP version to use for the message.</param>
         <param name="reason">
@@ -513,8 +549,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance has a body that corresponds to the SOAP body. It can be accessed as an <see cref="T:System.Xml.XmlDictionaryReader" /> by calling <see cref="M:System.ServiceModel.Channels.Message.GetReaderAtBodyContents" />. It is initially positioned directly after the &lt;S:Body&gt; element, and it returns EOF on reaching the &lt;/S:Body&gt; element. Alternatively, if you expect the body to contain a serialized object, you can call <see cref="Overload:System.ServiceModel.Channels.Message.GetBody" /> instead. You should be aware that a message body can only be accessed once and a message can only be written once. If you want to access the Body multiple times, use <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> to create a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance. </para>
@@ -524,6 +558,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the body of this <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="T" /> that contains the body of this message.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The body of the message.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetBody&lt;T&gt;">
@@ -543,9 +583,7 @@
         <Parameter Name="xmlFormatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <param name="xmlFormatter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance has a body that corresponds to the SOAP body. It can be accessed as an <see cref="T:System.Xml.XmlDictionaryReader" /> by calling <see cref="M:System.ServiceModel.Channels.Message.GetReaderAtBodyContents" />. It is initially positioned directly after the &lt;S:Body&gt; element, and it returns EOF on reaching the &lt;/S:Body&gt; element. Alternatively, if you expect the body to contain a serialized object, you can call <see cref="Overload:System.ServiceModel.Channels.Message.GetBody" /> instead. You should be aware that a message body can only be accessed once and a message can only be written once. If you want to access the body multiple times, use <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> to create a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance.  </para>
@@ -555,6 +593,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the body of this <see cref="T:System.ServiceModel.Channels.Message" /> using the specified serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of type <paramref name="T" /> that contains the body of this message.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The body of the message.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetBodyAttribute">
@@ -572,7 +616,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance has a body that corresponds to the SOAP body. It can be accessed as an <see cref="T:System.Xml.XmlDictionaryReader" /> by calling <see cref="M:System.ServiceModel.Channels.Message.GetReaderAtBodyContents" />. It is initially positioned directly after the &lt;S:Body&gt; element, and it returns EOF on reaching the &lt;/S:Body&gt; element. Alternatively, if you expect the body to contain a serialized object, you can call <see cref="Overload:System.ServiceModel.Channels.Message.GetBody" /> instead. You should be aware that a message body can only be accessed once and a message can only be written once. If you want to access the body multiple times, use <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> to create a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance.  </para>
@@ -581,6 +624,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the attributes of the message body.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes of the message body.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the XML node.</param>
         <param name="ns">
@@ -599,7 +646,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.ServiceModel.Channels.Message" /> instance has a body that corresponds to the SOAP body. It can be accessed as an <see cref="T:System.Xml.XmlDictionaryReader" /> by calling <see cref="M:System.ServiceModel.Channels.Message.GetReaderAtBodyContents" />. It is initially positioned directly after the &lt;S:Body&gt; element. Alternatively, if you expect the body to contain a serialized object, you can call <see cref="Overload:System.ServiceModel.Channels.Message.GetBody" /> instead. You should be aware that a message body can only be accessed once and a message can only be written once. If you want to access the body multiple times, use <see cref="M:System.ServiceModel.Channels.Message.CreateBufferedCopy(System.Int32)" /> to create a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> instance.  </para>
@@ -608,6 +654,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the XML dictionary reader that accesses the body content of this message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlDictionaryReader" /> object that accesses the body content of this message.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -822,12 +872,15 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when a message buffer is created to store this message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> object for the newly created message copy.</para>
+        </returns>
         <param name="maxBufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer to be created.</param>
       </Docs>
@@ -849,15 +902,19 @@
         <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when the body of the message is retrieved.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> that represents the body of the message.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlDictionaryReader)" /> object used to read the body of the message.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message body.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="OnGetBodyAttribute">
@@ -875,12 +932,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when the attributes of the message body is retrieved.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes of the message body.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the XML node.</param>
         <param name="ns">
@@ -899,12 +959,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when an XML dictionary reader that accesses the body content of this message is retrieved.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlDictionaryReader" /> object that accesses the body content of this message.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnWriteBodyContents">
@@ -1103,12 +1166,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.ServiceModel.Channels.Message" /> instance. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.ServiceModel.Channels.Message" /> instance. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">

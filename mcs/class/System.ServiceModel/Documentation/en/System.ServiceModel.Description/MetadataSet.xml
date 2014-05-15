@@ -63,9 +63,16 @@
         <Parameter Name="sections" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.MetadataSection&gt;" />
       </Parameters>
       <Docs>
-        <param name="sections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Description.MetadataSet" /> from <paramref name="sections" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataSet" /> class that contains the specified collection of <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
+        </summary>
+        <param name="sections">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata values that the <see cref="T:System.ServiceModel.Description.MetadataSet" /> is to contain.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -130,7 +137,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Description.MetadataSet" /> from an <see cref="T:System.Xml.XmlReader" /> object.</para>
@@ -139,6 +145,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSet" /> from the specified <see cref="T:System.Xml.XmlReader" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MetadataSet" /> that contains all the metadata present in the XML stream.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The reader to read in XML.</param>
       </Docs>
@@ -155,12 +165,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements <see cref="M:System.Xml.Serialization.IXmlSerializable.GetSchema" /> method to provide serialization support.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Xml.Schema.XmlSchema" />.</para>
+          <para>Returns the <see cref="T:System.Xml.Schema.XmlSchema" /> object that describes the XML representation of the object that is produced by the <see cref="M:System.ServiceModel.Description.MetadataSet.System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and accessed by the <see cref="M:System.ServiceModel.Description.MetadataSet.System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">

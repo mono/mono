@@ -46,12 +46,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric AES decryptor object using the current key and initialization vector (IV).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES decryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDecryptor">
@@ -71,12 +74,15 @@
       <Docs>
         <param name="rgbKey">To be added.</param>
         <param name="rgbIV">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric AES decryptor object using the specified key and initialization vector (IV).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES decryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateEncryptor">
@@ -91,12 +97,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric AES encryptor object using the current key and initialization vector (IV).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES encryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateEncryptor">
@@ -116,7 +125,6 @@
       <Docs>
         <param name="rgbKey">To be added.</param>
         <param name="rgbIV">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the code examples in the <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.LegalKeySizes" /> and <see cref="P:System.Security.Cryptography.SymmetricAlgorithm.LegalBlockSizes" /> properties to determine the size of the <paramref name="key" /> and <paramref name="iv" /> parameters.</para>
@@ -125,6 +133,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric encryptor object using the specified key and initialization vector (IV).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A symmetric AES encryptor object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">

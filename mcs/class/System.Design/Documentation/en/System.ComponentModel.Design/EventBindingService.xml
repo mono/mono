@@ -58,7 +58,6 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name returned by the <see cref="M:System.ComponentModel.Design.EventBindingService.CreateUniqueMethodName(System.ComponentModel.IComponent,System.ComponentModel.EventDescriptor)" /> method must be compatible with the script language being used and it must not conflict with any other name in your code.</para>
@@ -67,6 +66,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a unique method name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique method name.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which the method name will be created.</param>
       </Docs>
@@ -116,7 +119,6 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each string returned in the collection is the method name of a method whose signature is compatible with the delegate contained in <paramref name="e" />. <see cref="M:System.ComponentModel.Design.EventBindingService.GetCompatibleMethods(System.ComponentModel.EventDescriptor)" /> should return an empty collection if no names are compatible.</para>
@@ -125,6 +127,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of names of compatible methods.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of strings that are names of compatible methods.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -141,12 +147,15 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service from the service provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the service specified by <paramref name="serviceType" />, or null if the requested service is not available.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShowCode">
@@ -160,7 +169,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.EventBindingService.ShowCode" /> method does not display any particular code; generally it displays the last code the user typed. </para>
@@ -169,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays user code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if it is possible to display the code; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShowCode">
@@ -184,7 +196,6 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Line numbers are one-based.</para>
@@ -193,6 +204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the user code at the given line number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if it is possible to display the code; otherwise, false.</para>
+        </returns>
         <param name="lineNumber">
           <attribution license="cc4" from="Microsoft" modified="false" />The line number to show.</param>
       </Docs>
@@ -212,7 +227,6 @@
         <Parameter Name="methodName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.EventBindingService.ShowCode(System.ComponentModel.IComponent,System.ComponentModel.EventDescriptor,System.String)" /> method displays the body of the user code with the given method name.</para>
@@ -221,6 +235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the user code for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if it is possible to display the code; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to which the method is bound.</param>
         <param name="e">
@@ -244,12 +262,15 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a unique name for an event-handler method for the specified component and event.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The recommended name for the event-handler method for this event.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component instance the event is connected to.</param>
       </Docs>
@@ -268,7 +289,6 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each string returned in the collection is the method name of a method whose signature is compatible with the delegate contained in <paramref name="e" />. <see cref="M:System.ComponentModel.Design.EventBindingService.GetCompatibleMethods(System.ComponentModel.EventDescriptor)" /> should return an empty collection if no names are compatible.</para>
@@ -277,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of event-handler methods that have a method signature compatible with the specified event.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of strings that are names of compatible methods.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IEventBindingService.GetEvent">
@@ -292,12 +316,15 @@
         <Parameter Name="property" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.ComponentModel.EventDescriptor" /> for the event that the specified property descriptor represents, if it represents an event.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> for the event that the property represents, or null if the property does not represent an event.</para>
+        </returns>
         <param name="property">
           <attribution license="cc4" from="Microsoft" modified="false" />The property that represents an event.</param>
       </Docs>
@@ -315,12 +342,15 @@
         <Parameter Name="events" Type="System.ComponentModel.EventDescriptorCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a set of event descriptors to a set of property descriptors.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.ComponentModel.PropertyDescriptor" /> objects that describe the event set.</para>
+        </returns>
         <param name="events">
           <attribution license="cc4" from="Microsoft" modified="false" />The events to convert to properties.</param>
       </Docs>
@@ -339,12 +369,15 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a single event descriptor to a property descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that describes the event.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IEventBindingService.ShowCode">
@@ -358,12 +391,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the user code for the designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.IEventBindingService.ShowCode">
@@ -379,12 +415,15 @@
         <Parameter Name="lineNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the user code for the designer at the specified line.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
         <param name="lineNumber">
           <attribution license="cc4" from="Microsoft" modified="false" />The line number to place the caret on.</param>
       </Docs>
@@ -404,12 +443,15 @@
       </Parameters>
       <Docs>
         <param name="eventDescriptor">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the user code for the specified event.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the code is displayed; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that the event is connected to.</param>
       </Docs>

@@ -52,12 +52,15 @@
         <Parameter Name="origination" Type="System.ServiceModel.PeerMessageOrigination" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether or not a message received on a peer channel should be propagated, and if so, the destination of the message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.PeerMessagePropagation" /> enumeration value that indicates the destination of the message (local, remote, both, or no propagation at all).</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to evaluate for propagation. </param>
         <param name="origination">

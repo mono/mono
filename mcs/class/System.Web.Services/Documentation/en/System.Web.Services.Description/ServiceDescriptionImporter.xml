@@ -143,7 +143,6 @@
       </Parameters>
       <Docs>
         <param name="codeGenerator">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The services description document collection in each <see cref="T:System.Web.Services.Description.WebReference" /> member of the <paramref name="webReferences" /> collection should contain only <see cref="T:System.Web.Services.Description.ServiceDescription" /> and <see cref="T:System.Xml.Schema.XmlSchema" /> objects. This method is unable to interpret <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" /> objects.</para>
@@ -153,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles a collection of Web references to produce a client proxy or a server stub.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.StringCollection" /> of compiler warnings.</para>
+        </returns>
         <param name="webReferences">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.WebReferenceCollection" /> of Web references to compile.</param>
         <param name="codeCompileUnit">
@@ -172,7 +175,6 @@
         <Parameter Name="codeCompileUnit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>After you have specified the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values to import and the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property of the code to generate, call the <see cref="T:System.Web.Services.Description.Import" /> method to initiate code generation.</para>
@@ -181,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Imports the specified <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values, that generates code as specified by the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.Style" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.ServiceDescriptionImportWarnings" /> value that describes any error that occurred; or 0 if no error occurred.</para>
+        </returns>
         <param name="codeNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace into which the <see cref="P:System.Web.Services.Description.ServiceDescriptionImporter.ServiceDescriptions" /> values are imported. </param>
         <param name="codeCompileUnit">

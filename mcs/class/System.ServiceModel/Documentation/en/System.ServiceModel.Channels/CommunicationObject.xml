@@ -100,7 +100,6 @@
       <Docs>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method causes the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state within a default interval of time. The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). This method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object was initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
@@ -109,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to close a communication object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="BeginClose">
@@ -130,7 +133,6 @@
         <param name="timeout">To be added.</param>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method causes the <see cref="T:System.ServiceModel.Channels.CommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state, into the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state with in a specified interval of time.  The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). This method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object was initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
@@ -139,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to close a communication object with a specified timeout.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="BeginOpen">
@@ -158,7 +164,6 @@
       <Docs>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
@@ -168,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to open a communication object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="BeginOpen">
@@ -189,7 +198,6 @@
         <param name="timeout">To be added.</param>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Channels.CommunicationObject.BeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnOpening" /> and <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginOpen(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state.</para>
@@ -199,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to open a communication object within a specified interval of time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -437,12 +449,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type of communication object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of communication object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDisposed">
@@ -508,7 +523,6 @@
         <param name="timeout">To be added.</param>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.BeginClose" /> method calls <see cref="M:System.ServiceModel.Channels.CommunicationObject.OnBeginClose(System.TimeSpan,System.AsyncCallback,System.Object)" /> if the communication object is initially in the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state.</para>
@@ -518,6 +532,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts processing after a communication object transitions to the closing state due to the invocation of an asynchronous close operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on close operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnBeginOpen">
@@ -539,7 +557,6 @@
         <param name="timeout">To be added.</param>
         <param name="callback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To insert processing after a communication object transitions to a opening state due to the invocation of a synchronous <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> operation, use the <see cref="Overload:System.ServiceModel.Channels.CommunicationObject.Open" /> method.</para>
@@ -548,6 +565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts processing on a communication object after it transitions to the opening state due to the invocation of an asynchronous open operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous on open operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnClose">

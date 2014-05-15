@@ -136,7 +136,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The stack of binding elements depends on the value of the <see cref="T:System.ServiceModel.WSFederationHttpSecurityMode" /> set.</para>
@@ -209,6 +208,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a collection with the binding elements for the binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Generic.ICollection`1" /> of type <see cref="T:System.ServiceModel.Channels.BindingElement" /> that makes up the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMessageSecurity">
@@ -223,12 +226,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> that has enabled a reliable session.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> that has enabled a reliable session.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetTransport">
@@ -243,12 +249,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the transport binding element from the current binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> from the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PrivacyNoticeAt">

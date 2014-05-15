@@ -60,7 +60,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a copy of the synchronization context.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Threading.SynchronizationContext" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Current">
@@ -109,13 +112,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if wait notification is required.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if wait notification is required; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OperationCompleted">
@@ -299,7 +305,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -309,6 +314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for any or all the elements in the specified array to receive a signal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.IntPtr" /> that contains the native operating system handles.</param>
         <param name="waitAll">
@@ -345,7 +354,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -356,6 +364,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Helper function that waits for any or all the elements in the specified array to receive a signal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array index of the object that satisfied the wait.</para>
+        </returns>
         <param name="waitHandles">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.IntPtr" /> that contains the native operating system handles.</param>
         <param name="waitAll">

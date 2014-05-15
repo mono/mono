@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.CompilerServices">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.CompilerServices" /> namespace provides functionality for compiler writers who use managed code to specify attributes in metadata that affect the run-time behavior of the common language runtime.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This namespace is primarily for compiler writers, although several of its classes, such as <see cref="T:System.Runtime.CompilerServices.InternalsVisibleToAttribute" />, are used in a wide variety of applications.</para>
+    </remarks>
   </Docs>
 </Namespace>

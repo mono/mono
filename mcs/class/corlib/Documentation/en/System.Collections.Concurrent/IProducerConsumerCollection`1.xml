@@ -62,7 +62,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method provides a snapshot of the underlying collection. It is possible for other threads to add or remove items immediately after the array is made.</para>
@@ -71,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the elements contained in the <see cref="T:System.Collections.Concurrent.IProducerConsumerCollection`1" /> to a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing the elements copied from the <see cref="T:System.Collections.Concurrent.IProducerConsumerCollection`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryAdd">

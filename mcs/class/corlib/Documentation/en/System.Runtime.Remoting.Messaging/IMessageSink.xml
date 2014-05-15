@@ -47,7 +47,6 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IMessageCtrl'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is invoked on the message sink by the remoting infrastructure or by a previous sink for asynchronous messages.</para>
@@ -56,6 +55,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously processes the given message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> interface that provides a way to control asynchronous messages after they have been dispatched.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
         <param name="replySink">
@@ -99,7 +102,6 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IMessage'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method is invoked on the message sink by the remoting infrastructure or by a previous sink for synchronous messages.</para>
@@ -108,6 +110,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Synchronously processes the given message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reply message in response to the request.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to process. </param>
       </Docs>

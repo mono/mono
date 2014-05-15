@@ -115,7 +115,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.DataAnnotations.RangeAttribute.FormatErrorMessage(System.String)" /> creates the error message by using the name of the data field that caused the validation failure. You can override this method in a custom validation attribute to customize how errors are created, or to provide a more complex message that contains parameters that you evaluate at run time. For an example, see the <see cref="M:System.ComponentModel.DataAnnotations.RangeAttribute.#ctor(System.Type,System.String,System.String)" /> constructor.</para>
@@ -124,6 +123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats the error message that is displayed when range validation fails.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted error message.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field that caused the validation failure. </param>
       </Docs>
@@ -142,12 +145,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks that the value of the data field is in the specified range.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified value is in the range; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The data field value to validate.</param>
       </Docs>

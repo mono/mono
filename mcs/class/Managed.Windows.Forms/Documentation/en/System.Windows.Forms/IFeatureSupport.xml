@@ -29,7 +29,6 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For an implementation of this method, see <see cref="M:System.Windows.Forms.OSFeature.GetVersionPresent(System.Object)" />.</para>
@@ -38,6 +37,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the version of the specified feature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Version" /> representing the version number of the specified feature; or null if the feature is not installed.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature whose version is requested. </param>
       </Docs>
@@ -56,12 +59,15 @@
         <Parameter Name="feature" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any version of the specified feature is currently available on the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is present; otherwise, false.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature to look for. </param>
       </Docs>
@@ -81,12 +87,15 @@
         <Parameter Name="minimumVersion" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified or newer version of the specified feature is currently available on the system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the requested version of the feature is present; otherwise, false.</para>
+        </returns>
         <param name="feature">
           <attribution license="cc4" from="Microsoft" modified="false" />The feature to look for. </param>
         <param name="minimumVersion">

@@ -80,7 +80,6 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IMessageCtrl'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" /> method of the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface is not relevant to the <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> class. Implementation by <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> throws a <see cref="T:System.NotSupportedException" />. Instead, obtain an <see cref="T:System.Runtime.Remoting.Messaging.AsyncResult" /> by casting the <see cref="T:System.IAsyncResult" /> interface returned by an asynchronous call made using a delegate.</para>
@@ -89,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No value is returned.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The request <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> interface. </param>
         <param name="replySink">
@@ -207,7 +210,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IMessage'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.GetReplyMessage" /> method can return an object after the <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method is called. The <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> return value can be cast to an <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" />.</para>
@@ -217,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the response message for the asynchronous call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A remoting message that should represent a response to a method call on a remote object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsCompleted">
@@ -311,7 +317,6 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IMessage'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Messaging.AsyncResult.SyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage)" /> method implements the <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> interface. You do not need to call this method directly. It is intended for use by the remoting infrastructure of the .NET Framework.</para>
@@ -324,6 +329,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Synchronously processes a response message returned by a method call on a remote object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />A response message to a method call on a remote object.</param>
       </Docs>

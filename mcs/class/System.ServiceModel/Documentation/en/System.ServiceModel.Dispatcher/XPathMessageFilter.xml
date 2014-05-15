@@ -219,8 +219,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="FilterData">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" />. Users should create a filter table by calling a constructor for the filter table. This implementation returns an instance of <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" />.</para>
@@ -229,6 +227,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.ServiceModel.Dispatcher.XPathMessageFilterTable`1" /> that has a specified type of data associated with it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Dispatcher.IMessageFilterTable`1" /> object to which filters associated with <paramref name="FilterData" /> can be added.</para>
+        </returns>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Match">
@@ -245,7 +249,6 @@
         <Parameter Name="message" Type="System.ServiceModel.Channels.Message" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Dispatcher.XPathMessageFilter.Match(System.ServiceModel.MessageBuffer)" /> method to match elements from the body. An exception is thrown by this method if the engine attempts to access the message body in order to evaluate the XPath expression. This helps to ensure that the filter engine does not access the body stream.</para>
@@ -254,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether a specified message satisfies the criteria of the XPath filter. This form is not allowed to access the body of the message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ServiceModel.Channels.Message" /> satisfies the filter criteria; otherwise, false. </para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Message" /> to test. </param>
       </Docs>
@@ -272,7 +279,6 @@
         <Parameter Name="messageBuffer" Type="System.ServiceModel.Channels.MessageBuffer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload of the <see cref="Overload:System.ServiceModel.Dispatcher.XPathMessageFilter.Match" /> method when a <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> is available. This form is allowed to examine the body of the message.</para>
@@ -281,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a buffered message satisfies the query criteria of the XPath filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="M:System.ServiceModel.Dispatcher.XPathMessageFilter.Match(System.ServiceModel.MessageBuffer)" /> satisfies the filter criteria; otherwise false. </para>
+        </returns>
         <param name="messageBuffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.MessageBuffer" /> to test. </param>
       </Docs>
@@ -299,7 +309,6 @@
         <Parameter Name="navigator" Type="System.ServiceModel.Dispatcher.SeekableXPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> class extends the <see cref="T:System.Xml.XPath.XPathNavigator" /> class with methods that run queries more efficiently.</para>
@@ -308,6 +317,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the XML document provided by the specified optimized XPath navigator satisfies the query criteria of the XPath filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data from the <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> satisfies the filter criteria; otherwise, false. </para>
+        </returns>
         <param name="navigator">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.SeekableXPathNavigator" /> that provides data to test. </param>
       </Docs>
@@ -326,12 +339,15 @@
         <Parameter Name="navigator" Type="System.Xml.XPath.XPathNavigator" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates the filter over the specified XPath navigator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data from the <see cref="T:System.Xml.XPath.XPathNavigator" /> satisfies the filter criteria; false otherwise. </para>
+        </returns>
         <param name="navigator">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XPath.XPathNavigator" /> that provides data to test. </param>
       </Docs>
@@ -394,12 +410,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the schema for the current XML document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> that represents the current document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnReadXml">
@@ -491,12 +510,15 @@
         <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type of XML schema used to serialize the XPath filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmLSchemaType" /> used to serialize the XPath filter.</para>
+        </returns>
         <param name="schemas">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmLSchemaSet" /> that contains the cache of XML Schema definition language (XSD) schemas.</param>
       </Docs>
@@ -513,12 +535,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An explicit interface implementation that gets the current schema.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> that represents the current document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">

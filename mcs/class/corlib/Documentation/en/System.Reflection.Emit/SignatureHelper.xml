@@ -205,12 +205,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks if this instance is equal to the given object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the given object is a SignatureHelper and represents the same signature; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object with which this instance should be compared. </param>
       </Docs>
@@ -231,12 +234,15 @@
         <Parameter Name="mod" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a field.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The dynamic module that contains the field for which the SignatureHelper is requested. </param>
       </Docs>
@@ -255,7 +261,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The hash code is created from the name of this instance, so the return value is the same as if the GetHashCode method were called on the value of the Name property.</para>
@@ -264,6 +269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code based on the name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocalVarSigHelper">
@@ -279,12 +288,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a local variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> for a local variable.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLocalVarSigHelper">
@@ -303,12 +315,15 @@
         <Parameter Name="mod" Type="System.Reflection.Module" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a local variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a local variable.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The dynamic module that contains the local variable for which the SignatureHelper is requested. </param>
       </Docs>
@@ -329,12 +344,15 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a method given the method's calling convention and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
         <param name="callingConvention">
           <attribution license="cc4" from="Microsoft" modified="false" />The calling convention of the method. </param>
         <param name="returnType">
@@ -357,12 +375,15 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a method given the method's unmanaged calling convention and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
         <param name="unmanagedCallingConvention">
           <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged calling convention of the method. </param>
         <param name="returnType">
@@ -387,12 +408,15 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a method given the method's module, calling convention, and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
         <param name="callingConvention">
@@ -419,12 +443,15 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a method given the method's module, unmanaged calling convention, and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
         <param name="unmanagedCallConv">
@@ -451,7 +478,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload creates a signature with a standard calling convention.</para>
@@ -461,6 +487,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a method with a standard calling convention, given the method's module, return type, and argument types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SignatureHelper object for a method.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the method for which the SignatureHelper is requested. </param>
         <param name="returnType">
@@ -487,7 +517,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SignatureHelper'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To create a signature helper for a property with optional or required custom modifiers, use the <see cref="M:System.Reflection.Emit.SignatureHelper.GetPropertySigHelper(System.Reflection.Module,System.Type,System.Type[],System.Type[],System.Type[],System.Type[][],System.Type[][])" /> method overload.</para>
@@ -496,6 +525,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a property, given the dynamic module that contains the property, the property type, and the property arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
         <param name="returnType">
@@ -525,7 +558,6 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
@@ -535,6 +567,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a property, given the dynamic module that contains the property, the property type, the property arguments, and custom modifiers for the return type and arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
         <param name="returnType">
@@ -572,7 +608,6 @@
         <Parameter Name="optionalParameterTypeCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="N:System.Runtime.CompilerServices" /> namespace for classes that represent custom modifiers.</para>
@@ -585,6 +620,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a signature helper for a property, given the dynamic module that contains the property, the calling convention, the property type, the property arguments, and custom modifiers for the return type and arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.SignatureHelper" /> object for a property.</para>
+        </returns>
         <param name="mod">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.Emit.ModuleBuilder" /> that contains the property for which the <see cref="T:System.Reflection.Emit.SignatureHelper" /> is requested.</param>
         <param name="callingConvention">
@@ -617,12 +656,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the end token to the signature and marks the signature as finished, so no further tokens can be added.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a byte array made up of the full signature.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._SignatureHelper.GetIDsOfNames">
@@ -758,12 +800,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representing the signature arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representing the arguments of this signature.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

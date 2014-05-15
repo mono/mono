@@ -252,12 +252,6 @@
         <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="comparand" /> is an instance of the <see cref="T:System.Net.IPAddress" /> class
-   and has the same <see cref="P:System.Net.IPAddress.Address" /> property value
-   as the current instance; otherwise
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IPAddress.Equals(System.Object)" /> method compares the current <see cref="T:System.Net.IPAddress" /> instance with the <paramref name="comparand" /> parameter and returns true if the two instances contain the same IP address.</para>
@@ -266,6 +260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two IP addresses.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two addresses are equal; otherwise, false.</para>
+        </returns>
         <param name="comparand">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" /> instance to compare to the current instance. </param>
       </Docs>
@@ -285,12 +283,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a copy of the <see cref="T:System.Net.IPAddress" /> as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Byte" /> array.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -308,10 +309,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IPAddress.GetHashCode" /> method returns a hash code of the IP address. This value can be used as a key in hash tables.</para>
@@ -320,6 +317,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash value for an IP address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -340,10 +341,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="host" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int16" />
-in network-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -353,6 +350,10 @@ in network-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a short value from host byte order to network byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A short value, expressed in network byte order.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
@@ -375,10 +376,6 @@ in network-byte-order.</para>
         <Parameter Name="host" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-in network-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -388,6 +385,10 @@ in network-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an integer value from host byte order to network byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value, expressed in network byte order.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
@@ -410,9 +411,6 @@ in network-byte-order.</para>
         <Parameter Name="host" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> in network-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -422,6 +420,10 @@ in network-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a long value from host byte order to network byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value, expressed in network byte order.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in host byte order. </param>
       </Docs>
@@ -595,12 +597,6 @@ in network-byte-order.</para>
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if
-<paramref name="address " /> is a loopback address; otherwise
-<see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IPAddress.IsLoopback(System.Net.IPAddress)" /> method compares <paramref name="address" /> to <see cref="F:System.Net.IPAddress.Loopback" /> and returns true if the two IP addresses are the same.</para>
@@ -610,6 +606,10 @@ in network-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified IP address is the loopback address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="address" /> is the loopback address; otherwise, false.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />An IP address. </param>
       </Docs>
@@ -658,10 +658,6 @@ in network-byte-order.</para>
         <Parameter Name="network" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int16" />
-in host-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -671,6 +667,10 @@ in host-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a short value from network byte order to host byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A short value, expressed in host byte order.</para>
+        </returns>
         <param name="network">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
@@ -693,9 +693,6 @@ in host-byte-order.</para>
         <Parameter Name="network" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> in host-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -705,6 +702,10 @@ in host-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an integer value from network byte order to host byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer value, expressed in host byte order.</para>
+        </returns>
         <param name="network">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
@@ -727,9 +728,6 @@ in host-byte-order.</para>
         <Parameter Name="network" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> in host-byte-order.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Different computers use different conventions for ordering the bytes within multibyte integer values. Some computers put the most significant byte first (known as big-endian order) and others put the least-significant byte first (known as little-endian order). To work with computers that use different byte ordering, all integer values that are sent over the network are sent in network byte order which has the most significant byte first.</para>
@@ -739,6 +737,10 @@ in host-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a long value from network byte order to host byte order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value, expressed in host byte order.</para>
+        </returns>
         <param name="network">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert, expressed in network byte order. </param>
       </Docs>
@@ -787,9 +789,6 @@ in host-byte-order.</para>
         <Parameter Name="ipString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.IPAddress" /> instance that represents the address specified in <paramref name="ipString" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="ipString " />is <see langword="null" />.</exception>
         <exception cref="T:System.FormatException">
@@ -848,6 +847,10 @@ in host-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an IP address string to an <see cref="T:System.Net.IPAddress" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPAddress" /> instance.</para>
+        </returns>
         <param name="ipString">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains an IP address in dotted-quad notation for IPv4 and in colon-hexadecimal notation for IPv6. </param>
       </Docs>
@@ -909,10 +912,6 @@ in host-byte-order.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of 
-   the current instance. The returned string is an IP address expressed in dotted-quad notation (for example, "192.168.1.2").</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IPAddress.ToString" /> method converts the IP address that is stored in the <see cref="P:System.Net.IPAddress.Address" /> property to either IPv4 dotted-quad or IPv6 colon-hexadecimal notation.</para>
@@ -921,6 +920,10 @@ in host-byte-order.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an Internet address to its standard notation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the IP address in either IPv4 dotted-quad or in IPv6 colon-hexadecimal notation.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

@@ -100,7 +100,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Configuration.ConfigurationElement" /> object for the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Configuration.ConfigurationElement" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,7 +128,6 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -135,6 +137,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the element key for a specified <see cref="T:System.Configuration.ConfigurationElement" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" />, which acts as the key for the specified <see cref="T:System.Configuration.ConfigurationElement" /> object. </para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> whose key is returned.</param>
       </Docs>
@@ -152,7 +158,6 @@
         <Parameter Name="action" Type="System.Web.Configuration.HttpModuleAction" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -162,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection index of the specified <see cref="T:System.Web.Configuration.HttpModuleAction" /> module.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection index value for the specified module.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.HttpModuleAction" /> module for which to get the collection index.</param>
       </Docs>
@@ -179,7 +188,6 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -189,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies that the element is removable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the element is removable.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationElement" /> element whose removable property is queried.</param>
       </Docs>

@@ -827,12 +827,15 @@ schema.Includes.Add(include);</code>
         <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an XML Schema  from the supplied stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> object representing the XML Schema.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The supplied data stream. </param>
         <param name="validationEventHandler">
@@ -856,12 +859,15 @@ schema.Includes.Add(include);</code>
         <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an XML Schema from the supplied <see cref="T:System.IO.TextReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> object representing the XML Schema.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The TextReader containing the XML Schema to read. </param>
         <param name="validationEventHandler">
@@ -885,12 +891,15 @@ schema.Includes.Add(include);</code>
         <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an XML Schema from the supplied <see cref="T:System.Xml.XmlReader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> object representing the XML Schema.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlReader containing the XML Schema to read. </param>
         <param name="validationEventHandler">

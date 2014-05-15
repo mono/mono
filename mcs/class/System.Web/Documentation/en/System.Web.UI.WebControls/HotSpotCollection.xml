@@ -57,7 +57,6 @@
         <Parameter Name="spot" Type="System.Web.UI.WebControls.HotSpot" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -67,6 +66,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a specified <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to the end of the <see cref="T:System.Web.UI.WebControls.HotSpotCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the object was added to the collection.</para>
+        </returns>
         <param name="spot">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.HotSpot" /> object to append to the collection. </param>
       </Docs>
@@ -85,7 +88,6 @@
       </Parameters>
       <Docs>
         <param name="idx">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -140,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a default instance of a type derived from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of a specified type derived from the <see cref="T:System.Web.UI.WebControls.HotSpot" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,7 +159,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -167,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array of the <see cref="T:System.Web.UI.WebControls.HotSpot" /> object-derived types that a <see cref="T:System.Web.UI.WebControls.HotSpotCollection" /> collection can contain. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Web.UI.WebControls.HotSpot" /> object-derived types that a <see cref="T:System.Web.UI.WebControls.HotSpotCollection" /> collection can contain.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

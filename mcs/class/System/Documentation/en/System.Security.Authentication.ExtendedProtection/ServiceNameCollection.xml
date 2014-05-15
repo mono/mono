@@ -63,7 +63,6 @@
         <Parameter Name="serviceNames" Type="System.Collections.IEnumerable" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> class that is initialized contains the specified values passed in the <paramref name="items" /> parameter.</para>
@@ -72,6 +71,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Merges the current <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> with the specified values to create a new <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> containing the union.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> instance that contains the union of the existing <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> instance merged with the specified values.</para>
+        </returns>
         <param name="serviceNames">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Collections.IEnumerable" /> class that contains the specified values of service names to be merged.</param>
       </Docs>
@@ -90,7 +93,6 @@
         <Parameter Name="serviceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> class that is initialized contains the specified values passed in the <paramref name="items" /> parameter.</para>
@@ -99,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Merges the current <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> with the specified values to create a new <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> containing the union.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> instance that contains the union of the existing <see cref="T:System.Security.Authentication.ExtendedProtection.ServiceNameCollection" /> instance merged with the specified values.</para>
+        </returns>
         <param name="serviceName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the specified values of service names to be used to initialize the class.</param>
       </Docs>

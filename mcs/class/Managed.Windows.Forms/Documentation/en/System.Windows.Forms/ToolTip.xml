@@ -297,7 +297,6 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.ToolTip.CanExtend(System.Object)" /> method is the only member of the <see cref="T:System.ComponentModel.IExtenderProvider" /> interface. This method returns true if the <paramref name="target" /> parameter is of type <see cref="T:System.Windows.Forms.Control" />.</para>
@@ -306,6 +305,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns true if the ToolTip can offer an extender property to the specified target component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.ToolTip" /> class can offer one or more extender properties; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The target object to add an extender property to. </param>
       </Docs>
@@ -440,7 +443,6 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>With the <see cref="M:System.Windows.Forms.ToolTip.GetToolTip(System.Windows.Forms.Control)" /> method, you can retrieve the ToolTip text for any control. If the ToolTip text changes dynamically in an application, you can use this method to find out what text is displayed at any point, depending on the state of the application. To change the text that a control is displaying, use the <see cref="M:System.Windows.Forms.ToolTip.SetToolTip(System.Windows.Forms.Control,System.String)" /> method.</para>
@@ -449,6 +451,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the ToolTip text associated with the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the ToolTip text for the specified control.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> for which to retrieve the <see cref="T:System.Windows.Forms.ToolTip" /> text. </param>
       </Docs>
@@ -1051,7 +1057,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overridden version of the <see cref="M:System.Windows.Forms.ToolTip.ToString" /> method displays the class name, followed by the values of the <see cref="P:System.Windows.Forms.ToolTip.InitialDelay" /> and <see cref="P:System.Windows.Forms.ToolTip.ShowAlways" /> properties.</para>
@@ -1060,6 +1065,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation for this control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing a description of the <see cref="T:System.Windows.Forms.ToolTip" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

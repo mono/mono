@@ -109,7 +109,6 @@
         <Parameter Name="runtimeControl" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method is used by visual designers, such as vsprvslong, in an <ui>AutoFormat</ui> dialog box to display a formatted run-time preview of the control at design time before applying the format to the actual control.</para>
@@ -119,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a copy of the associated control in order to provide a preview before applying the format to the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.GetPreviewControl(System.Web.UI.Control)" /> method returns a copy of the associated Web server control.</para>
+        </returns>
         <param name="runtimeControl">
           <attribution license="cc4" from="Microsoft" modified="false" />A run-time version of the Web server control.</param>
       </Docs>
@@ -176,7 +179,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerAutoFormat.ToString" /> method returns a string that contains the value of the <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property of the <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</para>
@@ -185,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DesignerAutoFormat.Name" /> property of the current <see cref="T:System.Web.UI.Design.DesignerAutoFormat" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

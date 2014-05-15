@@ -78,12 +78,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that can iterate through the <see cref="T:System.ComponentModel.Design.DesignSurfaceCollection" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.ComponentModel.Design.DesignSurfaceCollection" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -207,7 +210,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.DesignSurfaceCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerator" /> interface.</para>
@@ -216,6 +218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.ComponentModel.Design.DesignSurfaceCollection" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -288,7 +288,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Read method will return 0 only if the end of the stream is reached. In all other cases, Read always reads at least one byte from the stream before returning. By definition, if no data is available from the stream upon a call to Read, the Read method returns 0 (the end of the stream is reached automatically). An implementation is free to return fewer bytes than requested even if the end of the stream has not been reached.</para>
@@ -298,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies bytes from the current buffered stream to an array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes read into <paramref name="array" />. This can be less than the number of bytes requested if that many bytes are not currently available, or 0 if the end of the stream has been reached before any data can be read.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to which bytes are to be copied. </param>
         <param name="offset">
@@ -320,12 +323,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from the underlying stream and returns the byte cast to an int, or returns -1 if reading from the end of the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte cast to an int, or -1 if reading from the end of the stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Seek">
@@ -345,7 +351,6 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="offset" /> is negative, the new position will precede the position specified by <paramref name="origin" /> by the number of bytes specified by <paramref name="offset" />. If <paramref name="offset" /> is 0, the new position will be the position specified by <paramref name="origin" />. If <paramref name="offset" /> is positive, the new position will follow the position specified by <paramref name="origin" /> by the number of bytes specified by <paramref name="offset" />.</para>
@@ -356,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the position within the current buffered stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position within the current buffered stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte offset relative to <paramref name="origin" />. </param>
         <param name="origin">

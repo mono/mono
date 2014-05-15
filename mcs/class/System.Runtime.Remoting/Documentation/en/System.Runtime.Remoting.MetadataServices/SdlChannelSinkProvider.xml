@@ -79,12 +79,15 @@
         <Parameter Name="channel" Type="System.Runtime.Remoting.Channels.IChannelReceiver" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Channels.IServerChannelSink'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a sink chain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first sink of the newly formed channel sink chain.</para>
+        </returns>
         <param name="channel">
           <attribution license="cc4" from="Microsoft" modified="false" />The channel for which to create the channel sink chain. </param>
       </Docs>

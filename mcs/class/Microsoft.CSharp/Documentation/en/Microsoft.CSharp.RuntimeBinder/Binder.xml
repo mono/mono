@@ -35,13 +35,23 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="operation">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp binary operation binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp binary operation binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binary operation kind.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="Convert">
@@ -60,12 +70,15 @@
         <Parameter Name="context" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new CSharp convert binder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp convert binder.</para>
+        </returns>
         <param name="flags">
           <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
         <param name="type">
@@ -90,12 +103,21 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp get index binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp get index binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="GetMember">
@@ -115,13 +137,23 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp get member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp get member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to get.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -140,12 +172,21 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="InvokeConstructor">
@@ -164,12 +205,21 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke constructor binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke constructor binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="InvokeMember">
@@ -190,14 +240,25 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="typeArguments">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp invoke member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp invoke member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to invoke.</param>
+        <param name="typeArguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of type arguments specified for this invoke.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="IsEvent">
@@ -216,12 +277,15 @@
         <Parameter Name="context" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new CSharp is event binder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp is event binder.</para>
+        </returns>
         <param name="flags">
           <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
         <param name="name">
@@ -246,12 +310,21 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp set index binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp set index binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="SetMember">
@@ -271,13 +344,23 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="name">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp set member binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp set member binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to set.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
     <Member MemberName="UnaryOperation">
@@ -297,13 +380,23 @@
         <Parameter Name="argumentInfo" Type="System.Collections.Generic.IEnumerable&lt;Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo&gt;" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="operation">To be added.</param>
-        <param name="context">To be added.</param>
-        <param name="argumentInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new CSharp unary operation binder.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new CSharp unary operation binder.</para>
+        </returns>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The flags with which to initialize the binder.</param>
+        <param name="operation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unary operation kind.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> that indicates where this operation is used.</param>
+        <param name="argumentInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence of <see cref="T:Microsoft.CSharp.RuntimeBinder.CSharpArgumentInfo" /> instances for the arguments to this operation.</param>
       </Docs>
     </Member>
   </Members>

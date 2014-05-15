@@ -199,7 +199,6 @@
         <param name="buffer">To be added.</param>
         <param name="cback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous read operation. (Consider using the <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> method instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An  object that represents the asynchronous read operation, which could still be pending.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte offset in <paramref name="array" /> at which to begin reading data from the stream.</param>
         <param name="count">
@@ -242,7 +245,6 @@
         <param name="buffer">To be added.</param>
         <param name="cback">To be added.</param>
         <param name="state">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -257,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous write operation. (Consider using the <see cref="M:System.IO.Stream.WriteAsync(System.Byte[],System.Int32,System.Int32)" /> method instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An  object that represents the asynchronous write operation, which could still be pending.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte offset in <paramref name="buffer" /> to begin writing from.</param>
         <param name="count">
@@ -371,7 +377,6 @@
       </Parameters>
       <Docs>
         <param name="async_result">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -383,6 +388,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Waits for the pending asynchronous read to complete. (Consider using the <see cref="M:System.IO.Stream.ReadAsync(System.Byte[],System.Int32,System.Int32)" /> method instead; see the Remarks section.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read from the stream, between 0 (zero) and the number of bytes you requested. <see cref="T:System.IO.Compression.DeflateStream" /> returns 0 only at the end of the stream; otherwise, it blocks until at least one byte is available.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EndWrite">
@@ -500,13 +509,16 @@
       <Docs>
         <param name="dest">To be added.</param>
         <param name="dest_offset">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a number of decompressed bytes into the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes that were read into the byte array.</para>
+        </returns>
         <param name="count">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of decompressed bytes to read.</param>
       </Docs>
@@ -527,13 +539,16 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation is not supported and always throws a <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A long value.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The location in the stream.</param>
         <param name="origin">

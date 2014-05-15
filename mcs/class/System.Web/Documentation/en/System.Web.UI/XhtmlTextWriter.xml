@@ -415,7 +415,6 @@
         <Parameter Name="attributeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -425,6 +424,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks an XHTML attribute to ensure that it can be rendered in the opening tag of a &lt;form&gt; element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute can be applied to a &lt;form&gt; element; otherwise, false.</para>
+        </returns>
         <param name="attributeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The attribute name to check. </param>
       </Docs>
@@ -444,13 +447,16 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified XHTML attribute and its value can be rendered to the current markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is rendered to the page; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The XHTML attribute to render. </param>
         <param name="value">
@@ -474,13 +480,16 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified XHTML style attribute and its value can be rendered to the current markup element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the style attribute is rendered; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The XHTML style attribute to render. </param>
         <param name="value">

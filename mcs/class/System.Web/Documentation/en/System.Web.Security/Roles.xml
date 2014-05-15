@@ -475,7 +475,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -486,6 +485,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a role from the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="roleName" /> was deleted from the data source; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -503,7 +506,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -514,6 +516,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a role from the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="roleName" /> was deleted from the data source; otherwise; false.</para>
+        </returns>
         <param name="throwOnPopulatedRole">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, throws an exception if <paramref name="roleName" /> has one or more members.</param>
       </Docs>
@@ -575,7 +581,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -587,6 +592,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a list of users in a specified role where the user name contains the specified user name to match.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users whose user name matches <paramref name="usernameToMatch" /> and who are members of the specified role.</para>
+        </returns>
         <param name="usernameToMatch">
           <attribution license="cc4" from="Microsoft" modified="false" />The user name to search for.</param>
       </Docs>
@@ -602,7 +611,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -612,6 +620,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a list of all the roles for the application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles stored in the data source for the application.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -625,7 +637,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -636,6 +647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a list of the roles that the currently logged-on user is in.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the currently logged-on user is in.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -651,7 +666,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -662,6 +676,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a list of the roles that a user is in.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the roles that the specified user is in.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user to return a list of roles for. </param>
       </Docs>
@@ -680,7 +698,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -690,6 +707,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a list of users in the specified role.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array containing the names of all the users who are members of the specified role.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -706,7 +727,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -717,6 +737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the currently logged-on user is in the specified role.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the currently logged-on user is in the specified role; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -734,7 +758,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -745,6 +768,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified user is in the specified role.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified user is in the specified role; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to search for. </param>
       </Docs>
@@ -977,7 +1004,6 @@
       </Parameters>
       <Docs>
         <param name="rolename">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -987,6 +1013,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified role name already exists in the role data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the role name already exists in the data source; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

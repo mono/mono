@@ -96,10 +96,6 @@
         <Parameter Name="socketAddress" Type="System.Net.SocketAddress" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.EndPoint" /> instance containing the address
-   information from the specified <see cref="T:System.Net.SocketAddress" /> instance.</para>
-        </returns>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> As described above.</block>
@@ -125,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Net.EndPoint" /> instance from a <see cref="T:System.Net.SocketAddress" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Net.EndPoint" /> instance that is initialized from the specified <see cref="T:System.Net.SocketAddress" /> instance.</para>
+        </returns>
         <param name="socketAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The socket address that serves as the endpoint for a connection. </param>
       </Docs>
@@ -144,12 +144,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes endpoint information into a <see cref="T:System.Net.SocketAddress" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.SocketAddress" /> instance that contains the endpoint information.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

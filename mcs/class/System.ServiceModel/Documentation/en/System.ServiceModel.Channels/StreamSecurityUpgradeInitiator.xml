@@ -50,7 +50,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This information is useful for implementing a stream-level authentication mechanism based on the identities provided in the security context.</para>
@@ -59,6 +58,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the security message property provided on the stream for performing custom security negotiation based on the information provided in the security context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

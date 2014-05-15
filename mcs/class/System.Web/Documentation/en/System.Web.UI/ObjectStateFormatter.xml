@@ -185,7 +185,6 @@
         <Parameter Name="inputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -198,6 +197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an object state graph from its binary-serialized form that is contained in the specified <see cref="T:System.IO.Stream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents a deserialized object state graph.</para>
+        </returns>
         <param name="inputStream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that the <see cref="T:System.Web.UI.ObjectStateFormatter" /> deserializes into an initialized object. </param>
       </Docs>
@@ -215,7 +218,6 @@
         <Parameter Name="inputString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -228,6 +230,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an object state graph from its serialized base64-encoded string form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents a deserialized object state graph.</para>
+        </returns>
         <param name="inputString">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that the <see cref="T:System.Web.UI.ObjectStateFormatter" /> deserializes into an initialized object.</param>
       </Docs>
@@ -245,7 +251,6 @@
         <Parameter Name="stateGraph" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -255,6 +260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes an object state graph to a base64-encoded string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A base-64 encoded string that represents the serialized object state of the <paramref name="stateGraph" /> parameter.</para>
+        </returns>
         <param name="stateGraph">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to serialize.</param>
       </Docs>
@@ -346,7 +355,6 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.ObjectStateFormatter" /> instance is cast to an <see cref="T:System.Runtime.Serialization.IFormatter" /> interface.</para>
@@ -355,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.ObjectStateFormatter.Deserialize(System.IO.Stream)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize.</param>
       </Docs>

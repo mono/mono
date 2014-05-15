@@ -160,7 +160,6 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Windows.Forms.PrintControllerWithStatusDialog" /> class calls the <see cref="M:System.Drawing.Printing.PrintController.OnStartPage(System.Drawing.Printing.PrintDocument,System.Drawing.Printing.PrintPageEventArgs)" /> method on the encapsulated <see cref="T:System.Drawing.Printing.PrintController" />.</para>
@@ -172,6 +171,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins the control sequence that determines when and how to print a page of a document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Graphics" /> object that represents a page from a <see cref="T:System.Drawing.Printing.PrintDocument" />.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document currently being printed.</param>
         <param name="e">

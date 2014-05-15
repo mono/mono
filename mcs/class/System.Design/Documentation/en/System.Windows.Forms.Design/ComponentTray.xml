@@ -116,12 +116,15 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified tool can be used to create a new component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified tool can be used to create a component; otherwise, false.</para>
+        </returns>
         <param name="tool">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to test. </param>
       </Docs>
@@ -140,7 +143,6 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method tests the specified component for the existence of a <see cref="T:System.ComponentModel.DesignTimeVisibleAttribute" />, which indicates whether the component has a user interface that can be displayed.</para>
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified component can be displayed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component can be displayed; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to test. </param>
       </Docs>
@@ -262,7 +268,6 @@
         <Parameter Name="receiver" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -272,6 +277,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the specified component, relative to the upper-left corner of the component tray.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> indicating the coordinates of the specified component, or an empty <see cref="T:System.Drawing.Point" /> if the specified component could not be found in the component tray. An empty <see cref="T:System.Drawing.Point" /> has an <see cref="P:System.Drawing.Point.IsEmpty" /> property equal to true and typically has <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> properties that are each equal to zero.</para>
+        </returns>
         <param name="receiver">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to retrieve the location of. </param>
       </Docs>
@@ -311,12 +320,15 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Similar to <see cref="M:System.Windows.Forms.Control.GetNextControl(System.Windows.Forms.Control,System.Boolean)" />, this method returns the next component in the tray, given a starting component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next component in the component tray, or null, if the end of the list is encountered (or the beginning, if <paramref name="forward" /> is false).</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component from which to start enumerating.</param>
         <param name="forward">
@@ -334,12 +346,15 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested service, or null if the service could not be found.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -373,7 +388,6 @@
         <Parameter Name="receiver" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The Location extender property is offered to all non-visual components. The returned value takes into account the value of <see cref="P:System.Windows.Forms.ScrollableControl.AutoScrollPosition" />. If <paramref name="receiver" /> does not have a component view, the returned value is an empty <see cref="T:System.Drawing.Point" />.</para>
@@ -382,6 +396,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the Location extender property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> representing the location of <paramref name="receiver" />. </para>
+        </returns>
         <param name="receiver">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> that receives the location extender property.</param>
       </Docs>
@@ -399,12 +417,15 @@
         <Parameter Name="comp" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests a component for presence in the component tray.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="comp" /> is being shown on the tray; otherwise, false.</para>
+        </returns>
         <param name="comp">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to test for presence in the component tray.</param>
       </Docs>
@@ -827,7 +848,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.ComponentTray" /> instance is cast to an <see cref="T:System.ComponentModel.IExtenderProvider" /> interface.</para>
@@ -836,6 +856,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.IExtenderProvider.CanExtend(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object can provide extender properties to the specified object; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to receive the extender properties.</param>
       </Docs>

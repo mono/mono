@@ -68,7 +68,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -78,6 +77,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value from the &lt;connectionStrings&gt; section of the Web.config file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> associated with a key in the &lt;connectionStrings&gt; section of the Web.config file.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the expression.</param>
         <param name="entry">
@@ -103,7 +106,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -113,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a code expression to evaluate during page parsing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> that invokes a method.</para>
+        </returns>
         <param name="entry">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that represents information about the property bound to by the expression.</param>
         <param name="parsedData">
@@ -134,7 +140,6 @@
         <Parameter Name="connectionStringName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -144,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a connection string from the &lt;connectionStrings&gt; section of the Web.config file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection string as a <see cref="T:System.String" /> for this connection string name.</para>
+        </returns>
         <param name="connectionStringName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the connection string.</param>
       </Docs>
@@ -161,7 +170,6 @@
         <Parameter Name="connectionStringName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -171,6 +179,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the connection string provider from the &lt;connectionStrings&gt; section of the Web.config file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The provider as a <see cref="T:System.String" /> for this connection string name.</para>
+        </returns>
         <param name="connectionStringName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the connection string.</param>
       </Docs>
@@ -190,7 +202,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -200,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that represents the parsed expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the parsed representation of the expression.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the declarative expression.</param>
         <param name="propertyType">

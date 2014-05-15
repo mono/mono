@@ -51,7 +51,6 @@
         <Parameter Name="deepClone" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a deep or shallow copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildProperty" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildProperty" />.</para>
+        </returns>
         <param name="deepClone">
           <attribution license="cc4" from="Microsoft" modified="false" />true to create a deep copy of the <see cref="T:Microsoft.Build.BuildEngine.BuildProperty" />; otherwise, false.</param>
       </Docs>
@@ -176,12 +179,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string that represents the property <see cref="P:Microsoft.Build.BuildEngine.BuildProperty.Value" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents the property <see cref="P:Microsoft.Build.BuildEngine.BuildProperty.Value" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

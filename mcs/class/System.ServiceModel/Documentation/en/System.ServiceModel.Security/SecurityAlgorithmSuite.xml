@@ -555,7 +555,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typical key lengths are 128, 192, and 256 bits.</para>
@@ -564,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a particular key length is supported by the asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key length is supported by the asymmetric algorithm; otherwise, false.</para>
+        </returns>
         <param name="length">
           <attribution license="cc4" from="Microsoft" modified="false" />The key length to check.</param>
       </Docs>
@@ -582,7 +585,6 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -592,6 +594,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether an asymmetric key wrap algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the asymmetric key wrap algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm to check.</param>
       </Docs>
@@ -610,7 +616,6 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -620,6 +625,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether an asymmetric signature algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the asymmetric signature algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -638,7 +647,6 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -648,6 +656,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a canonicalization algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the canonicalization algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -666,7 +678,6 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -676,6 +687,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a digest algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the digest algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -694,7 +709,6 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -704,6 +718,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether an encryption algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the encryption algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -722,12 +740,15 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether an encryption key derivation algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the encryption key derivation algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -746,12 +767,15 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a signature key derivation algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signature key derivation algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -770,7 +794,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="length" /> is compared to a range of values depending on the subclass. For example, in the TripleDES subclass, this method verifies that <paramref name="length" /> is between 192 and 256, inclusive.</para>
@@ -779,6 +802,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, indicates whether a particular symmetric key length is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the symmetric key length is supported; otherwise, false.</para>
+        </returns>
         <param name="length">
           <attribution license="cc4" from="Microsoft" modified="false" />The key length to check.</param>
       </Docs>
@@ -797,12 +824,15 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a symmetric key wrap algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the symmetric key wrap algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>
@@ -821,12 +851,15 @@
         <Parameter Name="algorithm" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a symmetric signature algorithm is supported.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the symmetric signature algorithm is supported; otherwise, false.</para>
+        </returns>
         <param name="algorithm">
           <attribution license="cc4" from="Microsoft" modified="false" />The algorithm name to check.</param>
       </Docs>

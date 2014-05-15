@@ -47,12 +47,15 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Reflection.FieldInfo" /> object that corresponds to the specified field and binding flag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object containing the field information for the named object that meets the search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field to find. </param>
         <param name="bindingAttr">
@@ -75,7 +78,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The match is based upon a name. Each field must have a unique name. The <see cref="F:System.Reflection.BindingFlags.NonPublic" /> flag specifies that non-public methods are included in the search. The <see cref="F:System.Reflection.BindingFlags.Public" /> flag specifies that public methods are included in the search.</para>
@@ -84,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Reflection.FieldInfo" /> objects that correspond to all fields of the current class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects containing all the field information for this reflection object that meets the search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search. </param>
       </Docs>
@@ -105,7 +111,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MemberInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.IReflect.GetMember(System.String,System.Reflection.BindingFlags)" /> method retrieves an array of <see cref="T:System.Reflection.MemberInfo" /> objects by using the name and binding attribute that correspond to all public members or to all members that match a specified name. The case of the specified name is observed or ignored, as specified by <see cref="F:System.Reflection.BindingFlags.IgnoreCase" />.</para>
@@ -114,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.Reflection.MemberInfo" /> objects corresponding to all public members or to all members that match a specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects matching the <paramref name="name" /> parameter.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find. </param>
         <param name="bindingAttr">
@@ -136,7 +145,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MemberInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves an array of <see cref="T:System.Reflection.MemberInfo" /> objects by using the binding attribute that corresponds either to all public members or to all members of the current class. It returns an array of all of the members defined for this object.</para>
@@ -145,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.Reflection.MemberInfo" /> objects that correspond either to all public members or to all members of the current class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects containing all the member information for this reflection object.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search. </param>
       </Docs>
@@ -166,12 +178,15 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Reflection.MethodInfo" /> object that corresponds to a specified method under specified search constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object containing the method information, with the match being based on the method name and search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find. </param>
         <param name="bindingAttr">
@@ -198,7 +213,6 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is a match based on the method name, <see cref="T:System.Reflection.BindingFlags" /> enum member, the kind of type conversion specified by the <paramref name="binder" /> parameter, the overload, and the <see cref="T:System.Reflection.ParameterInfo" /> that describes the signature of the method.</para>
@@ -207,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Reflection.MethodInfo" /> object corresponding to a specified method, using a <see cref="T:System.Type" /> array to choose from among overloaded methods.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested method that matches all the specified parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find. </param>
         <param name="bindingAttr">
@@ -235,7 +253,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodInfo []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The non-public attribute of <paramref name="bindingAttr" /> is indicated only if public methods are returned.</para>
@@ -244,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.Reflection.MethodInfo" /> objects with all public methods or all methods of the current class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects containing all the methods defined for this reflection object that meet the search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search. </param>
       </Docs>
@@ -264,12 +285,15 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyInfo []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.Reflection.PropertyInfo" /> objects corresponding to all public properties or to all properties of the current class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> objects for all the properties defined on the reflection object.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attribute used to control the search. </param>
       </Docs>
@@ -291,12 +315,15 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Reflection.PropertyInfo" /> object corresponding to a specified property under specified search constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object for the located property that meets the search constraints specified in <paramref name="bindingAttr" />, or null if the property was not located.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to find. </param>
         <param name="bindingAttr">
@@ -324,7 +351,6 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyInfo'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves a <see cref="T:System.Reflection.PropertyInfo" /> object corresponding to a specified property under specified search constraints. A type array is used to choose from among overloaded methods.</para>
@@ -333,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Reflection.PropertyInfo" /> object that corresponds to a specified property with specified search constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object for the located property, if a property with the specified name was located in this reflection object, or null if the property was not located.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find. </param>
         <param name="bindingAttr">
@@ -370,7 +400,6 @@
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method that is to be invoked must be accessible and provide the most specific match with the specified argument list, under the constraints of the specified binder and invocation attributes.</para>
@@ -385,6 +414,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes a specified member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find. </param>
         <param name="invokeAttr">

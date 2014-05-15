@@ -42,7 +42,6 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.GetInstance(System.ServiceModel.InstanceContext)" /> method to control the exact service object that a indigo2 service receives when it attempts to create a new one.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service object given the specified <see cref="T:System.ServiceModel.InstanceContext" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A user-defined service object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInstance">
@@ -69,7 +72,6 @@
       </Parameters>
       <Docs>
         <param name="context">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Dispatcher.IInstanceProvider.GetInstance(System.ServiceModel.InstanceContext,System.ServiceModel.Channels.Message)" /> method to control the exact service object that a indigo2 service receives when it attempts to create a new one.</para>
@@ -78,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service object given the specified <see cref="T:System.ServiceModel.InstanceContext" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service object.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The message that triggered the creation of a service object.</param>
       </Docs>

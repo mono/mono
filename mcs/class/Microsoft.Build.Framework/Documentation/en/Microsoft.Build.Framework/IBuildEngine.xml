@@ -28,7 +28,6 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates a build of a project file. If the build is successful, the outputs, if any, of the specified targets are returned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the project file to build.</param>
         <param name="targetNames">

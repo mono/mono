@@ -54,7 +54,6 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of the <paramref name="expression" /> parameter must evaluate to a public property. </para>
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates data-binding expressions at run time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> instance that results from the evaluation of the data-binding expression.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language. </param>
         <param name="expression">
@@ -92,7 +95,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of <paramref name="expression" /> must evaluate to a public property.</para>
@@ -109,6 +111,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates data-binding expressions at run time and formats the result as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> object that results from evaluating the data-binding expression and converting it to a string type.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language. </param>
         <param name="expression">
@@ -134,7 +140,6 @@
         <Parameter Name="container" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method calls the <see cref="M:System.Web.UI.DataBinder.GetDataItem(System.Object,System.Boolean@)" /> method, ignoring its <paramref name="foundDataItem" /> parameter when returning the result.</para>
@@ -144,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an object's declared data item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the container's declared data item. Returns null if no data item is found or if the container evaluates to null.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the page's specified language.</param>
       </Docs>
@@ -180,7 +189,6 @@
         <Parameter Name="expr" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The value of <paramref name="expr" /> must evaluate to a public property. </para>
@@ -190,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of a property of the specified container and navigation path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that results from the evaluation of the data-binding expression.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which <paramref name="expr" /> is evaluated. This must be a valid object identifier in the specified language for the page.</param>
         <param name="expr">
@@ -213,7 +225,6 @@
       </Parameters>
       <Docs>
         <param name="expr">a <see cref="T:System.String" /></param>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String,System.String)" /> method invokes the <see cref="M:System.Web.UI.DataBinder.GetIndexedPropertyValue(System.Object,System.String)" /> method, and then uses the <see cref="M:System.String.Format(System.String,System.Object)" /> method to format the result as specified in the <paramref name="format" /> parameter. A .NET Framework format string (like those used by <see cref="M:System.String.Format(System.String,System.Object)" />) converts the <see cref="T:System.Object" /> instance returned by the data-binding expression to a <see cref="T:System.String" /> object. </para>
@@ -223,6 +234,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the specified property for the specified container, and then formats the results.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property in the format specified by <paramref name="format" />.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference against which the expression is evaluated. This must be a valid object identifier in the specified language for the page.</param>
         <param name="format">
@@ -244,7 +259,6 @@
         <Parameter Name="propName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.DataBinder.GetPropertyValue(System.Object,System.String)" /> method is used to retrieve the value of a property in an object.</para>
@@ -253,6 +267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the specified property of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the property. </param>
         <param name="propName">
@@ -275,7 +293,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Web.UI.DataBinder.GetPropertyValue(System.Object,System.String,System.String)" /> method is used to retrieve and format the value of a property in an object.</para>
@@ -284,6 +301,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the specified property of the specified object, and then formats the results.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property in the format specified by <paramref name="format" />.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the property. </param>
         <param name="propName">

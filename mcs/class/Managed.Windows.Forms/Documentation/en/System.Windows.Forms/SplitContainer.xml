@@ -577,12 +577,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the control collection for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Windows.Forms.Control.ControlCollection" /> assigned to the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -1348,7 +1351,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during message preprocessing to handle dialog box key characters, such as TAB, LEFT ARROW, RIGHT ARROW, UP ARROW, and DOWN ARROW. Keys that include the ALT or CONTROL modifiers are not handled. This method is called only if the <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> method indicates that the control is not processing the key. The <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> simply sends the character to the parent's <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> method, or returns false if the control has no parent. The <see cref="T:System.Windows.Forms.Form" /> class overrides this method to perform actual processing of dialog box keys. The run time calls this method only when the control is hosted in a Windows Forms application or as an ActiveX control.</para>
@@ -1357,6 +1359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog box key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
@@ -1374,7 +1380,6 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1401,6 +1406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects the next available control and makes it the active control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a control is selected; otherwise, false.</para>
+        </returns>
         <param name="forward">
           <attribution license="cc4" from="Microsoft" modified="false" />true to cycle forward through the controls in the <see cref="T:System.Windows.Forms.ContainerControl" />; otherwise, false. </param>
       </Docs>

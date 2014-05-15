@@ -61,7 +61,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -71,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, deletes all user-profile data for profiles in which the last activity date occurred before the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> values, specifying whether anonymous, authenticated, or both types of profiles are deleted.</param>
         <param name="userInactiveSinceDate">
@@ -90,7 +93,6 @@
         <Parameter Name="usernames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -100,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, deletes profile properties and information for profiles that match the supplied list of user names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="usernames">
           <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names for profiles to be deleted.</param>
       </Docs>
@@ -117,7 +123,6 @@
         <Parameter Name="profiles" Type="System.Web.Profile.ProfileInfoCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -128,6 +133,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, deletes profile properties and information for the supplied list of profiles.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="profiles">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Profile.ProfileInfoCollection" />  of information about profiles that are to be deleted.</param>
       </Docs>
@@ -258,7 +267,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -268,6 +276,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the number of profiles in which the last activity date occurred on or before the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in which the last activity date occurred on or before the specified date.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="userInactiveSinceDate">

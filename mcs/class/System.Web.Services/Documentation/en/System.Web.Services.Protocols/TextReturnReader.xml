@@ -56,7 +56,6 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method. For the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class, the initializer is a <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object based on the return type of the Web method. </para>
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an initializer for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An initializer for the specified method</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
@@ -111,7 +114,6 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To parse the text content of the HTTP response, the <see cref="T:System.Web.Services.Protocols.TextReturnReader" /> class's implementation of the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method uses the <see cref="T:System.Web.Services.Protocols.PatternMatcher" /> object passed as an argument to the <see cref="M:System.Web.Services.Protocols.TextReturnReader.Initialize(System.Object)" /> method. It closes the response stream before returning the deserialized Web method return value.</para>
@@ -120,6 +122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses text contained in the HTTP response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the deserialized Web method return value.</para>
+        </returns>
         <param name="response">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebResponse" /> object  containing the output message for an operation.</param>
         <param name="responseStream">

@@ -109,7 +109,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Instead of calling the <see cref="M:System.Text.RegularExpressions.GroupCollection.GetEnumerator" /> method to retrieve an enumerator that lets you iterate through the <see cref="T:System.Text.RegularExpressions.Group" /> objects in the collection, you should use the group iteration construct (such as foreach in C# and For Each…Next in Visual Basic) that is provided by your programming language.</para>
@@ -118,6 +117,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides an enumerator that iterates through the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains all <see cref="T:System.Text.RegularExpressions.Capture" /> objects within the <see cref="T:System.Text.RegularExpressions.CaptureCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">

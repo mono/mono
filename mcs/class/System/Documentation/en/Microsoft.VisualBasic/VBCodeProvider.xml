@@ -56,9 +56,16 @@
         <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="providerOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value for <paramref name="providerOptions" /> is obtained from the <format type="text/html"><a href="014f2e0b-c0b5-4fc4-92d3-73f02978b2a1">&lt;providerOption&gt;</a></format> element in the configuration file. You can identify the version of the <see cref="T:Microsoft.VisualBasic.VBCodeProvider" /> you want to use by specifying the &lt;providerOption&gt; element, supplying "CompilerVersion" as the option name, and supplying the version number (for example, "v3.5") as the option value. You must precede the version number with a lower case "v". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.VisualBasic.VBCodeProvider" /> class by using the specified provider options. </para>
+        </summary>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.IDictionary`2" /> object that contains the provider options from the configuration file.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCompiler">
@@ -80,12 +87,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an instance of the Visual Basic code compiler.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the Visual Basic <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> implementation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateGenerator">
@@ -107,12 +117,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an instance of the Visual Basic code generator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the Visual Basic <see cref="T:System.CodeDom.Compiler.ICodeGenerator" /> implementation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FileExtension">
@@ -194,7 +207,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A derived class can override this method to provide specific types of type converters for specific data types.</para>
@@ -203,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type of object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of object to retrieve a type converter for. </param>
       </Docs>

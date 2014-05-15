@@ -713,7 +713,6 @@
         <Parameter Name="visible" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.MonthCalendar.GetDisplayRange(System.Boolean)" /> method returns a <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> that contains the begin and end dates displayed in the current view of the control. You can modify the returned range based on the value you specify for the <paramref name="visible" /> parameter. By specifying false, you can retrieve all dates displayed on the control; specifying true retrieves only those dates that are part of fully displayed months.</para>
@@ -722,6 +721,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves date information that represents the low and high limits of the displayed dates of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The begin and end dates of the displayed calendar.</para>
+        </returns>
         <param name="visible">
           <attribution license="cc4" from="Microsoft" modified="false" />true to retrieve only the dates that are fully contained in displayed months; otherwise, false. </param>
       </Docs>
@@ -740,12 +743,15 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object with information on which portion of a month calendar control is at a location specified by a <see cref="T:System.Drawing.Point" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> that contains information about the specified point on the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </returns>
         <param name="point">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> containing the <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> coordinates of the point to be hit tested. </param>
       </Docs>
@@ -765,12 +771,15 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> with information on which portion of a month calendar control is at a specified x- and y-coordinate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.MonthCalendar.HitTestInfo" /> that contains information about the specified point on the <see cref="T:System.Windows.Forms.MonthCalendar" />.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.X" /> coordinate of the point to be hit tested. </param>
         <param name="y">
@@ -2053,7 +2062,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The string includes the type and the string returned by the <see cref="M:System.Windows.Forms.SelectionRange.ToString" /> method of the <see cref="P:System.Windows.Forms.MonthCalendar.SelectionRange" /> property.</para>
@@ -2062,6 +2070,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the <see cref="T:System.Windows.Forms.MonthCalendar" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.MonthCalendar" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

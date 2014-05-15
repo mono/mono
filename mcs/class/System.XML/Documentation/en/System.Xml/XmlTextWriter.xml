@@ -184,7 +184,6 @@ public class WriteFragment
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="encoding">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="w" /> cannot be written to.</para>
@@ -193,6 +192,8 @@ public class WriteFragment
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="w " /> is <see langword="null" />.</exception>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes out the stream as UTF-8 and omits the encoding attribute from the ProcessingInstruction. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -226,7 +227,6 @@ public class WriteFragment
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="encoding">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="filename" /> is <see cref="F:System.String.Empty" />, contains only white space, or contains one or more implementation-specific invalid characters.</para>
@@ -242,6 +242,8 @@ public class WriteFragment
         <exception cref="T:System.Security.SecurityException">The caller does not have the required permissions.</exception>
         <exception cref="T:System.UnauthorizedAccessException">Write access is not permitted by the operating system for the path specified in <paramref name="filename" />.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to files. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The encoding to generate. If encoding is null it writes the file out as UTF-8, and omits the encoding attribute from the ProcessingInstruction. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -498,11 +500,6 @@ public class WriteFragment
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   corresponding prefix, or <see cref="F:System.String.Empty" qualify="true" /> if the prefix is not found and <paramref name="ns" /> is
-   the default namespace, or <see langword="null" /> if no matching namespace URI is found in the current scope.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="ns " /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <remarks>
@@ -515,6 +512,10 @@ public class WriteFragment
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the closest prefix defined in the current namespace scope for the namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching prefix. Or null if no matching namespace URI is found in the current scope.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />Namespace URI whose prefix you want to find. </param>
       </Docs>
@@ -1131,7 +1132,6 @@ public class WriteFragment
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para> The text would result in a non-well formed XML document.</para>
           <para> - or -</para>
@@ -1141,6 +1141,8 @@ public class WriteFragment
           <para>This method is being used to create an XML declaration after <see cref="M:System.Xml.XmlTextWriter.WriteStartDocument" /> has already been called. </para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />Text to include in the processing instruction. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1177,7 +1179,6 @@ public class WriteFragment
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</para>
@@ -1191,6 +1192,8 @@ public class WriteFragment
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="localName" /> is not a valid XML name.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the name. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1334,10 +1337,11 @@ public class WriteFragment
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is <see langword="false" /> for the writer, and <paramref name="prefix" /> and <paramref name="ns" /> are not both <see langword="null" /> or <see cref="F:System.String.Empty" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is not one of the following: <see cref="F:System.Xml.WriteState.Attribute" qualify="true" /> or <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />Namespace prefix of the attribute. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1445,7 +1449,6 @@ public class WriteFragment
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="prefix">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <see cref="P:System.Xml.XmlTextWriter.Namespaces" /> is <see langword="false" /> for the writer, and <paramref name="prefix" /> and <paramref name="ns" /> are not both <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlTextWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
@@ -1479,6 +1482,8 @@ public class WriteXml
           </para>
           <para> The value of the encoding attribute is the encoding of the output stream of the console.</para>
         </example>
+        <param name="prefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace prefix of the element. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">

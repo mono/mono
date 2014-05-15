@@ -33,7 +33,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -43,6 +42,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a submenu style to the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position in the collection at which the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance was inserted.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance to add to the collection.</param>
       </Docs>
@@ -60,7 +63,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -70,6 +72,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection contains a specific <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance is found in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection; otherwise, false. If null is passed as the <paramref name="style" /> parameter, false is returned.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> instance to locate in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</param>
       </Docs>
@@ -115,7 +121,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -129,6 +134,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Object" /> of the data type that corresponds to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an empty <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the data type to create. This parameter is not used in this implementation of the method; therefore, you should always pass in null.</param>
       </Docs>
@@ -144,7 +153,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -157,6 +165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array of <see cref="T:System.Type" /> objects that contains the supported data types of the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that contains the data types supported by the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> class.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -172,7 +184,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.SubMenuStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -182,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the location of a specified <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object if it is found in the list; otherwise, -1.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.SubMenuStyle" /> object to locate in the <see cref="T:System.Web.UI.WebControls.SubMenuStyleCollection" /> collection.</param>
       </Docs>

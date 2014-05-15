@@ -1,6 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Diagnostics.Contracts.Internal">
   <Docs>
-    <summary>This namespace contains classes for handling code contract failures.</summary>
-    <remarks></remarks>
+    <remarks>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Diagnostics.Contracts.Internal" /> namespace provides classes that the binary rewriter can use to handle a contract failure.</para>
+    </summary>
   </Docs>
 </Namespace>

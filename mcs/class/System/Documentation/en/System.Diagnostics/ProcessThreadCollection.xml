@@ -82,12 +82,15 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends a process thread to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the thread in the collection.</para>
+        </returns>
         <param name="thread">
           <attribution license="cc4" from="Microsoft" modified="false" />The thread to add to the collection. </param>
       </Docs>
@@ -108,7 +111,6 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A module is identified by its module name and its fully qualified file path.</para>
@@ -117,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified process thread exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the thread exists in the collection; otherwise, false.</para>
+        </returns>
         <param name="thread">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.ProcessThread" /> instance that indicates the thread to find in this collection. </param>
       </Docs>
@@ -165,12 +171,15 @@
         <Parameter Name="thread" Type="System.Diagnostics.ProcessThread" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the location of a specified thread within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index that defines the location of the thread within the <see cref="T:System.Diagnostics.ProcessThreadCollection" />.</para>
+        </returns>
         <param name="thread">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Diagnostics.ProcessThread" /> whose index is retrieved. </param>
       </Docs>

@@ -320,7 +320,6 @@
         <Parameter Name="timeSpan" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="M:System.DateTimeOffset.Add(System.TimeSpan)" /> method to add more than one kind of time interval (days, hours, minutes, seconds, or milliseconds) in a single operation. This method's behavior is identical to the addition operator. The <see cref="T:System.DateTimeOffset" /> structure also supports specialized addition methods (such as <see cref="M:System.DateTimeOffset.AddDays(System.Double)" />, <see cref="M:System.DateTimeOffset.AddHours(System.Double)" />, and <see cref="M:System.DateTimeOffset.AddMinutes(System.Double)" />) for each time interval.</para>
@@ -335,6 +334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified time interval to a <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the time interval represented by <paramref name="timeSpan" />.</para>
+        </returns>
         <param name="timeSpan">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> object that represents a positive or a negative time interval.</param>
       </Docs>
@@ -354,7 +357,6 @@
         <Parameter Name="days" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The fractional part of the <paramref name="days" /> parameter is the fractional part of a day. For example, 4.5 is equivalent to 4 days, 12 hours, 0 minutes, 0 seconds, 0 milliseconds. The <paramref name="days" /> parameter is rounded to the nearest millisecond.</para>
@@ -368,6 +370,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of whole and fractional days to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of days represented by <paramref name="days" />.</para>
+        </returns>
         <param name="days">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional days. The number can be negative or positive.</param>
       </Docs>
@@ -387,7 +393,6 @@
         <Parameter Name="hours" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The fractional part of the <paramref name="hours" /> parameter is the fractional part of an hour. For example, 4.5 is equivalent to 4 hours, 30 minutes, 0 seconds, 0 milliseconds. The <paramref name="hours" /> parameter is rounded to the nearest millisecond.</para>
@@ -401,6 +406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of whole and fractional hours to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of hours represented by <paramref name="hours" />.</para>
+        </returns>
         <param name="hours">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional hours. The number can be negative or positive.</param>
       </Docs>
@@ -420,7 +429,6 @@
         <Parameter Name="milliseconds" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The fractional part of the <paramref name="milliseconds" /> parameter is the fractional part of a millisecond. For example, 4.5 is equivalent to 4 milliseconds and 5000 ticks, where one millisecond equals 10,000 ticks. However, <paramref name="milliseconds" /> is rounded to the nearest millisecond; all values of .5 or greater are rounded up.</para>
@@ -433,6 +441,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of milliseconds to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of whole milliseconds represented by <paramref name="milliseconds" />.</para>
+        </returns>
         <param name="milliseconds">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional milliseconds. The number can be negative or positive.   </param>
       </Docs>
@@ -452,7 +464,6 @@
         <Parameter Name="minutes" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The fractional part of the <paramref name="minutes" /> parameter is the fractional part of a minute. For example, 4.5 is equivalent to 4 minutes, 30 seconds, 0 milliseconds. The <paramref name="minutes" /> parameter is rounded to the nearest millisecond.</para>
@@ -466,6 +477,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of whole and fractional minutes to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of minutes represented by <paramref name="minutes" />.</para>
+        </returns>
         <param name="minutes">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional minutes. The number can be negative or positive.   </param>
       </Docs>
@@ -485,7 +500,6 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike most of the other methods that add a single time interval unit (such as minutes or days) to a date and time value, <see cref="M:System.DateTimeOffset.AddMonths(System.Int32)" /> does not enable you to add fractional parts of a month. To add a time that consists of other time units in addition to months to a <see cref="T:System.DateTimeOffset" /> object, use the <see cref="M:System.DateTimeOffset.Add(System.TimeSpan)" /> method.</para>
@@ -497,6 +511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of months to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of months represented by <paramref name="months" />.</para>
+        </returns>
         <param name="months">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole months. The number can be negative or positive.</param>
       </Docs>
@@ -516,7 +534,6 @@
         <Parameter Name="seconds" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The fractional part of the <paramref name="seconds" /> parameter is the fractional part of a second. The value of fractional parts of a second are shown in the following table.</para>
@@ -566,6 +583,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of whole and fractional seconds to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of seconds represented by <paramref name="seconds" />.</para>
+        </returns>
         <param name="seconds">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of whole and fractional seconds. The number can be negative or positive.</param>
       </Docs>
@@ -585,7 +606,6 @@
         <Parameter Name="ticks" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A tick represents 100 nanoseconds, or one-ten millionth of a second. Because a tick is a very small and precise time interval, any larger time unit can be expressed as a number of ticks without a loss of precision.</para>
@@ -675,6 +695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of ticks to the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of ticks represented by <paramref name="ticks" />.</para>
+        </returns>
         <param name="ticks">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of 100-nanosecond ticks. The number can be negative or positive.</param>
       </Docs>
@@ -694,7 +718,6 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike most of the other methods that add a single time interval unit (such as minutes or days) to a date and time value, <see cref="M:System.DateTimeOffset.AddYears(System.Int32)" /> does not enable you to add fractional parts of a year. To add a time that consists of other time units in addition to years to a <see cref="T:System.DateTimeOffset" /> object, use the <see cref="M:System.DateTimeOffset.Add(System.TimeSpan)" /> method.</para>
@@ -706,6 +729,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified number of years to the <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object and the number of years represented by <paramref name="years" />.</para>
+        </returns>
         <param name="years">
           <attribution license="cc4" from="Microsoft" modified="false" />A number of years. The number can be negative or positive.</param>
       </Docs>
@@ -726,7 +753,6 @@
         <Parameter Name="second" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In performing the comparison, the method converts both the <paramref name="first" /> and the <paramref name="second" /> parameters to Coordinated Universal Time (UTC) before it performs the comparison. The method is equivalent to the following:</para>
@@ -737,6 +763,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.DateTimeOffset" /> objects and indicates whether the first is earlier than the second, equal to the second, or later than the second.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates whether the value of the <paramref name="first" /> parameter is earlier than, later than, or the same time as the value of the <paramref name="second" /> parameter, as the following table shows.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="first" /> is earlier than <paramref name="second" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="first" /> is equal to <paramref name="second" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="first" /> is later than <paramref name="second" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="second">
@@ -758,7 +827,6 @@
         <Parameter Name="other" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method compares <see cref="T:System.DateTimeOffset" /> objects by comparing their <see cref="P:System.DateTimeOffset.UtcDateTime" /> values; that is, it determines whether the two objects represent a single point in time, and indicates whether the current object is earlier than, later than, or the same as the <paramref name="other" /> parameter. </para>
@@ -767,6 +835,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.DateTimeOffset" /> object to a specified <see cref="T:System.DateTimeOffset" /> object and indicates whether the current object is earlier than, the same as, or later than the second <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relationship between the current <see cref="T:System.DateTimeOffset" /> object and <paramref name="other" />, as the following table shows.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is earlier than <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is the same as <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero.</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is later than <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current <see cref="T:System.DateTimeOffset" /> object.</param>
       </Docs>
@@ -907,7 +1015,6 @@
         <Parameter Name="other" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before it performs the comparison, this method converts the values of both <see cref="T:System.DateTimeOffset" /> objects to Coordinated Universal Time (UTC). The method is equivalent to the following:</para>
@@ -920,6 +1027,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.DateTimeOffset" /> object represents the same point in time as a specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.DateTimeOffset" /> objects have the same <see cref="P:System.DateTimeOffset.UtcDateTime" /> value; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to the current <see cref="T:System.DateTimeOffset" /> object.   </param>
       </Docs>
@@ -939,7 +1050,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before it performs the comparison, this method converts the values of both the current <see cref="T:System.DateTimeOffset" /> object and the <paramref name="obj" /> parameter to Coordinated Universal Time (UTC). The method is equivalent to the following:</para>
@@ -951,6 +1061,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a <see cref="T:System.DateTimeOffset" /> object represents the same point in time as a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.DateTimeOffset" /> object and represents the same point in time as the current <see cref="T:System.DateTimeOffset" /> object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.DateTimeOffset" /> object.</param>
       </Docs>
@@ -971,7 +1085,6 @@
         <Parameter Name="second" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Before it performs the comparison, this method converts both <see cref="T:System.DateTimeOffset" /> objects to Coordinated Universal Time (UTC). The method is equivalent to the following:</para>
@@ -982,6 +1095,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified <see cref="T:System.DateTimeOffset" /> objects represent the same point in time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.DateTimeOffset" /> objects have the same <see cref="P:System.DateTimeOffset.UtcDateTime" /> value; otherwise, false.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="second">
@@ -1003,7 +1120,6 @@
         <Parameter Name="other" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because multiple time zones share a single offset, a return value of true does not guarantee that the current and the <paramref name="other" /> object represent times in the same time zone. </para>
@@ -1013,6 +1129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.DateTimeOffset" /> object represents the same time and has the same offset as a specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current <see cref="T:System.DateTimeOffset" /> object and <paramref name="other" /> have the same date and time value and the same <see cref="P:System.DateTimeOffset.Offset" /> value; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current <see cref="T:System.DateTimeOffset" /> object. </param>
       </Docs>
@@ -1032,7 +1152,6 @@
         <Parameter Name="fileTime" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -1043,6 +1162,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified Windows file time to an equivalent local time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the date and time of <paramref name="fileTime" /> with the offset set to the local time offset.</para>
+        </returns>
         <param name="fileTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A Windows file time, expressed in ticks.</param>
       </Docs>
@@ -1060,12 +1183,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Hour">
@@ -1309,7 +1435,6 @@
         <Parameter Name="timeSpan" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_Addition(System.DateTimeOffset,System.TimeSpan)" /> method defines the addition operation for <see cref="T:System.DateTimeOffset" /> values. It enables code such as the following:</para>
@@ -1320,6 +1445,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a specified time interval to a <see cref="T:System.DateTimeOffset" /> object that has a specified date and time, and yields a <see cref="T:System.DateTimeOffset" /> object that has new a date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose value is the sum of the values of <paramref name="dateTimeTz" /> and <paramref name="timeSpan" />.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to add the time interval to.</param>
         <param name="timeSpan">
@@ -1342,7 +1471,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_Equality(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the equality operator for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1355,6 +1483,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified <see cref="T:System.DateTimeOffset" /> objects represent the same point in time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if both <see cref="T:System.DateTimeOffset" /> objects have the same <see cref="P:System.DateTimeOffset.UtcDateTime" /> value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1377,7 +1509,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_GreaterThan(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the greater than operator for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1391,6 +1522,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTimeOffset" /> object is greater than (or later than) a second specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="left" /> is later than the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1413,7 +1548,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_GreaterThan(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1427,6 +1561,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTimeOffset" /> object is greater than or equal to a second specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="left" /> is the same as or later than the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1470,7 +1608,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_Inequality(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the inequality operator for <see cref="T:System.DateTimeOffset" /> objects. It always returns the opposite result from <see cref="M:System.DateTimeOffset.op_Equality(System.DateTimeOffset,System.DateTimeOffset)" />. The <see cref="M:System.DateTimeOffset.op_Inequality(System.DateTimeOffset,System.DateTimeOffset)" /> method enables code such as the following:</para>
@@ -1485,6 +1622,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified <see cref="T:System.DateTimeOffset" /> objects refer to different points in time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> do not have the same <see cref="P:System.DateTimeOffset.UtcDateTime" /> value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1507,7 +1648,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_LessThan(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the less than operator for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1521,6 +1661,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTimeOffset" /> object is less than a second specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="left" /> is earlier than the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1543,7 +1687,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_LessThanOrEqual(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1557,6 +1700,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether one specified <see cref="T:System.DateTimeOffset" /> object is less than a second specified <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="left" /> is earlier than the <see cref="P:System.DateTimeOffset.UtcDateTime" /> value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1579,7 +1726,6 @@
         <Parameter Name="right" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_Subtraction(System.DateTimeOffset,System.DateTimeOffset)" /> method defines the subtraction operation for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1590,6 +1736,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts one <see cref="T:System.DateTimeOffset" /> object from another and yields a time interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the difference between <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The minuend.   </param>
         <param name="right">
@@ -1612,7 +1762,6 @@
         <Parameter Name="timeSpan" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.op_Subtraction(System.DateTimeOffset,System.TimeSpan)" /> method defines the subtraction operation for <see cref="T:System.DateTimeOffset" /> objects. It enables code such as the following:</para>
@@ -1623,6 +1772,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a specified time interval from a specified date and time, and yields a new date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equal to the value of <paramref name="dateTimeOffset" /> minus <paramref name="timeSpan" />.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time object to subtract from.</param>
         <param name="timeSpan">
@@ -1644,7 +1797,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1692,6 +1844,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date, time, and offset to its <see cref="T:System.DateTimeOffset" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in <paramref name="input" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.</param>
       </Docs>
@@ -1712,7 +1868,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method parses a string with three elements that can appear in any order and are delimited by white space. These three elements are shown in the following table.</para>
@@ -1769,6 +1924,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTimeOffset" /> equivalent using the specified culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in <paramref name="input" />, as specified by <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.   </param>
         <param name="formatProvider">
@@ -1792,7 +1951,6 @@
         <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method parses a string with three elements that can appear in any order and are delimited by white space. These three elements are shown in the following table.</para>
@@ -1954,6 +2112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTimeOffset" /> equivalent using the specified culture-specific format information and formatting style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in <paramref name="input" /> as specified by <paramref name="formatProvider" /> and <paramref name="styles" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.   </param>
         <param name="formatProvider">
@@ -1979,7 +2141,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.ParseExact(System.String,System.String,System.IFormatProvider)" /> method parses the string representation of a date, which must be in the format defined by the <paramref name="format" /> parameter. It also requires that the &lt;Date&gt;, &lt;Time&gt;, and &lt;Offset&gt; elements of the string representation of a date and time appear in the order specified by <paramref name="format" />. If the <paramref name="input" /> string does not match this <paramref name="format" /> parameter, the method throws a <see cref="T:System.FormatException" />.  In contrast, the <see cref="M:System.DateTimeOffset.Parse(System.String,System.IFormatProvider)" /> method parses the string representation of a date in any one of the formats recognized by the format provider's <see cref="T:System.Globalization.DateTimeFormatInfo" /> object. <see cref="M:System.DateTimeOffset.Parse(System.String,System.IFormatProvider)" /> also allows the &lt;Date&gt;, &lt;Time&gt;, and &lt;Offset&gt; elements of the string representation of a date and time to appear in any order.</para>
@@ -2000,6 +2161,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTimeOffset" /> equivalent using the specified format and culture-specific format information. The format of the string representation must match the specified format exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in <paramref name="input" /> as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.</param>
         <param name="format">
@@ -2026,7 +2191,6 @@
         <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.ParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.DateTimeStyles)" /> method parses the string representation of a date, which must be in the format defined by the <paramref name="format" /> parameter. It also requires that the &lt;Date&gt;, &lt;Time&gt;, and &lt;Offset&gt; elements of the string representation of a date and time appear in the order specified by <paramref name="format" />. If the <paramref name="input" /> string does not match the pattern of the <paramref name="format" /> parameter, with any variations defined by the <paramref name="styles" /> parameter, the method throws a <see cref="T:System.FormatException" />.  In contrast, the <see cref="M:System.DateTimeOffset.Parse(System.String,System.IFormatProvider,System.Globalization.DateTimeStyles)" /> method parses the string representation of a date in any one of the formats recognized by the format provider's <see cref="T:System.Globalization.DateTimeFormatInfo" /> object. <see cref="M:System.DateTimeOffset.Parse(System.String,System.IFormatProvider,System.Globalization.DateTimeStyles)" /> also allows the &lt;Date&gt;, &lt;Time&gt;, and &lt;Offset&gt; elements of the string representation of a date and time to appear in any order.</para>
@@ -2150,6 +2314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTimeOffset" /> equivalent using the specified format, culture-specific format information, and style. The format of the string representation must match the specified format exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in the <paramref name="input" /> parameter, as specified by the <paramref name="format" />, <paramref name="formatProvider" />, and <paramref name="styles" /> parameters.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.</param>
         <param name="format">
@@ -2178,7 +2346,6 @@
         <Parameter Name="styles" Type="System.Globalization.DateTimeStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.ParseExact(System.String,System.String[],System.IFormatProvider,System.Globalization.DateTimeStyles)" /> method parses the string representation of a date that matches any one of the patterns assigned to the <paramref name="formats" /> parameter. If the <paramref name="input" /> string does not match any one of these patterns with any of the variations defined by the <paramref name="styles" /> parameter, the method throws a <see cref="T:System.FormatException" />. Aside from comparing <paramref name="input" /> to multiple formatting patterns, this overload behaves identically to the <see cref="M:System.DateTimeOffset.ParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.DateTimeStyles)" /> method.</para>
@@ -2305,6 +2472,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string representation of a date and time to its <see cref="T:System.DateTimeOffset" /> equivalent using the specified formats, culture-specific format information, and style. The format of the string representation must match one of the specified formats exactly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equivalent to the date and time that is contained in the <paramref name="input" /> parameter, as specified by the <paramref name="formats" />, <paramref name="formatProvider" />, and <paramref name="styles" /> parameters.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a date and time to convert.</param>
         <param name="formats">
@@ -2354,7 +2525,6 @@
         <Parameter Name="value" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method converts both <see cref="T:System.DateTimeOffset" /> objects to Coordinated Universal Time (UTC) before calculating the time interval that separates them. This removes any effect that different offsets from UTC may have on the comparison.</para>
@@ -2367,6 +2537,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a <see cref="T:System.DateTimeOffset" /> value that represents a specific date and time from the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that specifies the interval between the two <see cref="T:System.DateTimeOffset" /> objects.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the value to subtract. </param>
       </Docs>
@@ -2386,7 +2560,6 @@
         <Parameter Name="value" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="M:System.DateTimeOffset.Subtract(System.TimeSpan)" /> method to subtract more than one kind of time interval (days, hours, minutes, seconds, or milliseconds) in a single operation. Its behavior is identical to the <see cref="M:System.DateTimeOffset.op_Subtraction(System.DateTimeOffset,System.TimeSpan)" /> method, which defines the subtraction operator. The <see cref="T:System.DateTimeOffset" /> structure also supports specialized addition methods (such as <see cref="M:System.DateTimeOffset.AddDays(System.Double)" />, <see cref="M:System.DateTimeOffset.AddHours(System.Double)" />, and <see cref="M:System.DateTimeOffset.AddMinutes(System.Double)" />) that allow you to perform subtraction by assigning a negative value to the method parameter. </para>
@@ -2400,6 +2573,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a specified time interval from the current <see cref="T:System.DateTimeOffset" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equal to the date and time represented by the current <see cref="T:System.DateTimeOffset" /> object, minus the time interval represented by <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The time interval to subtract.</param>
       </Docs>
@@ -2419,12 +2596,51 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the value of the current <see cref="T:System.DateTimeOffset" /> object with another object of the same type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that indicates whether the current <see cref="T:System.DateTimeOffset" /> object is less than, equal to, or greater than <paramref name="obj" />. The return values of the method are interpreted as follows:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is less than (earlier than) <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is equal to (the same point in time as) <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The current <see cref="T:System.DateTimeOffset" /> object is greater than (later than) <paramref name="obj" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.DateTimeOffset" /> object.</param>
       </Docs>
@@ -2542,7 +2758,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A Windows file time is a 64-bit value that represents the number of 100-nanosecond intervals that have elapsed since 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC). Windows uses a file time to record when an application creates, accesses, or writes to a file. </para>
@@ -2556,6 +2771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to a Windows file time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.DateTimeOffset" /> object, expressed as a Windows file time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToLocalTime">
@@ -2571,7 +2790,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In performing the conversion to local time, the method first converts the current <see cref="T:System.DateTimeOffset" /> object's date and time to Coordinated Universal Time (UTC) by subtracting the offset from the time. It then converts the UTC date and time to local time by adding the local time zone offset. In doing this, it takes account of any adjustment rules for the local time zone.  </para>
@@ -2582,6 +2800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current <see cref="T:System.DateTimeOffset" /> object to a <see cref="T:System.DateTimeOffset" /> object that represents the local time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the date and time of the current <see cref="T:System.DateTimeOffset" /> object converted to local time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToOffset">
@@ -2599,7 +2821,6 @@
         <Parameter Name="offset" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.DateTimeOffset.ToOffset(System.TimeSpan)" /> method is an alternative to calling the <see cref="M:System.TimeZoneInfo.ConvertTime(System.DateTimeOffset,System.TimeZoneInfo)" />  method. It can be useful for performing simple conversions from one time zone to another when the time zones' offsets from Coordinated Universal Time (UTC) are known. However, because neither the original <see cref="T:System.DateTimeOffset" /> object nor the new <see cref="T:System.DateTimeOffset" /> object returned by the method call are unambiguously related to a particular time zone, the method does not apply any time zone adjustment rules in the conversion. </para>
@@ -2608,6 +2829,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to the date and time specified by an offset value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that is equal to the original <see cref="T:System.DateTimeOffset" /> object (that is, their <see cref="M:System.DateTimeOffset.ToUniversalTime" /> methods return identical points in time) but whose <see cref="P:System.DateTimeOffset.Offset" /> property is set to <paramref name="offset" />.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The offset to convert the <see cref="T:System.DateTimeOffset" /> value to.   </param>
       </Docs>
@@ -2625,7 +2850,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of this method is identical to that of the <see cref="M:System.DateTime.ToString" /> method, except that it includes a space followed by the offset appended at the end of the string. In other words, it formats output using the short date pattern, the long time pattern, and the zzz custom format string, with each element separated from the previous element by a space. For example, if <see cref="M:System.DateTime.ToString" /> returns a value of 1/12/2008 6:15:50 PM, <see cref="M:System.DateTimeOffset.ToString" /> returns a value of 1/12/2008 6:15:50 PM -08:00 for a time that is eight hours behind Coordinated Universal Time (UTC).</para>
@@ -2635,6 +2859,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of a <see cref="T:System.DateTimeOffset" /> object that includes the offset appended at the end of the string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -2652,7 +2880,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of this method is identical to that of its equivalent overload of the <see cref="M:System.DateTime.ToString" /> method, except that it includes a space followed by the offset appended at the end of the string. In other words, it formats output using the short date pattern, the long time pattern, and the zzz custom format string, with each element separated from the previous element by a space.</para>
@@ -2671,6 +2898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to its equivalent string representation using the specified culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of the current <see cref="T:System.DateTimeOffset" /> object, as specified by <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="formatProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -2690,7 +2921,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="format" /> parameter should contain either a single format specifier character (see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard DateTime Format Strings</a></format>) or a custom format pattern (see <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>) that defines the format of the returned string. If <paramref name="format" /> is a null or empty string (""), the <see cref="T:System.DateTimeOffset" /> value is output using the default format.</para>
@@ -2746,6 +2976,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to its equivalent string representation using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of the current <see cref="T:System.DateTimeOffset" /> object, as specified by <paramref name="format" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format string.</param>
       </Docs>
@@ -2766,7 +3000,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="format" /> parameter should contain either a single format specifier character (see <format type="text/html"><a href="bb79761a-ca08-44ee-b142-b06b3e2fc22b">Standard DateTime Format Strings</a></format>) or a custom format pattern (see <format type="text/html"><a href="98b374e3-0cc2-4c78-ab44-efb671d71984">Custom DateTime Format Strings</a></format>). If <paramref name="format" /> is a null or empty string (""), the <see cref="T:System.DateTimeOffset" /> object is output using the default format.</para>
@@ -2831,6 +3064,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of the current <see cref="T:System.DateTimeOffset" /> object to its equivalent string representation using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of the current <see cref="T:System.DateTimeOffset" /> object, as specified by <paramref name="format" /> and <paramref name="provider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format string.</param>
         <param name="formatProvider">
@@ -2850,7 +3087,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a <see cref="T:System.DateTimeOffset" /> object whose <see cref="P:System.DateTimeOffset.Offset" /> property is set to zero.</para>
@@ -2860,6 +3096,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current <see cref="T:System.DateTimeOffset" /> object to a <see cref="T:System.DateTimeOffset" /> value that represents the Coordinated Universal Time (UTC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the date and time of the current <see cref="T:System.DateTimeOffset" /> object converted to Coordinated Universal Time (UTC).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryParse">

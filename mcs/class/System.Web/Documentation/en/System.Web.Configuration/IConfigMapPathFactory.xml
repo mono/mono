@@ -32,7 +32,6 @@
         <Parameter Name="physicalPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -42,6 +41,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the interface for the mapping between configuration-file virtual and physical paths. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.IConfigMapPath" /> object associated with the specified configuration-file path mapping.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration-file virtual path.</param>
         <param name="physicalPath">

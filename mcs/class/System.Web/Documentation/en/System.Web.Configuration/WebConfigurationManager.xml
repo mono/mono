@@ -93,7 +93,6 @@
         <Parameter Name="sectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified configuration section from the current Web application's configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist. Remember that security restrictions exist on the use of <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String)" /> as a runtime operation. You might not be able to access a section at run time for modifications, for example.</para>
+        </returns>
         <param name="sectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
       </Docs>
@@ -128,7 +131,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -146,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified configuration section from the Web application's configuration file at the specified location.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist. Remember that security restrictions exist on the use of <see cref="M:System.Web.Configuration.WebConfigurationManager.GetSection(System.String,System.String)" /> as a run-time operation. You might not be able to access a section at run time for modifications, for instance.</para>
+        </returns>
         <param name="sectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
         <param name="path">
@@ -165,7 +171,6 @@
         <Parameter Name="sectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -179,6 +184,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified configuration section from the current Web application's configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified configuration section object, or null if the section does not exist, or an internal object if the section is not accessible at run time.</para>
+        </returns>
         <param name="sectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration section name.</param>
       </Docs>
@@ -194,7 +203,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -204,6 +212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the machine-configuration file on the current computer as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -219,7 +231,6 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -229,6 +240,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the machine-configuration file on the current computer as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="locationSubPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the machine configuration applies.</param>
       </Docs>
@@ -247,7 +262,6 @@
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -257,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="locationSubPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies.</param>
         <param name="server">
@@ -278,7 +296,6 @@
         <Parameter Name="userToken" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -291,6 +308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object, using the specified security context to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="locationSubPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies.</param>
         <param name="server">
@@ -315,7 +336,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -325,6 +345,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified machine-configuration file on the specified server as a <see cref="T:System.Configuration.Configuration" /> object, using the specified security context to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="locationSubPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The application path to which the configuration applies. </param>
         <param name="server">
@@ -348,13 +372,16 @@
         <Parameter Name="fileMap" Type="System.Configuration.ConfigurationFileMap" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the machine-configuration file as a <see cref="T:System.Configuration.Configuration" /> object, using the specified file mapping to allow read or write operations. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="fileMap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationFileMap" /> object to use in place of the default machine-configuration file.</param>
       </Docs>
@@ -373,13 +400,16 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the machine-configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping and location to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="fileMap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.ConfigurationFileMap" /> object to use in place of a default machine-configuration file.</param>
         <param name="locationSubPath">
@@ -400,7 +430,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -410,6 +439,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping and virtual path to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="fileMap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration file.</param>
         <param name="path">
@@ -431,7 +464,6 @@
         <Parameter Name="site" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -441,6 +473,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified Web application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping, virtual path, and site name to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="fileMap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration-file mapping.</param>
         <param name="path">
@@ -465,7 +501,6 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -475,6 +510,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified file mapping, virtual path, site name, and location to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="fileMap">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Configuration.WebConfigurationFileMap" /> object to use in place of a default Web-application configuration-file mapping.</param>
         <param name="path">
@@ -498,7 +537,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -508,6 +546,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. If null, the root Web.config file is opened.</param>
       </Docs>
@@ -526,7 +568,6 @@
         <Parameter Name="site" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -536,6 +577,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path and site name to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
         <param name="site">
@@ -557,7 +602,6 @@
         <Parameter Name="locationSubPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -567,6 +611,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, and location to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
         <param name="site">
@@ -591,7 +639,6 @@
         <Parameter Name="server" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -601,6 +648,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, and server to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
         <param name="site">
@@ -628,7 +679,6 @@
         <Parameter Name="userToken" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -642,6 +692,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, server, and security context to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
         <param name="site">
@@ -672,7 +726,6 @@
         <Parameter Name="password" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -684,6 +737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the Web-application configuration file as a <see cref="T:System.Configuration.Configuration" /> object using the specified virtual path, site name, location, server, and security context to allow read or write operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.Configuration" /> object.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the configuration file. </param>
         <param name="site">

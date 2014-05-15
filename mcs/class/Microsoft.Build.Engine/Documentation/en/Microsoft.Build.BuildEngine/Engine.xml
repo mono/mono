@@ -129,13 +129,16 @@
         <Parameter Name="project" Type="Microsoft.Build.BuildEngine.Project" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="project">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
       </Docs>
@@ -154,13 +157,16 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified target of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="project">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
         <param name="targetName">
@@ -181,13 +187,16 @@
         <Parameter Name="targetNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="project">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
         <param name="targetNames">
@@ -209,13 +218,16 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" />, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="project">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
         <param name="targetNames">
@@ -240,13 +252,16 @@
         <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the specified targets of the specified <see cref="T:Microsoft.Build.BuildEngine.Project" /> with the specified <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" />, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="project">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.Project" /> to build.</param>
         <param name="targetNames">
@@ -270,13 +285,16 @@
         <Parameter Name="projectFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
       </Docs>
@@ -295,13 +313,16 @@
         <Parameter Name="targetName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the specified target of the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
         <param name="targetName">
@@ -322,13 +343,16 @@
         <Parameter Name="targetNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the specified targets of the project.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
         <param name="targetNames">
@@ -350,13 +374,16 @@
         <Parameter Name="globalProperties" Type="Microsoft.Build.BuildEngine.BuildPropertyGroup" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
         <param name="targetNames">
@@ -381,13 +408,16 @@
         <Parameter Name="targetOutputs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
         <param name="targetNames">
@@ -415,13 +445,16 @@
         <Parameter Name="buildFlags" Type="Microsoft.Build.BuildEngine.BuildSettings" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified project file and builds the specified targets of the project with the specified <see cref="T:Microsoft.Build.BuildEngine.BuildSettings" /> and <see cref="P:Microsoft.Build.BuildEngine.Engine.GlobalProperties" />, and returns the outputs of the targets.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the build was successful; otherwise, false.</para>
+        </returns>
         <param name="projectFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The project file to load and build.</param>
         <param name="targetNames">
@@ -445,13 +478,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that is associated with this <see cref="T:Microsoft.Build.BuildEngine.Engine" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created <see cref="T:Microsoft.Build.BuildEngine.Project" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -467,13 +503,16 @@
         <Parameter Name="projectFullFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that is associated with the specified project file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:Microsoft.Build.BuildEngine.Project" /> object that associated with the specified project file. If no <see cref="T:Microsoft.Build.BuildEngine.Project" /> object is associated with the specified project file, the method returns a null reference (Nothing in vbprvb).</para>
+        </returns>
         <param name="projectFullFileName">
           <attribution license="cc4" from="Microsoft" modified="false" />The fully qualified file path to the project file of the <see cref="T:Microsoft.Build.BuildEngine.Project" /> object.</param>
       </Docs>

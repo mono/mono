@@ -1,10 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.Serialization" FullName="System.Xml.Serialization" FullNameSP="System.Xml.Serialization" Maintainer="Mono">
   <Docs>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Xml.Serialization" /> namespace contains classes that are used to serialize objects into XML format documents or streams.</para>
     </summary>
     <remarks>
-      <para>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The central class in the namespace is the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class. To use this class, use the <see cref="M:System.Xml.Serialization.XmlSerializer.#ctor" /> constructor to create an instance of the class using the type of the object to serialize. Once an <see cref="T:System.Xml.Serialization.XmlSerializer" /> is created, create an instance of the object to serialize. You must also create an object to write the file to a document or stream, such as a <see cref="T:System.IO.Stream" />, <see cref="T:System.IO.TextWriter" />, or <see cref="T:System.Xml.XmlWriter" />. You can then call the <see cref="M:System.Xml.Serialization.XmlSerializer.Serialize" /> method to convert the object into an XML document.</para>
+      <para>To deserialize an object from an XML document, create a suitable object to read the document or stream (again, a <see cref="T:System.IO.Stream" />, <see cref="T:System.IO.TextWriter" />, or <see cref="T:System.Xml.XmlWriter" />). Invoke the <see cref="M:System.Xml.Serialization.XmlSerializer.Deserialize" /> method while casting the resulting object to the type of the original object (that was serialized).</para>
+      <para>To further control the serialization, the <see cref="N:System.Xml.Serialization" /> namespace contains several <see cref="T:System.Attribute" /> classes that can be applied to members of a class. For example, if a class contains a member that will be serialized as an XML element, you can apply the <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> attribute to the member. When applying the attribute, you can specify details such as the actual XML element name using the <see cref="P:System.Xml.Serialization.XmlElementAttribute.ElementName" /> property. For a complete list of all the attributes, see the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class overview.</para>
     </remarks>
   </Docs>
 </Namespace>

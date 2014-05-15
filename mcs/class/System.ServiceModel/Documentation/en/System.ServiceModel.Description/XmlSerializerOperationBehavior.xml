@@ -82,12 +82,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection of mappings between XML schema elements and CLR data types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> of <see cref="T:System.Xml.Serialization.XmlMapping" />s that contains the mappings.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IOperationBehavior.AddBindingParameters">

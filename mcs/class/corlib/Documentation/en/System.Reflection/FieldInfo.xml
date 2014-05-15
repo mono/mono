@@ -162,12 +162,15 @@ class FieldAttributesExample
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -244,7 +247,6 @@ class FieldAttributesExample
         <Parameter Name="handle" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles are valid only in the application domain in which they were obtained.</para>
@@ -253,6 +255,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.FieldInfo" /> for the field represented by the specified handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field specified by <paramref name="handle" />.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeFieldHandle" /> structure that contains the handle to the internal metadata representation of a field. </param>
       </Docs>
@@ -278,7 +284,6 @@ class FieldAttributesExample
         <Parameter Name="declaringType" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -291,6 +296,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.FieldInfo" /> for the field represented by the specified handle, for the specified generic type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object representing the field specified by <paramref name="handle" />, in the generic type specified by <paramref name="declaringType" />.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeFieldHandle" /> structure that contains the handle to the internal metadata representation of a field.</param>
         <param name="declaringType">
@@ -309,12 +318,15 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOptionalCustomModifiers">
@@ -330,7 +342,6 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -340,6 +351,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of types that identify the optional custom modifiers of the field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the optional custom modifiers of the current field, such as <see cref="T:System.Runtime.CompilerServices.IsConst" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRawConstantValue">
@@ -355,7 +370,6 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -370,6 +384,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a literal value associated with the field by a compiler. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the literal value associated with the field. If the literal value is a class type with an element value of zero, the return value is null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRequiredCustomModifiers">
@@ -385,7 +403,6 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -395,6 +412,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of types that identify the required custom modifiers of the property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the required custom modifiers of the current property, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -430,10 +451,6 @@ class FieldAttributesExample
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Object" /> that contains the
-   value of the field reflected by the current instance.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">A field is marked literal, but the field does not have one of the accepted literal types. <block subset="none" type="note">For information regarding the accepted literal types, see Partition II of the CLI Specification.</block></exception>
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.ArgumentException">The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</exception>
@@ -454,6 +471,10 @@ class FieldAttributesExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the value of a field supported by a given object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the value of the field reflected by this instance.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose field value will be returned. </param>
       </Docs>
@@ -480,12 +501,15 @@ class FieldAttributesExample
         <Parameter Name="obj" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of a field supported by a given object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Object containing a field value.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypedReference" /> structure that encapsulates a managed pointer to a location and a runtime representation of the type that might be stored at that location. </param>
       </Docs>
@@ -1088,12 +1112,15 @@ class FieldAttributesExample
         <Parameter Name="right" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.FieldInfo" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1115,12 +1142,15 @@ class FieldAttributesExample
         <Parameter Name="right" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.FieldInfo" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare.</param>
         <param name="right">
@@ -1150,7 +1180,6 @@ class FieldAttributesExample
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
           <para>
@@ -1159,6 +1188,8 @@ class FieldAttributesExample
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method will assign <paramref name="value" /> to the field reflected by this instance on object <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission. This final method is a convenience method for calling the following SetValue method.</para>
@@ -1202,9 +1233,6 @@ class FieldAttributesExample
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="culture">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
           <para>
@@ -1213,6 +1241,12 @@ class FieldAttributesExample
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field of Binder that specifies the type of binding that is desired (for example, Binder.CreateInstance or Binder.ExactBinding). </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of properties that enables the binding, coercion of argument types, and invocation of members through reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The software preferences of a particular culture. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method will assign <paramref name="value" /> to the field reflected by this instance on <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission.</para>
@@ -1321,12 +1355,15 @@ class FieldAttributesExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.FieldInfo" /> type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.FieldInfo" /> type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._FieldInfo.GetTypeInfo">

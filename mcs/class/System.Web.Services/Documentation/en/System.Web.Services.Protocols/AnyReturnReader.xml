@@ -53,7 +53,6 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method. For the <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class, the initializer is the instance referred to by the keyword this, unless the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> parameter value has a void return type, in which case the initializer is set to null.</para>
@@ -63,6 +62,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the parameter passed to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter passed to the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Initialize(System.Object)" /> method.</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" />  that indicates the Web method for which the initializer is obtained.</param>
       </Docs>
@@ -109,7 +112,6 @@
         <Parameter Name="responseStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.Services.Protocols.AnyReturnReader" /> class's implementation of the <see cref="M:System.Web.Services.Protocols.AnyReturnReader.Read(System.Net.WebResponse,System.IO.Stream)" /> method does no reading. Instead it simply returns the <see cref="T:System.IO.Stream" /> object passed as a parameter.</para>
@@ -118,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the input HTTP response stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input HTTP response stream.</para>
+        </returns>
         <param name="response">
           <attribution license="cc4" from="Microsoft" modified="false" />A representation of the HTTP response sent by a Web service, containing the output message for an operation.</param>
         <param name="responseStream">

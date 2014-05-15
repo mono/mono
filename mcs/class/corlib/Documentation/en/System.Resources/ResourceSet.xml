@@ -227,12 +227,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the preferred resource reader class for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Type" /> for the preferred resource reader for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDefaultWriter">
@@ -249,12 +252,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the preferred resource writer class for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Type" /> for the preferred resource writer for this kind of <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -276,7 +282,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enumerators only allow reading the data in the collection. Enumerators cannot be used to modify the underlying collection.</para>
@@ -292,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> that can iterate through the <see cref="T:System.Resources.ResourceSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> for this <see cref="T:System.Resources.ResourceSet" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObject">
@@ -310,7 +319,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name of the resource object is case sensitive. For a case-insensitive search, use <see cref="M:System.Resources.ResourceSet.GetObject(System.String,System.Boolean)" />.</para>
@@ -319,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a resource object with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Case-sensitive name of the resource to search for. </param>
       </Docs>
@@ -340,7 +352,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <paramref name="ignoreCase" /> parameter is true, a resource with the name "Resource" is equivalent to the resource with the name "resource". Note, however, that this method always performs case-insensitive string comparisons using <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />. The advantage is that results of case-insensitive string comparisons performed by this method are the same on all computers regardless of culture. The disadvantage is that the results are not consistent with the casing rules of all cultures.</para>
@@ -350,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a resource object with the specified name in a case-insensitive manner, if requested.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
         <param name="ignoreCase">
@@ -372,12 +387,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a <see cref="T:System.String" /> resource with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of a resource, if the value is a <see cref="T:System.String" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
       </Docs>
@@ -399,7 +417,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <paramref name="ignoreCase" /> parameter is true, a resource with the name "Resource" is equivalent to the resource with the name "resource". Note, however, that this method always performs case-insensitive string comparisons using <see cref="P:System.Globalization.CultureInfo.InvariantCulture" />. The advantage is that results of case-insensitive string comparisons performed by this method are the same on all computers regardless of culture. The disadvantage is that the results are not consistent with the casing rules of all cultures.</para>
@@ -409,6 +426,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for a <see cref="T:System.String" /> resource with the specified name in a case-insensitive manner, if requested.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of a resource, if the value is a <see cref="T:System.String" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of the resource to search for. </param>
         <param name="ignoreCase">
@@ -471,12 +492,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> object to avoid a race condition with Dispose. This member is not intended to be used directly from your code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the current <see cref="T:System.Resources.ResourceSet" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Table">

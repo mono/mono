@@ -41,12 +41,15 @@
         <Parameter Name="serializationData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the specified serialization data object and returns a collection of objects represented by that data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of objects rebuilt from the specified serialization data object.</para>
+        </returns>
         <param name="serializationData">
           <attribution license="cc4" from="Microsoft" modified="false" />An object consisting of serialized data. </param>
       </Docs>
@@ -67,7 +70,6 @@
         <Parameter Name="objects" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned object fully supports run-time serialization.</para>
@@ -77,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes the specified collection of objects and stores them in a serialization data object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the serialized state of the specified collection of objects.</para>
+        </returns>
         <param name="objects">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of objects to serialize. </param>
       </Docs>

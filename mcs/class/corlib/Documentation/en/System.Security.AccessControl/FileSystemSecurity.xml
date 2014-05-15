@@ -72,7 +72,6 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -83,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> class that represents a new access control rule for the specified user, with the specified access rights, access control, and flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> object that represents a new access control rule for the specified user, with the specified access rights, access control, and flags.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Principal.IdentityReference" /> object that represents a user account.</param>
         <param name="accessMask">
@@ -202,7 +205,6 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -213,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> class representing the specified audit rule for the specified user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.AccessControl.FileSystemAuditRule" /> object representing the specified audit rule for the specified user.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Security.Principal.IdentityReference" /> object that represents a user account.</param>
         <param name="accessMask">
@@ -266,7 +272,6 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.FileSystemAccessRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -279,6 +284,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all matching allow or deny access control list (ACL) permissions from the current file or directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the access rule was removed; otherwise, false.</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.AccessControl.FileSystemAccessRule" /> object that represents an access control list (ACL) permission to remove from a file or directory.</param>
       </Docs>
@@ -360,7 +369,6 @@
         <Parameter Name="rule" Type="System.Security.AccessControl.FileSystemAuditRule" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -370,6 +378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all matching allow or deny audit rules from the current file or directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the audit rule was removed; otherwise, false</para>
+        </returns>
         <param name="rule">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Security.AccessControl.FileSystemAuditRule" />  object that represents an audit rule to remove from a file or directory.</param>
       </Docs>

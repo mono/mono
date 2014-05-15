@@ -231,7 +231,6 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by serializers when they attempt to create an instance of a type. The default implementation creates a new instance of the type, or it may return an existing instance depending on the values of the <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.PreserveNames" /> and <see cref="P:System.ComponentModel.Design.Serialization.DesignerSerializationManager.RecycleInstances" /> properties. The <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method uses reflection to create instances and will perform some generic <see cref="T:System.IConvertible" /> transformations on parameters to find a matching constructor.</para>
@@ -240,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the type specified by <paramref name="type" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to create an instance of.</param>
         <param name="arguments">
@@ -261,7 +264,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Most data within the serialization manager is transient and only lives for the life of a serialization session. When a session is disposed, serialization is considered to be complete and this transient state is cleared. This allows a single instance of a serialization manager to be used to serialize multiple object trees. Some state, including the service provider and any custom serialization providers that were added to the serialization manager, span sessions.</para>
@@ -270,6 +272,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new serialization session.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> that represents a new serialization session.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -308,7 +314,6 @@
       </Parameters>
       <Docs>
         <param name="componentType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can request the type of serializer you would like. This method returns null if there is no serializer of the requested type for the specified object type.</para>
@@ -317,6 +322,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the serializer for the given object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serializer for <paramref name="objectType" />, or null, if not found.</para>
+        </returns>
         <param name="serializerType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of serializer to retrieve.</param>
       </Docs>
@@ -335,7 +344,6 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetService(System.Type)" /> method provides access to the underlying container or service provider that was set in the constructor.</para>
@@ -344,6 +352,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, or null if the service cannot be resolved.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -360,7 +372,6 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetType" /> method will search the service provider for an <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> and, if available, it will delegate to that service to resolve the type. If an <see cref="T:System.ComponentModel.Design.ITypeResolutionService" /> is not available, <see cref="Overload:System.ComponentModel.Design.Serialization.DesignerSerializationManager.GetType" /> will call the <see cref="M:System.Object.GetType" /> method.</para>
@@ -369,6 +380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested type, or null if the type cannot be resolved.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnResolveName">
@@ -611,12 +626,15 @@
         <Parameter Name="addToContainer" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implements the <see cref="M:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.CreateInstance(System.Type,System.Collections.ICollection,System.String,System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object instance.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The data type to create. </param>
         <param name="arguments">
@@ -640,12 +658,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an instance of a created object of the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the object with the given name, or null if no object by that name can be found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the object to retrieve.</param>
       </Docs>
@@ -664,7 +685,6 @@
       </Parameters>
       <Docs>
         <param name="instance">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="M:System.ComponentModel.Design.Serialization.DesignerSerializationManager.System#ComponentModel#Design#Serialization#IDesignerSerializationManager#GetName(System.Object)" /> method cannot find a corresponding name for the <paramref name="value" /> parameter, it raises the <see cref="E:System.ComponentModel.Design.Serialization.IDesignerSerializationManager.ResolveName" /> event before it returns null.</para>
@@ -673,6 +693,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a name for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the object, or null if the object is unnamed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.GetSerializer">
@@ -690,12 +714,15 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a serializer of the requested type for the specified object type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested serializer, or null if no appropriate serializer can be located.</para>
+        </returns>
         <param name="serializerType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the serializer to retrieve.</param>
       </Docs>
@@ -714,12 +741,15 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a type of the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the type, or null if the type cannot be loaded.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Design.Serialization.IDesignerSerializationManager.Properties">
@@ -833,7 +863,6 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Design.Serialization.DesignerSerializationManager" /> instance is cast to an <see cref="T:System.IServiceProvider" /> interface.</para>
@@ -842,6 +871,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see the <see cref="M:System.IServiceProvider.GetService(System.Type)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A service object of type <paramref name="serviceType" />.</para>
+          <para>-or-</para>
+          <para>null if there is no service object of type <paramref name="serviceType" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidateRecycledTypes">

@@ -572,7 +572,6 @@
         <Parameter Name="delegateType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -583,6 +582,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Completes the dynamic method and creates a delegate that can be used to execute it.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type, which can be used to execute the dynamic method.</para>
+        </returns>
         <param name="delegateType">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate type whose signature matches that of the dynamic method. </param>
       </Docs>
@@ -608,7 +611,6 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -621,6 +623,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Completes the dynamic method and creates a delegate that can be used to execute it, specifying the delegate type and an object the delegate is bound to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A delegate of the specified type, which can be used to execute the dynamic method with the specified target object.</para>
+        </returns>
         <param name="delegateType">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate type whose signature matches that of the dynamic method, minus the first parameter.</param>
         <param name="target">
@@ -668,7 +674,6 @@
         <Parameter Name="parameterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -679,6 +684,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a parameter of the dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns null. </para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The position of the parameter in the parameter list. Parameters are indexed beginning with the number 1 for the first parameter. </param>
         <param name="attributes">
@@ -716,7 +725,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -726,6 +734,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the base implementation for the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation of the method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -743,7 +755,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -756,6 +767,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes defined for the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects representing all the custom attributes of the method.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to search the method's inheritance chain to find the custom attributes; false to check only the current method. </param>
       </Docs>
@@ -776,7 +791,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -789,6 +803,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the custom attributes of the specified type that have been applied to the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects representing the attributes of the method that are of type <paramref name="attributeType" /> or derive from type <paramref name="attributeType" />.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of custom attribute to return. </param>
         <param name="inherit">
@@ -808,7 +826,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Reflection.Emit.DynamicILInfo" /> class is provided to support unmanaged code generation. For more information, see <format type="text/html"><a href="0c5bb9de-0cf6-438d-ba47-134e6c775fb8">The Unmanaged Reflection API</a></format>.</para>
@@ -817,6 +834,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object that can be used to generate a method body from metadata tokens, scopes, and Microsoft intermediate language (MSIL) streams.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object that can be used to generate a method body from metadata tokens, scopes, and MSIL streams.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -832,7 +853,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -845,6 +865,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Microsoft intermediate language (MSIL) generator for the method with a default MSIL stream size of 64 bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.ILGenerator" /> object for the method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -862,7 +886,6 @@
         <Parameter Name="streamSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -875,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Microsoft intermediate language (MSIL) generator for the method with the specified MSIL stream size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.Emit.ILGenerator" /> object for the method, with the specified MSIL stream size.</para>
+        </returns>
         <param name="streamSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The size of the MSIL stream, in bytes. </param>
       </Docs>
@@ -892,7 +919,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -902,6 +928,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the implementation flags for the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A bitwise combination of <see cref="T:System.Reflection.MethodImplAttributes" /> values representing the implementation flags for the method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetParameters">
@@ -917,7 +947,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -927,6 +956,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the parameters of the dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.ParameterInfo" /> objects that represent the parameters of the dynamic method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitLocals">
@@ -972,7 +1005,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -993,6 +1025,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the dynamic method using the specified parameters, under the constraints of the specified binder, with the specified culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> containing the return value of the invoked method.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is ignored for dynamic methods, because they are static. Specify null. </param>
         <param name="invokeAttr">
@@ -1021,7 +1057,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1034,6 +1069,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified custom attribute type is defined.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified custom attribute type is defined; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of custom attribute to search for. </param>
         <param name="inherit">
@@ -1220,7 +1259,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1230,6 +1268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the signature of the method, represented as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the method signature.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

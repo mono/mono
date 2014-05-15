@@ -197,7 +197,6 @@
         <Parameter Name="counterName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property before calling this method. Otherwise, an exception is thrown.</para>
@@ -212,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified counter is registered to this category, which is indicated by the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> and <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the counter is registered to the category that is specified by the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> and <see cref="P:System.Diagnostics.PerformanceCounterCategory.MachineName" /> properties; otherwise, false.</para>
+        </returns>
         <param name="counterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
       </Docs>
@@ -233,7 +236,6 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -246,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified counter is registered to the specified category on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the counter is registered to the specified category on the local computer; otherwise, false.</para>
+        </returns>
         <param name="counterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
         <param name="categoryName">
@@ -270,7 +276,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -283,6 +288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified counter is registered to the specified category on a remote computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the counter is registered to the specified category on the specified computer; otherwise, false.</para>
+        </returns>
         <param name="counterName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter to look for. </param>
         <param name="categoryName">
@@ -314,7 +323,6 @@
         <Parameter Name="counterData" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounterCategory'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -327,6 +335,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers the custom performance counter category containing the specified counters on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new custom category, or performance object.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system. </param>
         <param name="categoryHelp">
@@ -353,7 +365,6 @@
         <Parameter Name="counterData" Type="System.Diagnostics.CounterCreationDataCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="categoryType" /> parameter specifies whether the performance counter category is single-instance or multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the  .NET Framework versions 1.0 and 1.1, it is not necessary to know if a performance counter category is multi-instance or single-instance. In the dnprdnext, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
@@ -371,6 +382,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers the custom performance counter category containing the specified counters on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new custom category, or performance object.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system.</param>
         <param name="categoryHelp">
@@ -405,7 +420,6 @@
         <Parameter Name="counterHelp" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounterCategory'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -418,6 +432,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a custom performance counter category containing a single counter of type NumberOfItems32 on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new system category, or performance object.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system. </param>
         <param name="categoryHelp">
@@ -447,7 +465,6 @@
         <Parameter Name="counterHelp" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="categoryType" /> parameter specifies whether the performance counter category is single-instance or multi-instance. By default, a category is single-instance when it is created and becomes multi-instance when another instance is added. Categories are created when an application is set up, and instances are added at run time. In the .NET Framework versions 1.0 and 1.1, it is not necessary to know if a performance counter category is multi-instance or single-instance. In the dnprdnext, the <see cref="T:System.Diagnostics.PerformanceCounterCategoryType" /> enumeration is used to indicate whether a performance counter can have multiple instances.</para>
@@ -465,6 +482,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers the custom performance counter category containing a single counter of type <see cref="F:System.Diagnostics.PerformanceCounterType.NumberOfItems32" /> on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> that is associated with the new system category, or performance object.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the custom performance counter category to create and register with the system.</param>
         <param name="categoryHelp">
@@ -526,7 +547,6 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use of the <see cref="M:System.Diagnostics.PerformanceCounterCategory.Exists(System.String)" /> method can result in a noticeable performance penalty while all performance counters on the machine are checked for availability. If you are only writing to a performance counter, you can avoid the global search for performance counters by creating the performance counter when the application is installed and assuming the category exists when accessing the counter. There is no way to avoid the performance counter search when reading from performance counters.</para>
@@ -540,6 +560,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the category is registered on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category is registered; otherwise, false.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category to look for. </param>
       </Docs>
@@ -561,7 +585,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use of the <see cref="M:System.Diagnostics.PerformanceCounterCategory.Exists(System.String,System.String)" /> method can result in a noticeable performance penalty while all performance counters on the machine are checked for availability. If you are only writing to a performance counter, you can avoid the global search for performance counters by creating the performance counter when the application is installed and assuming the category exists when accessing the counter. There is no way to avoid the performance counter search when reading from performance counters.</para>
@@ -575,6 +598,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the category is registered on the specified computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category is registered; otherwise, false.</para>
+        </returns>
         <param name="categoryName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category to look for. </param>
         <param name="machineName">
@@ -595,7 +622,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounterCategory []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -608,6 +634,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a list of the performance counter categories that are registered on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> objects indicating the categories that are registered on the local computer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCategories">
@@ -626,7 +656,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounterCategory []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To retrieve the categories on the local computer, use another overload or pass "." as the <paramref name="machineName" /> parameter.</para>
@@ -640,6 +669,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a list of the performance counter categories that are registered on the specified computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> objects indicating the categories that are registered on the specified computer.</para>
+        </returns>
         <param name="machineName">
           <attribution license="cc4" from="Microsoft" modified="false" />The computer to look on. </param>
       </Docs>
@@ -658,7 +691,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounter []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about performance object instances, see the <see cref="T:System.Diagnostics.PerformanceCounter" /> class overview.</para>
@@ -672,6 +704,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a list of the counters in a performance counter category that contains exactly one instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounter" /> objects indicating the counters that are associated with this single-instance performance counter category.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCounters">
@@ -690,7 +726,6 @@
         <Parameter Name="instanceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PerformanceCounter []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To represent a single-instance category, pass an empty string ("") for the <paramref name="instanceName" /> parameter.</para>
@@ -705,6 +740,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a list of the counters in a performance counter category that contains one or more instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Diagnostics.PerformanceCounter" /> objects indicating the counters that are associated with the specified object instance of this performance counter category.</para>
+        </returns>
         <param name="instanceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance for which to retrieve the list of associated counters. </param>
       </Docs>
@@ -723,7 +762,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -736,6 +774,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the list of performance object instances that are associated with this category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings representing the performance object instance names that are associated with this category or, if the category contains only one performance object instance, a single-entry array that contains an empty string ("").</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InstanceExists">
@@ -754,7 +796,6 @@
         <Parameter Name="instanceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of <see cref="M:System.Diagnostics.PerformanceCounterCategory.InstanceExists(System.String)" /> is not static. It requires you to create a <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> object and to set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property.</para>
@@ -768,6 +809,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified performance object instance exists in the category that is identified by this <see cref="T:System.Diagnostics.PerformanceCounterCategory" /> object's <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
         <param name="instanceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance in this performance counter category to search for. </param>
       </Docs>
@@ -789,7 +834,6 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not possible to determine whether a performance object instance exists on a computer without specifying a specific category to look in.</para>
@@ -803,6 +847,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a specified category on the local computer contains the specified performance object instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
         <param name="instanceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance to search for. </param>
         <param name="categoryName">
@@ -827,7 +875,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not possible to determine whether a performance object instance exists on a computer without specifying a specific category to look in.</para>
@@ -842,6 +889,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a specified category on a specified computer contains the specified performance object instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the category contains the specified performance object instance; otherwise, false.</para>
+        </returns>
         <param name="instanceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The performance object instance to search for. </param>
         <param name="categoryName">
@@ -892,7 +943,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'InstanceDataCollectionCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must set the <see cref="P:System.Diagnostics.PerformanceCounterCategory.CategoryName" /> property before you call <see cref="M:System.Diagnostics.PerformanceCounterCategory.ReadCategory" />.</para>
@@ -907,6 +957,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads all the counter and performance object instance data that is associated with this performance counter category.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Diagnostics.InstanceDataCollectionCollection" /> that contains the counter and performance object instance data for the category.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

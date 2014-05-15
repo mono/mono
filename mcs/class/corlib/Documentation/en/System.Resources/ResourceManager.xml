@@ -591,7 +591,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="usingResourceSet" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ResourceManager'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns a resource manager that retrieves resources from a .resources file that is not embedded in an assembly. You can use this <see cref="T:System.Resources.ResourceManager" /> object to load resources for an ASP.NET page or to test a <see cref="T:System.Resources.ResourceSet" /> implementation.  For an example that retrieves resources from a standalone .resources file, see the <format type="text/html"><a href="eca16922-1c46-4f68-aefe-e7a12283641f">Retrieving Resources in Desktop Apps</a></format> article.</para>
@@ -604,6 +603,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Resources.ResourceManager" /> object that searches a specific directory instead of an assembly manifest for resources.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a resource manager that searches the specified directory instead of an assembly manifest for resources.</para>
+        </returns>
         <param name="baseName">
           <attribution license="cc4" from="Microsoft" modified="false" />The root name of the resources. For example, the root name for the resource file named "MyResource.en-US.resources" is "MyResource". </param>
         <param name="resourceDir">
@@ -653,12 +656,15 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="a" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Globalization.CultureInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns culture-specific information for the main assembly's default resources by retrieving the value of the <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> attribute on a specified assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The culture from the <see cref="T:System.Resources.NeutralResourcesLanguageAttribute" /> attribute, if found; otherwise, the invariant culture.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly for which to return culture-specific information. </param>
       </Docs>
@@ -679,7 +685,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Resources.ResourceManager.GetObject(System.String)" /> method is used to retrieve non-string resources. These include values that belong to primitive data types such as <see cref="T:System.Int32" /> or <see cref="T:System.Double" />, bitmaps (such as a <see cref="T:System.Drawing.Bitmap" /> object), or custom serialized objects. Typically, the returned object must be cast (in C#) or converted (in Visual Basic) to an object of the appropriate type. </para>
@@ -697,6 +702,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified non-string resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the resource localized for the caller's current culture settings. If an appropriate resource set exists but <paramref name="name" /> cannot be found, the method returns null. </para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource to get. </param>
       </Docs>
@@ -718,7 +727,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Resources.ResourceManager.GetObject(System.String,System.Globalization.CultureInfo)" /> method is used to retrieve non-string resources. These include values that belong to primitive data types such as <see cref="T:System.Int32" /> or <see cref="T:System.Double" />, bitmaps (such as a <see cref="T:System.Drawing.Bitmap" /> object), or custom serialized objects. Typically, the returned object must be cast (in C#) or converted (in Visual Basic) to an object of the appropriate type. </para>
@@ -736,6 +744,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the specified non-string resource localized for the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the resource, localized for the specified culture. If an appropriate resource set exists but <paramref name="name" /> cannot be found, the method returns null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource to get. </param>
         <param name="culture">
@@ -758,7 +770,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Resources.ResourceManager.GetResourceFileName(System.Globalization.CultureInfo)" /> method is useful only if you write your own class that derives from the <see cref="T:System.Resources.ResourceManager" /> class.</para>
@@ -769,6 +780,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates the name of the resource file for the given <see cref="T:System.Globalization.CultureInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name that can be used for a resource file for the given <see cref="T:System.Globalization.CultureInfo" /> object.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />The culture object for which a resource file name is constructed. </param>
       </Docs>
@@ -791,7 +806,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="tryParents" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ResourceSet'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The resource set that is returned represents the resources that are localized for the specified culture. If the resources have not been localized for that culture and <paramref name="tryParents" /> is true, <see cref="M:System.Resources.ResourceManager.GetResourceSet(System.Globalization.CultureInfo,System.Boolean,System.Boolean)" /> uses resource fallback rules to load an appropriate resource. If <paramref name="tryParents" /> is false and a culture-specific resource set cannot be found, the method returns null. For more information about resource fallback, see "The Resource Fallback Process" section in the <format type="text/html"><a href="b224d7c0-35f8-4e82-a705-dd76795e8d16">Packaging and Deploying Resources</a></format> article.</para>
@@ -800,6 +814,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the resource set for a particular culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource set for the specified culture.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />The culture whose resources are to be retrieved. </param>
         <param name="createIfNotExists">
@@ -824,7 +842,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="a" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Version'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about satellite assembly versioning, see the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> reference topic.</para>
@@ -833,6 +850,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the version specified by the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> attribute in the given assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The satellite contract version of the given assembly, or null if no version was found.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to check for the <see cref="T:System.Resources.SatelliteContractVersionAttribute" /> attribute. </param>
       </Docs>
@@ -857,7 +878,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -869,6 +889,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an unmanaged memory stream object from the specified resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged memory stream object that represents a resource .</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a resource.</param>
       </Docs>
@@ -894,7 +918,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -906,6 +929,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an unmanaged memory stream object from the specified resource, using the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unmanaged memory stream object that represents a resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a resource.</param>
         <param name="culture">
@@ -928,7 +955,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <format type="text/html">
@@ -951,6 +977,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified string resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the resource localized for the caller's current UI culture, or null if <paramref name="name" /> cannot be found in a resource set.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource to retrieve. </param>
       </Docs>
@@ -972,7 +1002,6 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <format type="text/html">
@@ -996,6 +1025,10 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the string resource localized for the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the resource localized for the specified culture, or null if <paramref name="name" /> cannot be found in a resource set.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource to retrieve. </param>
         <param name="culture">
@@ -1072,12 +1105,15 @@ al /out:ru-RU\Showdate.resources.dll /culture:ru-RU /embed:DateStrings.ru-RU.res
         <Parameter Name="tryParents" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ResourceSet'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the implementation for finding a resource set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified resource set.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />The culture object to look for. </param>
         <param name="createIfNotExists">

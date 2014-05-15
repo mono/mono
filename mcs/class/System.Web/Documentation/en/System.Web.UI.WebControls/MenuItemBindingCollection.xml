@@ -48,7 +48,6 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -65,6 +64,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> was inserted in the collection.</para>
+        </returns>
         <param name="binding">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to append to the end of the collection.</param>
       </Docs>
@@ -82,7 +85,6 @@
         <Parameter Name="binding" Type="System.Web.UI.WebControls.MenuItemBinding" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -92,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object is in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> is contained in the collection; otherwise, false.</para>
+        </returns>
         <param name="binding">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> to find.</param>
       </Docs>
@@ -139,7 +145,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -153,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Object" /> of the data type that corresponds to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an empty <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the data type to create. This parameter is not used in this implementation of the method; therefore, you should always pass in null.</param>
       </Docs>
@@ -168,7 +177,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -181,6 +189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array of <see cref="T:System.Type" /> objects that contains the supported data types of the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that contains the data types supported by the <see cref="T:System.Web.UI.WebControls.MenuItemBindingCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,7 +209,6 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +225,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of the specified <see cref="T:System.Web.UI.WebControls.MenuItemBinding" /> object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the collection, if found; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

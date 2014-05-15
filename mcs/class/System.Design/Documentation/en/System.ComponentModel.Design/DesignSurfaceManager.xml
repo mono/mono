@@ -110,12 +110,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDesignSurface">
@@ -131,7 +134,6 @@
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you want to conveniently add additional per-designer services, use the <paramref name="parentProvider" /> parameter to provide a service provider for this design surface. The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method creates a merged service provider that can satisfy service requests from both the given service provider as well as the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> itself. The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface(System.IServiceProvider)" /> method then passes this service provider into the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method.</para>
@@ -141,6 +143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
         <param name="parentProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />A parent service provider. A new merged service provider will be created that will first ask this provider for a service, and then delegate any failures to the design surface manager object. This merged provider will be passed into the <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method.</param>
       </Docs>
@@ -158,7 +164,6 @@
         <Parameter Name="parentProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurfaceCore(System.IServiceProvider)" /> method is called by both <see cref="Overload:System.ComponentModel.Design.DesignSurfaceManager.CreateDesignSurface" /> methods. It is the implementation that actually creates the design surface. The default implementation just returns a new <see cref="T:System.ComponentModel.Design.DesignSurface" />. You may override this method to provide a custom object that derives from the <see cref="T:System.ComponentModel.Design.DesignSurface" /> class.</para>
@@ -167,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Implementation that creates the design surface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new design surface instance.</para>
+        </returns>
         <param name="parentProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />A service provider to pass to the design surface. This is either an instance of <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> or an object that implements <see cref="T:System.IServiceProvider" />, and represents a merge between the service provider of the <see cref="T:System.ComponentModel.Design.DesignSurfaceManager" /> class and an externally passed provider.</param>
       </Docs>
@@ -294,7 +303,6 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignSurfaceManager.GetService(System.Type)" /> method forwards to any service provider that was given to the design surface manager at construction time.</para>
@@ -303,6 +311,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a service in the design surface manager’s service container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements, or is a derived class of, the given service type; otherwise, null if the service does not exist in the service container.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SelectionChanged">

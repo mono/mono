@@ -51,12 +51,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a cryptographic object that is used to perform the symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object that is used to perform the symmetric algorithm.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -73,7 +76,6 @@
         <Parameter Name="algorithmName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Possible <paramref name="algorithmName" /> values are: "AES", "AesCryptoServiceProvider", "System.Security.Cryptography.AesCryptoServiceProvider", "AesManaged", and "System.Security.Cryptography.AesManaged".</para>
@@ -82,6 +84,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a cryptographic object that specifies the implementation of AES to use to perform the symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A cryptographic object that is used to perform the symmetric algorithm.</para>
+        </returns>
         <param name="algorithmName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of AES to use.</param>
       </Docs>

@@ -52,7 +52,6 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the view helper object for the <see cref="T:System.Web.UI.IHierarchicalDataSource" /> interface for the specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> that represents a single view of the data at the hierarchical level identified by the <paramref name="viewPath" /> parameter.</para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The hierarchical path of the view to retrieve. </param>
       </Docs>

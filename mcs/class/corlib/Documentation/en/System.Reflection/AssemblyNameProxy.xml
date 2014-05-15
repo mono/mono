@@ -62,7 +62,6 @@
         <Parameter Name="assemblyFile" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AssemblyName'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This will only work if the file contains an assembly manifest. This method causes the file to be opened and closed.</para>
@@ -71,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the AssemblyName for a given file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An AssemblyName object representing the given file.</para>
+        </returns>
         <param name="assemblyFile">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly file for which to get the AssemblyName. </param>
       </Docs>

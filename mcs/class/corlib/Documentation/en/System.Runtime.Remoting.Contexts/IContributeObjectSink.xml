@@ -45,12 +45,15 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Chains the message sink of the provided server object in front of the given sink chain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composite sink chain.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The server object which provides the message sink that is to be chained in front of the given chain. </param>
         <param name="nextSink">

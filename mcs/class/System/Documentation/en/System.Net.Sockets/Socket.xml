@@ -451,10 +451,6 @@ public class Client {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new connected <see cref="T:System.Net.Sockets.Socket" />
-instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">An error occurred while creating the new <see cref="T:System.Net.Sockets.Socket" />.</exception>
         <exception cref="T:System.InvalidOperationException">
           <para>An asynchronous call is pending and a blocking method has been called.</para>
@@ -485,6 +481,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Net.Sockets.Socket" /> for a newly created connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.Sockets.Socket" /> for a newly created connection.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -503,7 +503,6 @@ instance.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connection-oriented protocols can use the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method to asynchronously process incoming connection attempts. Accepting connections asynchronously gives you the ability to send and receive data within a separate execution thread. Before calling the <see cref="M:System.Net.Sockets.Socket.AcceptAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method, you must call the <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" /> method to listen for and queue incoming connection requests.</para>
@@ -527,6 +526,11 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to accept an incoming connection attempt.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation.</para>
+          <para>Returns false if the I/O operation completed synchronously. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -615,9 +619,6 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.Net.Sockets.SocketException">An error occurred while accepting the connection. <para><block subset="none" type="note">For additional information on causes of the <see langword=" SocketException" />, see the <see cref="T:System.Net.Sockets.SocketException" qualify="true" /> class.</block></para></exception>
         <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
         <example>
@@ -685,6 +686,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to accept an incoming connection attempt.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous <see cref="T:System.Net.Sockets.Socket" /> creation.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -709,7 +714,6 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connection-oriented protocols can use the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" /> method to asynchronously process incoming connection attempts. Accepting connections asynchronously enables you to send and receive data within a separate execution thread. This overload allows you to specify the number of bytes to accept in the initial transfer in the <paramref name="receiveSize" /> parameter.</para>
@@ -738,6 +742,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to accept an incoming connection attempt and receives the first block of data sent by the client application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous <see cref="T:System.Net.Sockets.Socket" /> creation.</para>
+        </returns>
         <param name="receiveSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to accept from the sender. </param>
         <param name="callback">
@@ -764,7 +772,6 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Connection-oriented protocols can use the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" /> method to asynchronously process incoming connection attempts. Accepting connections asynchronously gives you the ability to send and receive data within a separate execution thread. This overload allows you to specify the accepted socket in the <paramref name="acceptSocket" /> parameter. If this parameter is null, the accepted socket is created by the <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" /> method. You can specify the number of bytes to accept in the initial transfer in the <paramref name="receiveSize" /> parameter.</para>
@@ -793,6 +800,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to accept an incoming connection attempt from a specified socket and receives the first block of data sent by the client application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous <see cref="T:System.Net.Sockets.Socket" /> object creation.</para>
+        </returns>
         <param name="acceptSocket">
           <attribution license="cc4" from="Microsoft" modified="false" />The accepted <see cref="T:System.Net.Sockets.Socket" /> object. This value may be null. </param>
         <param name="receiveSize">
@@ -823,9 +834,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="end_point">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="remoteEP " />is <see langword="null" />.</para>
@@ -865,6 +873,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous connection.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -891,7 +903,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="callback">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.IPAddress,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.Socket.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -915,6 +926,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The host is specified by an <see cref="T:System.Net.IPAddress" /> and a port number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous connection.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> of the remote host.</param>
         <param name="port">
@@ -942,7 +957,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="callback">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.IPAddress[],System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.Socket.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -966,6 +980,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The host is specified by an <see cref="T:System.Net.IPAddress" /> array and a port number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous connections.</para>
+        </returns>
         <param name="addresses">
           <attribution license="cc4" from="Microsoft" modified="false" />At least one <see cref="T:System.Net.IPAddress" />, designating the remote host.</param>
         <param name="port">
@@ -993,7 +1011,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="callback">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.String,System.Int32,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.Socket.EndConnect(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="requestCallback" /> delegate.</para>
@@ -1017,6 +1034,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a remote host connection. The host is specified by a host name and a port number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous connection.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the remote host.</param>
         <param name="port">
@@ -1042,7 +1063,6 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you are using a connection-oriented protocol, you can call the <see cref="M:System.Net.Sockets.Socket.BeginDisconnect(System.Boolean,System.AsyncCallback,System.Object)" /> method to request a disconnect from a remote endpoint. If <paramref name="reuseSocket" /> is true, you can reuse the socket.</para>
@@ -1058,6 +1078,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request to disconnect from a remote endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that references the asynchronous operation.</para>
+        </returns>
         <param name="reuseSocket">
           <attribution license="cc4" from="Microsoft" modified="false" />true if this socket can be reused after the connection is closed; otherwise, false. </param>
         <param name="callback">
@@ -1089,13 +1113,45 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous <see cref="M:System.Net.Sockets.Socket.BeginReceive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="callback" /> delegate.</para>
+          <para>This method does not block until the operation is complete. To block until the operation is complete, use one of the <see cref="Overload:System.Net.Sockets.Socket.Receive" /> method overloads.</para>
+          <para>To cancel a pending <see cref="Overload:System.Net.Sockets.Socket.BeginReceive" />, call the <see cref="M:System.Net.Sockets.Socket.Close" /> method.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>All I/O initiated by a given thread is canceled when that thread exits. A pending asynchronous operation can fail if the thread exits before the operation completes.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="state" /> is an instantiation of a user-defined class. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The execution context (the security context, the impersonated user, and the calling context) is cached for the asynchronous <see cref="T:System.Net.Sockets.Socket" /> methods. After the first use of a particular context (a specific asynchronous <see cref="T:System.Net.Sockets.Socket" /> method, a specific <see cref="T:System.Net.Sockets.Socket" /> instance, and a specific callback), subsequent uses of that context will see a performance improvement.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins to asynchronously receive data from a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous read.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the receive operation. This object is passed to the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" /> delegate when the operation is complete.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginReceive">
@@ -1155,9 +1211,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="socket_flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1215,6 +1268,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins to asynchronously receive data from a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data. </param>
         <param name="offset">
@@ -1428,13 +1485,49 @@ method.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method starts an asynchronous send operation to the remote host established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />, <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.Sockets.Socket.Accept" />, or <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" /> method. <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> will throw an exception if you do not first call <see cref="M:System.Net.Sockets.Socket.Accept" />, <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />, or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />. Calling the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method gives you the ability to send data within a separate execution thread.</para>
+          <para>You can create a callback method that implements the <see cref="T:System.AsyncCallback" /> delegate and pass its name to the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method. To do this, at the very minimum, your <paramref name="state" /> parameter must contain the connected or default <see cref="T:System.Net.Sockets.Socket" /> being used for communication. If your callback needs more information, you can create a small class or structure to hold the <see cref="T:System.Net.Sockets.Socket" /> and the other required information. Pass an instance of this class to the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method through the <paramref name="state" /> parameter.</para>
+          <para>Your callback method should invoke the <see cref="M:System.Net.Sockets.Socket.EndSend(System.IAsyncResult)" /> method. When your application calls <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" />, the system will use a separate thread to execute the specified callback method, and will block on <see cref="M:System.Net.Sockets.Socket.EndSend(System.IAsyncResult)" /> until the <see cref="T:System.Net.Sockets.Socket" /> sends the number of bytes requested or throws an exception. If you want the original thread to block after you call the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method, use the <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> method. Call the Set method on a T:System.Threading.ManualResetEvent in the callback method when you want the original thread to continue executing. For additional information on writing callback methods see <format type="text/html"><a href="6DDD7866-9804-4571-84DE-83F5CC017A5A">[&lt;topic://cpconcallbacksample&gt;]</a></format>.</para>
+          <para>Although intended for connection-oriented protocols, <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> also works for connectionless protocols, provided that you first call the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" /> method to establish a default remote host. If you are using a connectionless protocol and plan to send data to several different hosts, you should use <see cref="M:System.Net.Sockets.Socket.BeginSendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint,System.AsyncCallback,System.Object)" />. It is okay to use <see cref="M:System.Net.Sockets.Socket.BeginSendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint,System.AsyncCallback,System.Object)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />. With connectionless protocols, you must also be sure that the size of your buffer does not exceed the maximum packet size of the underlying service provider. If it does, the datagram will not be sent and <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />.</para>
+          <para>If you specify the <see cref="F:System.Net.Sockets.SocketFlags.DontRoute" /> flag as the <paramref name="socketflags" /> parameter, the data you are sending will not be routed. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>All I/O initiated by a given thread is canceled when that thread exits. A pending asynchronous operation can fail if the thread exits before the operation completes. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="state" /> is an instantiation of a user-defined class. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The execution context (the security context, the impersonated user, and the calling context) is cached for the asynchronous <see cref="T:System.Net.Sockets.Socket" /> methods. After the first use of a particular context (a specific asynchronous <see cref="T:System.Net.Sockets.Socket" /> method, a specific <see cref="T:System.Net.Sockets.Socket" /> instance, and a specific callback), subsequent uses of that context will see a performance improvement.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends data asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous send.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to send. </param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains state information for this request. </param>
       </Docs>
     </Member>
     <Member MemberName="BeginSend">
@@ -1494,9 +1587,6 @@ method.</para>
       </Parameters>
       <Docs>
         <param name="socket_flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -1558,6 +1648,10 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous send.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to send. </param>
         <param name="offset">
@@ -1621,7 +1715,6 @@ method.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload sends the file <paramref name="fileName" /> to the connected socket. If <paramref name="fileName" /> is in the local directory, it may be identified with just the name of the file; otherwise, the full path and name of the file must be specified. Wildcards ("..\\myfile.txt") and UNC share names ("\\\\shared directory\\myfile.txt") are supported. If the file is not found, the exception <see cref="T:System.IO.FileNotFoundException" /> is thrown.</para>
@@ -1644,6 +1737,10 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends the file <paramref name="fileName" /> to a connected <see cref="T:System.Net.Sockets.Socket" /> object using the <see cref="F:System.Net.Sockets.TransmitFileOptions.UseDefaultWorkerThread" /> flag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that represents the asynchronous send.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the path and name of the file to send. This parameter can be null. </param>
         <param name="callback">
@@ -1672,7 +1769,6 @@ method.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload requires the name of the file you want to send and a bitwise combination of <see cref="T:System.Net.Sockets.TransmitFileOptions" /> values. The <paramref name="preBuffer" /> parameter contains any data you want to precede the file. <paramref name="postBuffer" /> contains data you want to follow the file. If <paramref name="fileName" /> is in the local directory, it may be identified with just the name of the file; otherwise, the full path and name of the file must be specified. Wildcards ("..\\myfile.txt") and UNC share names ("\\\\shared directory\\myfile.txt") are supported. If the file is not found, the exception <see cref="T:System.IO.FileNotFoundException" /> is thrown.</para>
@@ -1696,6 +1792,10 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a file and buffers of data asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> object that represents the asynchronous operation.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the path and name of the file to be sent. This parameter can be null. </param>
         <param name="preBuffer">
@@ -1735,9 +1835,6 @@ method.</para>
       <Docs>
         <param name="socket_flags">To be added.</param>
         <param name="remote_end">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="buffer " />is <see langword="null" />.</para>
@@ -1801,6 +1898,10 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data asynchronously to a specific remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous send.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to send. </param>
         <param name="offset">
@@ -2168,7 +2269,6 @@ method.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you are using a connection-oriented protocol, the <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method starts an asynchronous request for a connection to the remote host. If you are using a connectionless protocol, <see cref="M:System.Net.Sockets.Socket.ConnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> establishes a default remote host. </para>
@@ -2202,6 +2302,11 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a connection to a remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation. </para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -2293,7 +2398,6 @@ method.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When using a connection-oriented protocol, calling the <see cref="M:System.Net.Sockets.Socket.DisconnectAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method requests a disconnect from a remote endpoint. If you set <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.DisconnectReuseSocket" /> to true in the <paramref name="e" /> parameter, the socket can be reused.</para>
@@ -2302,6 +2406,11 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request to disconnect from a remote endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -2410,7 +2519,6 @@ method.</para>
         <Parameter Name="targetProcessId" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The target process should use <see cref="M:System.Net.Sockets.Socket.#ctor(System.Net.Sockets.SocketInformation)" /> to create the duplicate socket instance. </para>
@@ -2421,6 +2529,10 @@ method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Duplicates the socket reference for the target process, and closes the socket for this process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The socket reference to be passed to the target process.</para>
+        </returns>
         <param name="targetProcessId">
           <attribution license="cc4" from="Microsoft" modified="false" />The ID of the target process where a duplicate of the socket reference is created.</param>
       </Docs>
@@ -2467,10 +2579,6 @@ method.</para>
       </Parameters>
       <Docs>
         <param name="result">A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</param>
-        <returns>
-          <para> A new connected <see cref="T:System.Net.Sockets.Socket" />
-instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2501,6 +2609,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously accepts an incoming connection attempt and creates a new <see cref="T:System.Net.Sockets.Socket" /> to handle remote host communication.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.Sockets.Socket" /> to handle communication with the remote host.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2657,9 +2769,6 @@ instance.</para>
         <param name="result">
           <para>A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</para>
         </param>
-        <returns>
-          <para> A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes received.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2695,6 +2804,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends a pending asynchronous read.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2833,9 +2946,6 @@ delegate's method.</para>
         <param name="result">
           <para>A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</para>
         </param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes sent. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2874,6 +2984,10 @@ delegate's method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends a pending asynchronous send.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />; otherwise, an invalid <see cref="T:System.Net.Sockets.Socket" /> error.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2957,9 +3071,6 @@ delegate's method.</para>
         <param name="result">
           <para>A <see cref="T:System.IAsyncResult" /> object that holds the state information for the asynchronous operation.</para>
         </param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes sent. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2992,6 +3103,10 @@ delegate's method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends a pending asynchronous send to a specific location.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the number of bytes sent; otherwise, an invalid <see cref="T:System.Net.Sockets.Socket" /> error.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3055,9 +3170,6 @@ delegate's method.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the hash code for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.GetHashCode" /> method returns a hash code of this instance. This value can be used as a key in hash tables.</para>
@@ -3066,6 +3178,10 @@ delegate's method.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash value for a <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
       <AssemblyInfo>
@@ -3090,42 +3206,6 @@ delegate's method.</para>
         <Parameter Name="optionName" Type="System.Net.Sockets.SocketOptionName" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> The following table describes the values returned 
-      by this method.</para>
-          <list type="table">
-            <listheader>
-              <term>optionName</term>
-              <description>Return value</description>
-            </listheader>
-            <item>
-              <term>
-                <see langword="Linger" />
-              </term>
-              <description> An instance of the <see cref="T:System.Net.Sockets.LingerOption" qualify="true" />
-   class.</description>
-            </item>
-            <item>
-              <term>
-                <para>
-                  <see langword="AddMembership" />
-                </para>
-                <para> -or-</para>
-                <para>
-                  <see langword="DropMembership" />
-                </para>
-              </term>
-              <description> An instance of
-   the <see cref="T:System.Net.Sockets.MulticastOption" qualify="true" />
-   class.</description>
-            </item>
-            <item>
-              <term> All other values defined in the <see cref="T:System.Net.Sockets.SocketOptionName" /> enumeration.</term>
-              <description>A <see cref="T:System.Int32" qualify="true" /> containing the value
-of the option.</description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.Net.Sockets.SocketException">An error occurred while accessing the socket. <para><block subset="none" type="note">For additional information on causes of the <see langword=" SocketException" />, see the <see cref="T:System.Net.Sockets.SocketException" qualify="true" /> class.</block></para></exception>
         <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
         <example>
@@ -3223,6 +3303,10 @@ class OptionTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of a specified <see cref="T:System.Net.Sockets.Socket" /> option, represented as an object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the value of the option. When the <paramref name="optionName" /> parameter is set to <see cref="F:System.Net.Sockets.SocketOptionName.Linger" /> the return value is an instance of the <see cref="T:System.Net.Sockets.LingerOption" /> class. When <paramref name="optionName" /> is set to <see cref="F:System.Net.Sockets.SocketOptionName.AddMembership" /> or <see cref="F:System.Net.Sockets.SocketOptionName.DropMembership" />, the return value is an instance of the <see cref="T:System.Net.Sockets.MulticastOption" /> class. When <paramref name="optionName" /> is any other value, the return value is an integer.</para>
+        </returns>
         <param name="optionLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> values. </param>
         <param name="optionName">
@@ -3301,9 +3385,6 @@ class OptionTest{
       </Parameters>
       <Docs>
         <param name="length">To be added.</param>
-        <returns>
-          <para> A <see cref="T:System.Byte" qualify="true" /> array containing the value of the specified socket option.</para>
-        </returns>
         <exception cref="T:System.Net.Sockets.SocketException">
           <para>
             <paramref name="optionLength" /> is smaller than the number of bytes required to store the value of the specified socket option.</para>
@@ -3328,6 +3409,10 @@ class OptionTest{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the specified <see cref="T:System.Net.Sockets.Socket" /> option in an array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Byte" /> that contains the value of the socket option.</para>
+        </returns>
         <param name="optionLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> values. </param>
         <param name="optionName">
@@ -3387,10 +3472,6 @@ class OptionTest{
         <param name="ioctl_code">To be added.</param>
         <param name="in_value">To be added.</param>
         <param name="out_value">To be added.</param>
-        <returns>
-          <para> A <see cref="T:System.Int32" qualify="true" /> containing the length of the
-<paramref name="optionOutValue" /> array after the method returns.</para>
-        </returns>
         <exception cref="T:System.InvalidOperationException">
           <para>An attempt was made to change the blocking mode.</para>
           <block subset="none" type="note">
@@ -3459,6 +3540,10 @@ class App {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets low-level operating modes for the <see cref="T:System.Net.Sockets.Socket" /> using numerical control codes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes in the <paramref name="optionOutValue" /> parameter.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -3479,7 +3564,6 @@ class App {
         <Parameter Name="optionOutValue" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method provides low-level access to the operating system <see cref="T:System.Net.Sockets.Socket" /> underlying the current instance of the <see cref="T:System.Net.Sockets.Socket" /> class. For more, see the WSAIoctl documentation in the MSDN library.</para>
@@ -3494,6 +3578,10 @@ class App {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets low-level operating modes for the <see cref="T:System.Net.Sockets.Socket" /> using the <see cref="T:System.Net.Sockets.IOControlCode" /> enumeration to specify control codes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes in the <paramref name="optionOutValue" /> parameter.</para>
+        </returns>
         <param name="ioControlCode">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Sockets.IOControlCode" /> value that specifies the control code of the operation to perform. </param>
         <param name="optionInValue">
@@ -3776,57 +3864,6 @@ instance.</para>
       </Parameters>
       <Docs>
         <param name="time_us">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the current instance
-   satisfies at least one of the conditions in the following table
-   corresponding to the specified <see cref="T:System.Net.Sockets.SelectMode" />
-   value; otherwise, <see langword="false" />. <see langword="false" /> is returned if the status of the current instance cannot be determined within the time specified by <paramref name="microSeconds" /> . </para>
-          <list type="table">
-            <listheader>
-              <term>SelectMode value</term>
-              <description> Condition</description>
-            </listheader>
-            <item>
-              <term> SelectRead</term>
-              <description>
-                <para> Data is available for reading (includes
-            out-of-band data if the <see cref="F:System.Net.Sockets.SocketOptionName.OutOfBandInline" /> value defined in
-            the <see cref="T:System.Net.Sockets.SocketOptionName" />
-            enumeration
-            is set).</para>
-                <para>-or-</para>
-                <para>The socket is in the listening state with a
-            pending connection, and
-            the <see cref="M:System.Net.Sockets.Socket.Accept" /> method has been called and is guaranteed to succeed without
-            blocking.</para>
-                <para>-or-</para>
-                <para> The connection has been closed, reset,
-            or terminated.</para>
-              </description>
-            </item>
-            <item>
-              <term> SelectWrite</term>
-              <description>
-                <para>Data can be sent.</para>
-                <para>-or-</para>
-                <para> A non-blocking <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> method is being processed and the connection has
-            succeeded.</para>
-              </description>
-            </item>
-            <item>
-              <term> SelectError</term>
-              <description>
-                <para>The <see cref="F:System.Net.Sockets.SocketOptionName.OutOfBandInline" /> value defined in
-            the <see cref="T:System.Net.Sockets.SocketOptionName" /> enumeration is not set
-            and out-of-band data is available.</para>
-                <para>-or-</para>
-                <para> A non-blocking <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />
-      method is being processed and the connection has
-      failed.</para>
-              </description>
-            </item>
-          </list>
-        </returns>
         <exception cref="T:System.NotSupportedException">
           <paramref name="mode " />is not one of the values defined in the <see cref="T:System.Net.Sockets.SelectMode" /> enumeration.</exception>
         <exception cref="T:System.Net.Sockets.SocketException">
@@ -3853,6 +3890,60 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the status of the <see cref="T:System.Net.Sockets.Socket" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status of the <see cref="T:System.Net.Sockets.Socket" /> based on the polling mode value passed in the <paramref name="mode" /> parameter.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Mode </para>
+                </term>
+                <description>
+                  <para>Return Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Sockets.SelectMode.SelectRead" /> </para>
+              </term>
+              <description>
+                <para>true if <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" /> has been called and a connection is pending; </para>
+                <para>-or- </para>
+                <para>true if data is available for reading; </para>
+                <para>-or- </para>
+                <para>true if the connection has been closed, reset, or terminated; </para>
+                <para>otherwise, returns false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Sockets.SelectMode.SelectWrite" /> </para>
+              </term>
+              <description>
+                <para>true, if processing a <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />, and the connection has succeeded; </para>
+                <para>-or- </para>
+                <para>true if data can be sent; </para>
+                <para>otherwise, returns false. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Net.Sockets.SelectMode.SelectError" /> </para>
+              </term>
+              <description>
+                <para>true if processing a <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> that does not block, and the connection has failed; </para>
+                <para>-or- </para>
+                <para>true if <see cref="F:System.Net.Sockets.SocketOptionName.OutOfBandInline" /> is not set and out-of-band data is available; </para>
+                <para>otherwise, returns false. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="mode">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Net.Sockets.SelectMode" /> values. </param>
       </Docs>
@@ -3905,10 +3996,6 @@ instance.</para>
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes received.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">
@@ -3942,6 +4029,10 @@ containing the number of bytes received.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into a receive buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data. </param>
       </Docs>
@@ -3962,10 +4053,29 @@ containing the number of bytes received.</para>
         <Parameter Name="buffers" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads data into the buffers parameter and returns the number of bytes successfully read. You can call from both connection-oriented and connectionless sockets.</para>
+          <para>This overload requires you to provide one or more receive buffers.</para>
+          <para>If you are using a connection-oriented protocol, you must either call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection prior to calling <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" />. The <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will only read data that arrives from the remote host connection established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.Accept" /> method. If you are using a connectionless protocol, you can also use the <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> method. <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> will allow you to receive data arriving from any host.</para>
+          <para>If no data is available for reading, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will block until data is available, unless a time-out value was set by using <see cref="P:System.Net.Sockets.Socket.ReceiveTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are in non-blocking mode, and there is no data available in the in the protocol stack buffer, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will complete immediately and throw a <see cref="T:System.Net.Sockets.SocketException" />. You can use the <see cref="P:System.Net.Sockets.Socket.Available" /> property to determine if data is available for reading. When <see cref="P:System.Net.Sockets.Socket.Available" /> is non-zero, retry the receive operation.</para>
+          <para>If you are using a connection-oriented <see cref="T:System.Net.Sockets.Socket" />, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will read as much data as is available, up to the size of the buffer. If the remote host shuts down the <see cref="T:System.Net.Sockets.Socket" /> connection with the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method, and all available data has been received, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will complete immediately and return zero bytes.</para>
+          <para>If you are using a connectionless <see cref="T:System.Net.Sockets.Socket" />, <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will read the first enqueued datagram from the destination address you specify in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> method. If the datagram you receive is larger than the size of the <paramref name="buffers" /> parameter, <paramref name="buffers" /> gets filled with the first part of the message, the excess data is lost and a <see cref="T:System.Net.Sockets.SocketException" /> is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <para>Note   This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into the list of receive buffers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the received data.</param>
       </Docs>
     </Member>
     <Member MemberName="Receive">
@@ -3987,9 +4097,6 @@ containing the number of bytes received.</para>
       </Parameters>
       <Docs>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes received.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">
@@ -4024,6 +4131,10 @@ containing the number of bytes received.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into a receive buffer, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data. </param>
       </Docs>
@@ -4050,11 +4161,33 @@ containing the number of bytes received.</para>
         <Parameter Name="socketFlags" Type="System.Net.Sockets.SocketFlags" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads data into the <paramref name="buffers" /> parameter and returns the number of bytes successfully read. You can call from both connection-oriented and connectionless sockets.</para>
+          <para>This overload requires you to provide one or more receive buffers. The <see cref="T:System.Net.Sockets.SocketFlags" /> value defaults to <see cref="F:System.Net.Sockets.SocketFlags.None" />.</para>
+          <para>If you are using a connection-oriented protocol, you must either call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection prior to calling <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" />. The <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will only read data that arrives from the remote host connection established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.Accept" /> method. If you are using a connectionless protocol, you can also use the <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> method. <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> will allow you to receive data arriving from any host.</para>
+          <para>If no data is available for reading, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will block until data is available, unless a time-out value was set by using <see cref="P:System.Net.Sockets.Socket.ReceiveTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> call throws a <see cref="T:System.Net.Sockets.SocketException" />. If you are in non-blocking mode, and there is no data available in the in the protocol stack buffer, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will complete immediately and throw a <see cref="T:System.Net.Sockets.SocketException" />. You can use the <see cref="P:System.Net.Sockets.Socket.Available" /> property to determine if data is available for reading. When <see cref="P:System.Net.Sockets.Socket.Available" /> is non-zero, retry the receive operation.</para>
+          <para>If you are using a connection-oriented <see cref="T:System.Net.Sockets.Socket" />, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will read as much data as is available, up to the size of the buffer. If the remote host shuts down the <see cref="T:System.Net.Sockets.Socket" /> connection with the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method, and all available data has been received, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will complete immediately and return zero bytes.</para>
+          <para>If you are using a connectionless <see cref="T:System.Net.Sockets.Socket" />, <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will read the first enqueued datagram from the destination address you specify in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> method. If the datagram you receive is larger than the size of the <paramref name="buffers" /> parameter, <paramref name="buffers" /> gets filled with the first part of the message, the excess data is lost and a <see cref="T:System.Net.Sockets.SocketException" /> is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into the list of receive buffers, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the received data.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Receive">
@@ -4077,9 +4210,6 @@ containing the number of bytes received.</para>
       </Parameters>
       <Docs>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the number of bytes received.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -4123,6 +4253,10 @@ containing the number of bytes received.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Receives the specified number of bytes of data from a bound <see cref="T:System.Net.Sockets.Socket" /> into a receive buffer, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data. </param>
         <param name="size">
@@ -4181,10 +4315,6 @@ containing the number of bytes received.</para>
       </Parameters>
       <Docs>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes received.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -4237,6 +4367,10 @@ containing the number of bytes received.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Receives the specified number of bytes from a bound <see cref="T:System.Net.Sockets.Socket" /> into the specified offset position of the receive buffer, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes received.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for received data. </param>
         <param name="offset">
@@ -4290,7 +4424,6 @@ containing the number of bytes received.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.ReceiveAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method is used on connected sockets or bound connectionless sockets and is used to read incoming data. The socket's local address must be known.</para>
@@ -4325,6 +4458,11 @@ containing the number of bytes received.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request to receive data from a connected <see cref="T:System.Net.Sockets.Socket" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -4635,7 +4773,6 @@ buffer.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.ReceiveFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method is used primarily to receive data on a connectionless socket. The socket's local address must be known.</para>
@@ -4676,6 +4813,11 @@ buffer.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins to asynchronously receive data from a specified network device.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -4736,7 +4878,6 @@ buffer.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.ReceiveMessageFromAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method is used primarily to receive message data on a connectionless socket. The socket's local address must be known. This method can only be used with datagram and raw sockets. The socket must be initialized with the socket type set to <see cref="F:System.Net.Sockets.SocketType.Dgram" /> or <see cref="F:System.Net.Sockets.SocketType.Raw" /> before calling this method. This can be done when the socket is constructed using <see cref="M:System.Net.Sockets.Socket.#ctor(System.Net.Sockets.AddressFamily,System.Net.Sockets.SocketType,System.Net.Sockets.ProtocolType)" />. </para>
@@ -4778,6 +4919,11 @@ buffer.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins to asynchronously receive the specified number of bytes of data into the specified location in the data buffer, using the specified <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.SocketFlags" />, and stores the endpoint and packet information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -4989,10 +5135,6 @@ class SelectTest {
       </Parameters>
       <Docs>
         <param name="buf">A <see cref="T:System.Byte" qualify="true" /> array containing data to send to the socket.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">
@@ -5027,6 +5169,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -5045,10 +5191,34 @@ containing the number of bytes sent.</para>
         <Parameter Name="buffers" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> can be used for both connection-oriented and connectionless protocols.</para>
+          <para>This overload requires at least one buffer that contains the data you want to send.</para>
+          <para>If you are using a connectionless protocol, you must call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before calling this method, or <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are using a connection-oriented protocol, you must either use <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or use <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection.</para>
+          <para>If you are using a connectionless protocol and plan to send data to several different hosts, you should use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method. If you do not use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method, you will have to call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before each call to <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />. You can use <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />.</para>
+          <para>If you are using a connection-oriented protocol, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will block until all of the bytes in the buffer are sent, unless a time-out was set by using <see cref="P:System.Net.Sockets.Socket.SendTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. In nonblocking mode, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> may complete successfully even if it sends less than the number of bytes in the buffer. It is your application's responsibility to keep track of the number of bytes sent and to retry the operation until the application sends the bytes in the buffer. There is also no guarantee that the data you send will appear on the network immediately. To increase network efficiency, the underlying system may delay transmission until a significant amount of outgoing data is collected. A successful completion of the <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method means that the underlying system has had room to buffer your data for a network send. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the set of buffers in the list to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -5071,10 +5241,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="buf">To be added.</param>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidOperationException">
@@ -5112,6 +5278,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data to a connected <see cref="T:System.Net.Sockets.Socket" /> using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -5131,11 +5301,34 @@ containing the number of bytes sent.</para>
         <Parameter Name="socketFlags" Type="System.Net.Sockets.SocketFlags" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload requires at least one buffer that contains the data you want to send. The <see cref="T:System.Net.Sockets.SocketFlags" /> value defaults to 0. If you specify the <see cref="F:System.Net.Sockets.SocketFlags.DontRoute" /> flag as the <paramref name="socketFlags" /> parameter, the data you are sending will not be routed. </para>
+          <para>If you are using a connectionless protocol, you must call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before calling this method, or <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are using a connection-oriented protocol, you must either use <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or use <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection.</para>
+          <para>If you are using a connectionless protocol and plan to send data to several different hosts, you should use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method. If you do not use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method, you will have to call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before each call to <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />. You can use <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />.</para>
+          <para>If you are using a connection-oriented protocol, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will block until all of the bytes in the buffer are sent, unless a time-out was set by using <see cref="P:System.Net.Sockets.Socket.SendTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. In non-blocking mode, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> may complete successfully even if it sends less than the number of bytes in the buffer. It is your application's responsibility to keep track of the number of bytes sent and to retry the operation until the application sends the bytes in the buffer. There is also no guarantee that the data you send will appear on the network immediately. To increase network efficiency, the underlying system may delay transmission until a significant amount of outgoing data is collected. A successful completion of the <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method means that the underlying system has had room to buffer your data for a network send. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the set of buffers in the list to a connected <see cref="T:System.Net.Sockets.Socket" />, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the data to be sent.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -5159,10 +5352,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="buf">To be added.</param>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -5207,6 +5396,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends the specified number of bytes of data to a connected <see cref="T:System.Net.Sockets.Socket" />, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
         <param name="size">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to send. </param>
       </Docs>
@@ -5264,10 +5457,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="buf">To be added.</param>
         <param name="flags">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -5319,6 +5508,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends the specified number of bytes of data to a connected <see cref="T:System.Net.Sockets.Socket" />, starting at the specified offset, and using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent to the <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The position in the data buffer at which to begin sending data. </param>
         <param name="size">
@@ -5370,7 +5563,6 @@ containing the number of bytes sent.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.SendAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method is used to write outgoing data from one or more buffers on a connection-oriented socket. This method can also be used, however, on connectionless sockets that have specified a remote host on a connect operation. </para>
@@ -5405,6 +5597,11 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -5538,7 +5735,6 @@ containing the number of bytes sent.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.SendPacketsAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method is used to send a collection of files or in memory data buffers to remote host. The <see cref="T:System.Net.Sockets.Socket" /> must already be connected to the remote host.</para>
@@ -5569,6 +5765,11 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends a collection of files or in memory data buffers asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>
@@ -5615,10 +5816,6 @@ containing the number of bytes sent.</para>
       </Parameters>
       <Docs>
         <param name="remote_end">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="buffer or remoteEP " />is <see langword="null" />.</para>
@@ -5648,6 +5845,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data to the specified endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
       </Docs>
@@ -5674,10 +5875,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="flags">To be added.</param>
         <param name="remote_end">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="buffer or remoteEP " />is <see langword="null" />.</para>
@@ -5715,6 +5912,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data to a specific endpoint using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
       </Docs>
@@ -5742,10 +5943,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="flags">To be added.</param>
         <param name="remote_end">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="buffer or remoteEP " />is <see langword="null" />.</para>
@@ -5790,6 +5987,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends the specified number of bytes of data to the specified endpoint using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
         <param name="size">
@@ -5820,10 +6021,6 @@ containing the number of bytes sent.</para>
       <Docs>
         <param name="flags">To be added.</param>
         <param name="remote_end">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes sent.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="buffer or remoteEP " />is <see langword="null" />.</para>
@@ -5874,6 +6071,10 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends the specified number of bytes of data to the specified endpoint, starting at the specified location in the buffer, and using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes sent.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
         <param name="offset">
@@ -5898,7 +6099,6 @@ containing the number of bytes sent.</para>
         <Parameter Name="e" Type="System.Net.Sockets.SocketAsyncEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method starts an asynchronous send operation to the remote host specified in the <see cref="P:System.Net.Sockets.SocketAsyncEventArgs.RemoteEndPoint" /> property of the <paramref name="e" /> parameter. Calling the <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> method gives you the ability to send data within a separate execution thread. Although this method is intended for connectionless protocols, <see cref="M:System.Net.Sockets.Socket.SendToAsync(System.Net.Sockets.SocketAsyncEventArgs)" /> works with both connectionless and connection-oriented protocols.</para>
@@ -5941,6 +6141,11 @@ containing the number of bytes sent.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sends data asynchronously to a specific remote host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the I/O operation is pending. The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will be raised upon completion of the operation. </para>
+          <para>Returns false if the I/O operation completed synchronously. In this case, The <see cref="E:System.Net.Sockets.SocketAsyncEventArgs.Completed" /> event on the <paramref name="e" /> parameter will not be raised and the <paramref name="e" /> object passed as a parameter may be examined immediately after the method call returns to retrieve the result of the operation.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.Sockets.SocketAsyncEventArgs" /> object to use for this asynchronous socket operation.</param>
       </Docs>

@@ -71,7 +71,6 @@
         <Parameter Name="newCtx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Once all the context properties have been added to the new context, they are all queried as to whether they are okay in the new context. The context property could look at the other context properties from <paramref name="newCtx" /> and determine whether it is compatible with these other context properties. </para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the context property is compatible with the new context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the context property can coexist with the other context properties in the given context; otherwise, false.</para>
+        </returns>
         <param name="newCtx">
           <attribution license="cc4" from="Microsoft" modified="false" />The new context in which the <see cref="T:System.Runtime.Remoting.Contexts.ContextProperty" /> has been created. </param>
       </Docs>

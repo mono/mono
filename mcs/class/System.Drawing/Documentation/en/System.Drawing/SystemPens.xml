@@ -311,12 +311,15 @@
         <Parameter Name="c" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Pen'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Pen" /> from the specified <see cref="T:System.Drawing.Color" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Pen" /> this method creates.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> for the new <see cref="T:System.Drawing.Pen" />. </param>
       </Docs>

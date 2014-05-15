@@ -274,7 +274,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern.</para>
@@ -286,6 +285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones another instance of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" /> that represents the copy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause">
@@ -303,7 +306,6 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause using the <see cref="M:System.IdentityModel.Tokens.SecurityToken.CreateKeyIdentifierClause``1" /> method, with <paramref name="referenceStyle" /> as a generic parameter.</para>
@@ -312,6 +314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause for a token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security key identifier clause.</para>
+        </returns>
         <param name="token">
           <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
         <param name="referenceStyle">
@@ -333,12 +339,15 @@
         <Parameter Name="securityTokenSerializer" Type="System.IdentityModel.Selectors.SecurityTokenSerializer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a collection of issued token request parameter XML elements that get included in the request sent by the client to the security token service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.ObjectModel.Collection`1" /> that contains XML elements that represent the request parameters.</para>
+        </returns>
         <param name="messageSecurityVersion">
           <attribution license="cc4" from="Microsoft" modified="false" />The message security version.</param>
         <param name="securityTokenSerializer">
@@ -602,7 +611,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method displays the name of this class, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.TokenType" />, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.KeyType" />, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.KeySize" />, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.IssuerAddress" />, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.IssuerMetadataAddress" />, <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.IssuerBinding" /> (if not null) and binding elements, and <see cref="P:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters.ClaimTypeRequirements" /> (if not 0).</para>
@@ -611,6 +619,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a text representation of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of this class.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

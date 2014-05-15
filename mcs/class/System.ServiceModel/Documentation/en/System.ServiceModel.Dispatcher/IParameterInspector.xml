@@ -73,7 +73,6 @@
         <Parameter Name="inputs" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>On outbound calls from a client, the inspector is invoked before the request contents are serialized and sent to the service. The inspector is also called after the response has been deserialized but before the return values have been dispatched to the proxy method. </para>
@@ -83,6 +82,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called before client calls are sent and after service responses are returned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The correlation state that is returned as the <paramref name="correlationState" /> parameter in <see cref="M:System.ServiceModel.Dispatcher.IParameterInspector.AfterCall(System.String,System.Object[],System.Object,System.Object)" />. Return null if you do not intend to use correlation state.</para>
+        </returns>
         <param name="operationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the operation.</param>
         <param name="inputs">

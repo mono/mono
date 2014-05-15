@@ -43,7 +43,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calling <see cref="M:System.Reflection.ICustomAttributeProvider.GetCustomAttributes(System.Type,System.Boolean)" /> on <see cref="T:System.Reflection.PropertyInfo" /> or <see cref="T:System.Reflection.EventInfo" /> when the <paramref name="inherit" /> parameter of GetCustomAttributes is true does not walk the type hierarchy. Use <see cref="T:System.Attribute" /> to inherit custom attributes.</para>
@@ -53,6 +52,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all of the custom attributes defined on this member, excluding named attributes, or an empty array if there are no custom attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of Objects representing custom attributes, or an empty array.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />When true, look up the hierarchy chain for the inherited custom attribute. </param>
       </Docs>
@@ -74,7 +77,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="attributeType" /> is a base class or interface, this method returns any implementation of that type.</para>
@@ -85,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of custom attributes defined on this member, identified by type, or an empty array if there are no custom attributes of that type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of Objects representing custom attributes, or an empty array.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the custom attributes. </param>
         <param name="inherit">
@@ -108,12 +114,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether one or more instance of <paramref name="attributeType" /> is defined on this member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="attributeType" /> is defined on this member; false otherwise.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the custom attributes. </param>
         <param name="inherit">

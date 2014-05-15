@@ -31,7 +31,6 @@
         <Parameter Name="tool" Type="System.Drawing.Design.ToolboxItem" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the specified tool is supported by the designer implementing the <see cref="T:System.Drawing.Design.IToolboxUser" /> interface, then the tool will be enabled in the toolbox when this designer has focus. Otherwise, it will be disabled. Once a tool is marked as enabled or disabled, it may not be tested for support with the same designer again.</para>
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified tool is supported by the current designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool is supported by the toolbox and can be enabled; false if the document designer does not know how to use the tool.</para>
+        </returns>
         <param name="tool">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Design.ToolboxItem" /> to be tested for toolbox support. </param>
       </Docs>

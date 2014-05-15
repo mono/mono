@@ -72,13 +72,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the token can create a key identifier clause.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the token can create a key identifier clause; otherwise, false. The default is false.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause&lt;T&gt;">
@@ -100,13 +104,17 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Create a key identifier clause.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetWrappedKey">
@@ -121,12 +129,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the wrapped key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The wrapped key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -162,12 +173,15 @@
         <Parameter Name="keyIdentifierClause" Type="System.IdentityModel.Tokens.SecurityKeyIdentifierClause" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current security key identifier clause to a specified one for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current security key identifier clause equals the specified one; otherwise, false. The default is false.</para>
+        </returns>
         <param name="keyIdentifierClause">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified security key identifier clause.</param>
       </Docs>

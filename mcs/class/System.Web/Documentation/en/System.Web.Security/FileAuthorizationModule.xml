@@ -64,7 +64,6 @@
         <Parameter Name="verb" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Security.FileAuthorizationModule.CheckFileAccessForUser(System.String,System.IntPtr,System.String)" /> method checks to see whether the current user, represented by a Windows access token, is granted access to the requested file in the file-system access-control lists (ACLs). The virtual path is mapped to the physical file-system path before the check is made.</para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the user has access to the requested file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current Windows user represented by <paramref name="token" /> has access to the file using the specified HTTP verb or if the <see cref="T:System.Web.Security.FileAuthorizationModule" /> module is not defined in the application's configuration file; otherwise, false.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the file.</param>
         <param name="token">

@@ -56,12 +56,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates, cast as an object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -88,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -330,7 +337,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Image'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Managed GDI+ has built-in encoders and decoders that support the following file types: </para>
@@ -361,6 +367,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file from which to create the <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
@@ -380,7 +390,6 @@
         <Parameter Name="useEmbeddedColorManagement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Image'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Managed GDI+ has built-in encoders and decoders that support the following file types: </para>
@@ -412,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified file using embedded color management information in that file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the name of the file from which to create the <see cref="T:System.Drawing.Image" />. </param>
         <param name="useEmbeddedColorManagement">
@@ -432,7 +445,6 @@
         <Parameter Name="hbitmap" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Drawing.Image.FromHbitmap(System.IntPtr)" /> method makes a copy of the ndptecgdi bitmap; so you can release the incoming ndptecgdi bitmap using the ndptecgdi DeleteObject method immediately after creating the new <see cref="T:System.Drawing.Image" />.</para>
@@ -441,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from a handle to a GDI bitmap.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> this method creates.</para>
+        </returns>
         <param name="hbitmap">
           <attribution license="cc4" from="Microsoft" modified="false" />The ndptecgdi bitmap handle from which to create the <see cref="T:System.Drawing.Bitmap" />. </param>
       </Docs>
@@ -460,7 +476,6 @@
         <Parameter Name="hpalette" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Drawing.Image.FromHbitmap(System.IntPtr,System.IntPtr)" /> method makes a copy of the ndptecgdi bitmap; so you can release the incoming ndptecgdi bitmap using the ndptecgdi DeleteObject method immediately after creating the new <see cref="T:System.Drawing.Image" />.</para>
@@ -469,6 +484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Drawing.Bitmap" /> from a handle to a GDI bitmap and a handle to a GDI palette.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Bitmap" /> this method creates.</para>
+        </returns>
         <param name="hbitmap">
           <attribution license="cc4" from="Microsoft" modified="false" />The ndptecgdi bitmap handle from which to create the <see cref="T:System.Drawing.Bitmap" />. </param>
         <param name="hpalette">
@@ -489,7 +508,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Image'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must keep the stream open for the lifetime of the <see cref="T:System.Drawing.Image" />.</para>
@@ -502,6 +520,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
       </Docs>
@@ -521,7 +543,6 @@
         <Parameter Name="useEmbeddedColorManagement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Image'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must keep the stream open for the lifetime of the <see cref="T:System.Drawing.Image" />.</para>
@@ -535,6 +556,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream, optionally using embedded color management information in that stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
         <param name="useEmbeddedColorManagement">
@@ -561,7 +586,6 @@
         <Parameter Name="validateImageData" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="useEmbeddedColorManagement" /> parameter specifies whether the new <see cref="T:System.Drawing.Image" /> applies color correction according to color management information that is embedded in the data stream. Embedded information can include International Color Consortium (ICC) profiles, gamma values, and chromaticity information.</para>
@@ -573,6 +597,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Drawing.Image" /> from the specified data stream, optionally using embedded color management information and validating the image data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Image" /> this method creates.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the data for this <see cref="T:System.Drawing.Image" />. </param>
         <param name="useEmbeddedColorManagement">
@@ -611,12 +639,15 @@
         <Parameter Name="encoder" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Imaging.EncoderParameters'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information about the parameters supported by the specified image encoder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that contains an array of <see cref="T:System.Drawing.Imaging.EncoderParameter" /> objects. Each <see cref="T:System.Drawing.Imaging.EncoderParameter" /> contains information about one of the parameters supported by the specified image encoder.</para>
+        </returns>
         <param name="encoder">
           <attribution license="cc4" from="Microsoft" modified="false" />A GUID that specifies the image encoder. </param>
       </Docs>
@@ -635,7 +666,6 @@
         <Parameter Name="dimension" Type="System.Drawing.Imaging.FrameDimension" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns information about multiple-frame images, which come in two styles: multiple page and multiple resolution.</para>
@@ -646,6 +676,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of frames of the specified dimension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of frames in the specified dimension.</para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.FrameDimension" /> that specifies the identity of the dimension type. </param>
       </Docs>
@@ -664,12 +698,15 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the color depth, in number of bits per pixel, of the specified pixel format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The color depth of the specified pixel format.</para>
+        </returns>
         <param name="pixfmt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> member that specifies the format for which to find the size. </param>
       </Docs>
@@ -688,7 +725,6 @@
         <Parameter Name="propid" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Imaging.PropertyItem'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a list of property item IDs and links to more information, see <see cref="P:System.Drawing.Imaging.PropertyItem.Id" />. </para>
@@ -698,6 +734,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified property item from this <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.PropertyItem" /> this method gets.</para>
+        </returns>
         <param name="propid">
           <attribution license="cc4" from="Microsoft" modified="false" />The ID of the property item to get. </param>
       </Docs>
@@ -791,12 +831,15 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the pixel format for this <see cref="T:System.Drawing.Image" /> contains alpha information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> contains alpha information; otherwise, false.</para>
+        </returns>
         <param name="pixfmt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> to test. </param>
       </Docs>
@@ -815,7 +858,6 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The canonical pixel format indicates a pixel format of 32 bits per pixel. This format specifies 24-bit color depth and an 8-bit alpha channel. </para>
@@ -824,6 +866,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the pixel format is 32 bits per pixel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> is canonical; otherwise, false.</para>
+        </returns>
         <param name="pixfmt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> to test. </param>
       </Docs>
@@ -842,12 +888,15 @@
         <Parameter Name="pixfmt" Type="System.Drawing.Imaging.PixelFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the pixel format is 64 bits per pixel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="pixfmt" /> is extended; otherwise, false.</para>
+        </returns>
         <param name="pixfmt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PixelFormat" /> enumeration to test. </param>
       </Docs>
@@ -1215,6 +1264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a frame to the file or stream specified in a previous call to the <see cref="Overload:System.Drawing.Image.Save" /> method. Use this method to save selected frames from a multiple-frame image to another multiple-frame image.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="encoderParams">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Imaging.EncoderParameters" /> that holds parameters required by the image encoder that is used by the save-add operation. </param>
       </Docs>
@@ -1239,6 +1292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a frame to the file or stream specified in a previous call to the <see cref="Overload:System.Drawing.Image.Save" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="image">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Drawing.Image" /> that contains the frame to add. </param>
         <param name="encoderParams">
@@ -1260,7 +1317,6 @@
         <Parameter Name="frameIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The possible values of the <paramref name="dimensionID" /> parameter are properties of the <see cref="T:System.Drawing.Imaging.FrameDimension" />. These can be used to identify an image by its time, resolution, or page number.</para>
@@ -1270,6 +1326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects the frame specified by the dimension and index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns 0.</para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.FrameDimension" /> that specifies the identity of the dimension type. </param>
         <param name="frameIndex">
@@ -1299,6 +1359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Stores a property item (piece of metadata) in this <see cref="T:System.Drawing.Image" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="propitem">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Imaging.PropertyItem" /> to be stored. </param>
       </Docs>

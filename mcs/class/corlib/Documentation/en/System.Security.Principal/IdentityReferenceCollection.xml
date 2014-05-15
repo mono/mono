@@ -133,13 +133,16 @@
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection contains the specified <see cref="T:System.Security.Principal.IdentityReference" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified object.</para>
+        </returns>
         <param name="identity">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.IdentityReference" /> object to check for.</param>
       </Docs>
@@ -206,13 +209,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that can be used to iterate through the <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -273,13 +279,16 @@
         <Parameter Name="identity" Type="System.Security.Principal.IdentityReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified <see cref="T:System.Security.Principal.IdentityReference" /> object from the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object was removed from the collection.</para>
+        </returns>
         <param name="identity">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Principal.IdentityReference" /> object to remove.</param>
       </Docs>
@@ -297,13 +306,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that can be used to iterate through the <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Translate">
@@ -321,7 +333,6 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -332,6 +343,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the objects in the collection to the specified type. Calling this method is the same as calling <see cref="M:System.Security.Principal.IdentityReferenceCollection.Translate(System.Type,System.Boolean)" /> with the second parameter set to false, which means that exceptions will not be thrown for items that fail conversion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection that represents the converted contents of the original collection.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to which items in the collection are being converted.</param>
       </Docs>
@@ -352,7 +367,6 @@
         <Parameter Name="forceSuccess" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -363,6 +377,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the objects in the collection to the specified type and uses the specified fault tolerance to handle or ignore errors associated with a type not having a conversion mapping.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Principal.IdentityReferenceCollection" /> collection that represents the converted contents of the original collection.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to which items in the collection are being converted.</param>
         <param name="forceSuccess">

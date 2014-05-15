@@ -313,7 +313,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method assumes the default format is text XML.</para>
@@ -325,6 +324,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an XML document or stream into an object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> that contains the XML to deserialize.</param>
       </Docs>
@@ -365,7 +368,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Serialization.DataContractSerializer.IsStartObject(System.Xml.XmlDictionaryReader)" /> determines whether it can read an object by examining the name and namespace of the XML element the reader is positioned at, and comparing the values to expected name and namespace. The expected name and namespace can be set with the following: the data contract name and namespace of the type passed into the constructor, or the <paramref name="rootName" /> and <paramref name="rootNamespace" /> values passed into the constructor (if present).</para>
@@ -375,6 +377,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Xml.XmlDictionaryReader" /> is positioned on an object that can be deserialized using the specified reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the reader is at the start element of the stream to read; otherwise, false.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryReader" /> that contains the XML to read.</param>
       </Docs>
@@ -417,7 +423,6 @@
       </Parameters>
       <Docs>
         <param name="readContentOnly">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="verifyObjectName" /> parameter determines whether it can read an object by examining the name and namespace of the XML element the reader is positioned at, and comparing the values to expected name and namespace. The expected name and namespace can be set with the following: the data contract name and namespace of the type passed into the constructor, or the <paramref name="rootName" /> and <paramref name="rootNamespace" /> values passed into the constructor (if present).</para>
@@ -430,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the XML stream or document with an <see cref="T:System.Xml.XmlDictionaryReader" /> and returns the deserialized object; also checks whether the object data conforms to the name and namespace used to create the serializer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deserialized object.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReader" /> used to read the XML stream or document.</param>
       </Docs>

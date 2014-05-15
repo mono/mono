@@ -85,7 +85,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Discovery.DynamicDiscoveryDocument" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This static method takes an XML document, represented as a <see cref="T:System.IO.Stream" />, and converts in to a <see cref="T:System.Web.Services.Discovery.DynamicDiscoveryDocument" /> .</para>
@@ -94,6 +93,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes an XML document into a <see cref="T:System.Web.Services.Discovery.DynamicDiscoveryDocument" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Discovery.DynamicDiscoveryDocument" /> that was loaded.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> object from which the XML dynamic discovery document is deserialized.</param>
       </Docs>

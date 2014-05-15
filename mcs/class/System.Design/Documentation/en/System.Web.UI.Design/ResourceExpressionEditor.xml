@@ -57,7 +57,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -69,6 +68,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates a resource expression and provides the design-time value for a control property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by the evaluated expression string, if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />A resource expression to evaluate. <paramref name="expression" /> does not include the Resources expression prefix.</param>
         <param name="parseTimeData">
@@ -93,7 +96,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a resource expression editor sheet that is initialized with the input expression string and service provider implementation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ResourceExpressionEditorSheet" /> that defines the resource expression properties.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />A resource expression, used to initialize the expression editor sheet.</param>
         <param name="serviceProvider">

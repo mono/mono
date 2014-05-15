@@ -174,12 +174,15 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates a request to complete an editing procedure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the editing procedure committed successfully; otherwise, false.</para>
+        </returns>
         <param name="dataSource">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataView" /> of the edited column. </param>
         <param name="rowNum">
@@ -328,12 +331,15 @@
         <Parameter Name="row" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value, typed as <see cref="T:System.Object" />.</para>
+        </returns>
         <param name="lm">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> for the column. </param>
         <param name="row">
@@ -352,12 +358,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the height of a cell in a column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height of the column. The default is 16.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredHeight">
@@ -375,12 +384,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the height used when resizing columns.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height used to automatically resize cells in a column.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> that draws on the screen. </param>
         <param name="value">
@@ -402,7 +414,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridBoolColumn.GetPreferredSize(System.Drawing.Graphics,System.Object)" /> method allows you to resize the column based on the value displayed. For example, if a cell contains an especially large value, you can use the <see cref="M:System.Windows.Forms.DataGridBoolColumn.GetPreferredSize(System.Drawing.Graphics,System.Object)" /> method to return the optimum size of the cell based on the value. The optimum size takes into account not only the size of the string, but also the font used to display it.</para>
@@ -411,6 +422,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the optimum width and height of a cell given a specific value to contain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that contains the drawing information for the cell.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> that draws the cell. </param>
         <param name="value">

@@ -217,7 +217,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -230,6 +229,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the number of generic type parameters for the current method, specifies their names, and returns an array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects that can be used to define their constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects representing the type parameters of the generic method.</para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of strings that represent the names of the generic type parameters.</param>
       </Docs>
@@ -252,7 +255,6 @@
         <Parameter Name="strParamName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ParameterBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Reflection.Emit.ParameterBuilder" /> object returned by this method can be used to set the default value for a parameter or to apply custom attributes. </para>
@@ -265,6 +267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the parameter attributes and the name of a parameter of this method, or of the return value of this method. Returns a ParameterBuilder that can be used to apply custom attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a ParameterBuilder object that represents a parameter of this method or the return value of this method.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The position of the parameter in the parameter list. Parameters are indexed beginning with the number 1 for the first parameter; the number 0 represents the return value of the method. </param>
         <param name="attributes">
@@ -289,7 +295,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Equality is determined by having the same name, attributes, and signature.</para>
@@ -298,6 +303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the given object is equal to this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is an instance of MethodBuilder and is equal to this object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this MethodBuilder instance. </param>
       </Docs>
@@ -316,7 +325,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This always returns the current MethodBuilder object.</para>
@@ -325,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Return the base implementation for a method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base implementation of this method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -343,12 +355,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes defined for this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of objects representing all the custom attributes of this method.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the custom attributes. </param>
       </Docs>
@@ -370,12 +385,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the custom attributes identified by the given type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of objects representing the attributes of this method that are of type <paramref name="attributeType" />.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom attribute type. </param>
         <param name="inherit">
@@ -395,7 +413,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -406,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects that represent the type parameters of the method, if it is generic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects representing the type parameters, if the method is generic, or null if the method is not generic. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericMethodDefinition">
@@ -421,7 +442,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -432,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current instance of <see cref="T:System.Reflection.Emit.MethodBuilder" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -448,12 +472,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code for this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -470,12 +497,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ILGenerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an ILGenerator for this method with a default Microsoft intermediate language (MSIL) stream size of 64 bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an ILGenerator object for this method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILGenerator">
@@ -494,12 +524,15 @@
         <Parameter Name="size" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ILGenerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an ILGenerator for this method with the specified Microsoft intermediate language (MSIL) stream size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an ILGenerator object for this method.</para>
+        </returns>
         <param name="size">
           <attribution license="cc4" from="Microsoft" modified="false" />The size of the MSIL stream, in bytes. </param>
       </Docs>
@@ -518,12 +551,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the implementation flags for the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the implementation flags for the method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetModule">
@@ -540,12 +576,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Reflection.Module'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a reference to the module that contains this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a reference to the module that contains this method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetParameters">
@@ -562,12 +601,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the parameters of this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of ParameterInfo objects that represent the parameters of the method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetToken">
@@ -584,12 +626,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'MethodToken'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the MethodToken that represents the token for this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the MethodToken of this method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InitLocals">
@@ -638,7 +683,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the method is static, the <paramref name="obj" /> parameter is ignored. For non-static methods, <paramref name="obj" /> should be an instance of a class that inherits or declares the method and must be the same type as this class. If the method has no parameters, the value of <paramref name="parameters" /> should be null. Otherwise the number, type, and order of elements in the parameters array should be identical to the number, type, and order of parameters for the method reflected by this instance.</para>
@@ -650,6 +694,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dynamically invokes the method reflected by this instance on the given object, passing along the specified parameters, and under the constraints of the given binder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an object containing the return value of the invoked method.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object on which to invoke the specified method. If the method is static, this parameter is ignored. </param>
         <param name="invokeAttr">
@@ -679,12 +727,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks if the specified custom attribute type is defined.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified custom attribute type is defined; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom attribute type. </param>
         <param name="inherit">
@@ -760,7 +811,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -770,6 +820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a generic method constructed from the current generic method definition using the specified generic type arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> representing the generic method constructed from the current generic method definition using the specified generic type arguments.</para>
+        </returns>
         <param name="typeArguments">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Type" /> objects that represent the type arguments for the generic method.</param>
       </Docs>
@@ -1360,12 +1414,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns this MethodBuilder instance as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string containing the name, attributes, method signature, exceptions, and local signature of this method followed by the current Microsoft intermediate language (MSIL) stream.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

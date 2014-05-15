@@ -57,7 +57,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -68,6 +67,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an expression string and provides the design-time value for a control property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object referenced by the evaluated expression string, if the expression evaluation succeeded; otherwise, null.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />An expression string to evaluate. The expression does not include the expression prefix.</param>
         <param name="parseTimeData">
@@ -115,7 +118,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -128,6 +130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation that is associated with the specified expression prefix.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation associated with <paramref name="expressionPrefix" />; otherwise, null, if <paramref name="expressionPrefix" /> is not defined or is not associated with an <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</para>
+        </returns>
         <param name="expressionPrefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression prefix used to find the associated expression editor.</param>
         <param name="serviceProvider">
@@ -148,7 +154,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -161,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation that is associated with the specified expression builder type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditor" /> implementation associated with <paramref name="expressionBuilderType" />; otherwise, null, if <paramref name="expressionBuilderType" /> cannot be located or has no associated <see cref="T:System.Web.UI.Design.ExpressionEditor" />.</para>
+        </returns>
         <param name="expressionBuilderType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the derived expression builder class, used to locate the associated expression editor.</param>
         <param name="serviceProvider">
@@ -181,7 +190,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -193,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an expression editor sheet that is associated with the current expression editor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.Design.ExpressionEditorSheet" /> that defines the custom expression properties.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression string set for a control property, used to initialize the expression editor sheet.</param>
         <param name="serviceProvider">

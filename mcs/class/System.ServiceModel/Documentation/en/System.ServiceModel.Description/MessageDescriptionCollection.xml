@@ -38,7 +38,6 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you need to find all of the <see cref="T:System.ServiceModel.Description.MessageDescription" /> objects in the collection that match the specified <paramref name="action" />, use the <see cref="M:System.ServiceModel.Description.MessageDescriptionCollection.FindAll(System.String)" /> method instead.</para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds and returns the first message description in a collection for a message with a specified action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first <see cref="T:System.ServiceModel.Description.MessageDescription" /> from the collection whose message has the specified <paramref name="action" /> and null if no matching <paramref name="action" /> is found.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />The action of the message being found.</param>
       </Docs>
@@ -65,7 +68,6 @@
         <Parameter Name="action" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you need to find the first instance of the <see cref="T:System.ServiceModel.Description.MessageDescription" /> in the collection that match the specified <paramref name="action" />, use the <see cref="M:System.ServiceModel.Description.MessageDescriptionCollection.Find(System.String)" /> method instead.</para>
@@ -74,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds and returns all of the message descriptions in a collection whose messages have a specified action.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MessageDescriptionCollection" /> that contains the collection message descriptions from the current collection whose messages have the specified <paramref name="action" />. If no matching <see cref="T:System.ServiceModel.Description.MessageDescription" /> objects are found, an empty collection is returned.</para>
+        </returns>
         <param name="action">
           <attribution license="cc4" from="Microsoft" modified="false" />The action of the messages being found.</param>
       </Docs>

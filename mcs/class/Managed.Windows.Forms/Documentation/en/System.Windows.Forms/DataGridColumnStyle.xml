@@ -387,12 +387,15 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, initiates a request to complete an editing procedure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the editing procedure committed successfully; otherwise, false.</para>
+        </returns>
         <param name="dataSource">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> for the <see cref="T:System.Windows.Forms.DataGridColumnStyle" />. </param>
         <param name="rowNum">
@@ -429,7 +432,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This property is called by a <see cref="T:System.Windows.Forms.DataGridTableStyle" /> when its <see cref="T:System.Windows.Forms.DataGrid" /> property changes. This property is required because any child controls hosted by a <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> must be added to the <see cref="T:System.Windows.Forms.DataGrid" /> control's ControlCollection.</para>
@@ -438,6 +440,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Windows.Forms.AccessibleObject" /> for the column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> for the column.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -682,7 +688,6 @@
         <Parameter Name="rowNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the data source for the column is a <see cref="T:System.Data.DataTable" />, use the <see cref="E:System.Data.DataTable.ColumnChanging" /> or <see cref="E:System.Data.DataTable.RowChanging" /> events to determine when a row or column value has changed.</para>
@@ -691,6 +696,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value in the specified row from the specified <see cref="T:System.Windows.Forms.CurrencyManager" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.CurrencyManager" /> containing the data. </param>
         <param name="rowNum">
@@ -709,12 +718,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the minimum height of a row.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum height of a row.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPreferredHeight">
@@ -732,7 +744,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridColumnStyle.GetPreferredSize(System.Drawing.Graphics,System.Object)" /> will usually be invoked from a mouse down event to resize a column's height for a long string.</para>
@@ -741,6 +752,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the height used for automatically resizing columns.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height used for auto resizing a cell.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object. </param>
         <param name="value">
@@ -762,7 +777,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Windows.Forms.DataGridColumnStyle.GetPreferredSize(System.Drawing.Graphics,System.Object)" /> to determine the width a column should resize to, given a particular string or numeral.</para>
@@ -771,6 +785,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the width and height of the specified value. The width and height are used when the user navigates to <see cref="T:System.Windows.Forms.DataGridTableStyle" /> using the <see cref="T:System.Windows.Forms.DataGridColumnStyle" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that contains the dimensions of the cell.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object. </param>
         <param name="value">

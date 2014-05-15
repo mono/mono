@@ -58,7 +58,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not intended to be called from application code.</para>
@@ -68,6 +67,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a unique session identifier for the session.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique session identifier.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
@@ -85,7 +88,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not intended to be called from application code.</para>
@@ -95,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes a URL-encoded session identifier obtained from a cookie or the URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The decoded session identifier.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to decode. </param>
       </Docs>
@@ -112,7 +118,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not intended to be called from application code.</para>
@@ -123,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes the session identifier for saving to either a cookie or the URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The encoded session identifier.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to encode. </param>
       </Docs>
@@ -140,7 +149,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not intended to be called from application code.</para>
@@ -150,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the session-identifier value from the current Web request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current <see cref="P:System.Web.SessionState.HttpSessionState.SessionID" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
@@ -283,7 +295,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not intended to be called from application code.</para>
@@ -294,6 +305,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether a session identifier is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the session identifier is valid; otherwise, false.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to validate. </param>
       </Docs>

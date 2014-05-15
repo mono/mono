@@ -58,12 +58,15 @@
         <Parameter Name="id" Type="System.ApplicationIdentity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <format type="text/html"><a href="e72f2550-bdec-4a20-a2f4-2e14847266c1">IDefinitionAppId Interface</a></format> representing the unique identifier of an <see cref="T:System.ApplicationIdentity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unique identifier held by the <see cref="T:System.ApplicationIdentity" /> object.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The object from which to extract the identifier.</param>
       </Docs>

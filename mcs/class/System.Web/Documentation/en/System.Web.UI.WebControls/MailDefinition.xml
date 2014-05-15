@@ -126,7 +126,6 @@
         <Parameter Name="owner" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -140,6 +139,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an e-mail message from a text file to send by means of SMTP (Simple Mail Transfer Protocol).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The e-mail message from a text file.</para>
+        </returns>
         <param name="recipients">
           <attribution license="cc4" from="Microsoft" modified="false" />A comma-separated list of message recipients.</param>
         <param name="replacements">
@@ -164,7 +167,6 @@
         <Parameter Name="owner" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -178,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an e-mail message with replacements from a text file to send by means of SMTP (Simple Mail Transfer Protocol).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The e-mail message with replacements from a text file.</para>
+        </returns>
         <param name="recipients">
           <attribution license="cc4" from="Microsoft" modified="false" />The comma-separated list of recipients.</param>
         <param name="replacements">
@@ -400,7 +406,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
@@ -409,6 +414,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves any server control view-state changes that have occurred since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server control's current view state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">

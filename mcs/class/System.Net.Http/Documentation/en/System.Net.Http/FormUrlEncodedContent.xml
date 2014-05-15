@@ -29,9 +29,13 @@
         <Parameter Name="nameValueCollection" Type="System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.String,System.String&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="nameValueCollection">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.FormUrlEncodedContent" /> class with a specific collection of name/value pairs.</para>
+        </summary>
+        <param name="nameValueCollection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of name/value pairs.</param>
       </Docs>
     </Member>
   </Members>

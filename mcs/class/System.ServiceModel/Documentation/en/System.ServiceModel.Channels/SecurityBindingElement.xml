@@ -64,8 +64,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The channel factory created is a SOAP message security channel factory, which internally has a reference to the channel factory that corresponds to the binding context, (which includes the transport channel factory). </para>
@@ -75,8 +73,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel factory based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in. The channel factory created is a SOAP message security channel factory, which internally has a reference to the channel factory that corresponds to the binding context, (which includes the transport channel factory).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel factory based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel factory.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildChannelFactoryCore&lt;TChannel&gt;">
@@ -96,8 +100,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -107,8 +109,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented, creates a channel factory of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel factory of a specified type.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel factory.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildChannelListener&lt;TChannel&gt;">
@@ -133,8 +141,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The channel factory created is a SOAP message security channel listener, which internally has a reference to the channel listener that corresponds to the binding context, which includes the transport channel listener.</para>
@@ -144,8 +150,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel listener based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel listener based on the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> settings and the binding context passed in.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel listener.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildChannelListenerCore&lt;TChannel&gt;">
@@ -170,8 +182,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -181,8 +191,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented, creates a channel listener of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel listener of a specified type.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> object.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel listener.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildChannelFactory&lt;TChannel&gt;">
@@ -202,8 +218,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should call this method before trying to create a channel factory.</para>
@@ -212,8 +226,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a channel factory of the specified type can be built. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel factory of the specified type can be built; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel factory.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildChannelListener&lt;TChannel&gt;">
@@ -238,8 +258,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should call this method before trying to create a channel listener.</para>
@@ -248,8 +266,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a channel listener of the specified type can be built.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel listener of the specified type can be built; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.serviceModel.Channels.BindingContext" />.</param>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of channel listener.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CreateAnonymousForCertificateBindingElement">
@@ -264,7 +288,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The client and server must be configured out of band with the service certificate.</para>
@@ -274,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured for anonymous client authentication and certificate-based server authentication.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> that holds the new binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCertificateOverTransportBindingElement">
@@ -288,7 +315,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This binding element expects the transport to provide server authentication as well as message protection (for example, HTTPS).</para>
@@ -301,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that expects clients to do certificate-based authentication using SOAP message security. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCertificateOverTransportBindingElement">
@@ -317,7 +347,6 @@
         <Parameter Name="version" Type="System.ServiceModel.MessageSecurityVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This binding element expects the transport to provide server authentication as well as message protection (for example, HTTPS). The binding element is configured with the specified <see cref="T:System.ServiceModel.MessageSecurityVersion" />.</para>
@@ -329,6 +358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that expects clients to do certificate-based authentication using SOAP message security. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.MessageSecurityVersion" /> for the binding.</param>
       </Docs>
@@ -345,7 +378,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" /> object returned from <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.LocalClientSettings" /> has its <see cref="P:System.ServiceModel.Channels.LocalClientSecuritySettings.DetectReplays" /> property set to false.</para>
@@ -355,6 +387,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a binding element using a certificate to sign messages. This binding element can be used only for one-way message exchanges and is capable only of signing the message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.AsymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateIssuedTokenBindingElement">
@@ -371,7 +407,6 @@
         <Parameter Name="issuedTokenParameters" Type="System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The issued token parameters must have a symmetric key type.</para>
@@ -383,6 +418,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require client authentication using a symmetric-key based issued token. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="issuedTokenParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" /> that represents the symmetric-key based issued token.</param>
       </Docs>
@@ -401,7 +440,6 @@
         <Parameter Name="issuedTokenParameters" Type="System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The issued token can have a symmetric or an asymmetric key. The client and server must be provisioned with the server's certificate.</para>
@@ -414,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require client authentication based on an issued token and server authentication based on the server certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="issuedTokenParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" /> that represents the symmetric-key based issued token.</param>
       </Docs>
@@ -432,7 +474,6 @@
         <Parameter Name="issuedTokenParameters" Type="System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The server issues a cookie-based security context token at the end of the SSL protocol.</para>
@@ -442,6 +483,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require client authentication based on an issued token and server authentication based on the server certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="issuedTokenParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />.</param>
       </Docs>
@@ -461,7 +506,6 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The created binding has <see cref="P:System.ServiceModel.Channels.SymmetricSecurityBindingElement.RequireSignatureConfirmation" /> set to true and <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.MessageSecurityVersion" /> set to <see cref="P:System.ServiceModel.MessageSecurityVersion.WSSecurity11WSTrustFebruary2005WSSecureConversationFebruary2005WSSecurityPolicy11" />.</para>
@@ -470,6 +514,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require client authentication based on an issued token and server authentication based on the server certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="issuedTokenParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />.</param>
         <param name="requireCancellation">
@@ -490,7 +538,6 @@
         <Parameter Name="issuedTokenParameters" Type="System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The created binding has <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.IncludeTimestamp" /> set to true.</para>
@@ -504,6 +551,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element configured to require SOAP security based client authentication using an issued token. This binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="issuedTokenParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ServiceModel.Security.Tokens.IssuedSecurityTokenParameters" />.</param>
       </Docs>
@@ -520,7 +571,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To do Kerberos authentication, the server must run in an account that has a service principal name registered with Active Directory. NetworkService is such an account.</para>
@@ -529,6 +579,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require client authentication based on the client's Kerberos token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKerberosOverTransportBindingElement">
@@ -543,7 +597,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To do Kerberos authentication, the server must run in an account that has a service principal name registered with Active Directory. NetworkService is such an account.</para>
@@ -554,6 +607,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that is configured to require SOAP-security based client authentication using the client's Kerberos token. This binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMutualCertificateBindingElement">
@@ -568,7 +625,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The binding is configured so that a new random symmetric key (encrypted for the server) is generated for every request by the client and is used to protect the request as well as the response from the server. The client's certificate is used as an endorsing supporting token on the request.</para>
@@ -578,6 +634,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an asymmetric security binding element that is configured to require certificate-based client authentication as well as certificate-based server authentication.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMutualCertificateBindingElement">
@@ -594,7 +654,6 @@
         <Parameter Name="version" Type="System.ServiceModel.MessageSecurityVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the version is WSSecurity10, then the binding element is configured so that the client request is signed by its certificate and encrypted with the server certificate. </para>
@@ -607,6 +666,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an asymmetric security binding element that is configured to require certificate-based client authentication as well as certificate-based server authentication.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The message security version.</param>
       </Docs>
@@ -626,7 +689,6 @@
         <Parameter Name="allowSerializedSigningTokenOnReply" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="allowSerializedSigningTokenOnReply" /> parameter, when true, enables interoperability with older versions of Web Services Enhancements (WSE).</para>
@@ -638,6 +700,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an asymmetric security binding element that is configured to require certificate-based client authentication as well as certificate-based server authentication.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The message security version.</param>
         <param name="allowSerializedSigningTokenOnReply">
@@ -656,12 +722,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an asymmetric security binding element that is configured to require certificate-based client authentication as well as certificate-based server authentication. This authentication mode can be used to secure duplex message-exchange patterns and requires the service to be configured with the client certificate out of band.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.AsymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMutualCertificateDuplexBindingElement">
@@ -678,7 +747,6 @@
         <Parameter Name="version" Type="System.ServiceModel.MessageSecurityVersion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -689,6 +757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an asymmetric security binding element that is configured to require certificate-based client authentication as well as certificate-based server authentication. This authentication mode can be used to secure duplex message exchange patterns and requires the service to be configured with the client certificate out of band.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ServiceModel.Channels.AsymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The message security version.</param>
       </Docs>
@@ -708,7 +780,6 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The binding element is configured to use session-based security context tokens.</para>
@@ -720,6 +791,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to establish a secure conversation between the client and service. The security context token issued at the end of the secure conversation handshake is used to secure the messages. The bootstrap security binding element specifies how the secure conversation handshake messages are secured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateSecureConversationBindingElement">
@@ -738,7 +813,6 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="requireCancellation" /> is false, cookie-based security context tokens are issued; otherwise, session-based security context tokens are issued.</para>
@@ -753,6 +827,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to establish a secure conversation between the client and service. The security context token issued at the end of the secure conversation handshake is used to secure the messages.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
         <param name="requireCancellation">
           <attribution license="cc4" from="Microsoft" modified="false" />true if cancellation is required; otherwise, false. Setting this parameter to false enables a security context token that is useful in Web farm scenarios, because in this mode the session state is encoded inside the established security context token instead of being kept in the server memory.</param>
       </Docs>
@@ -775,7 +853,6 @@
       <Docs>
         <param name="binding">To be added.</param>
         <param name="protectionRequirements">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="bootstrapProtectionRequirements" /> parameter enables customization of how the messages exchanged as part of the secure conversation handshake are secured.</para>
@@ -790,6 +867,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to establish a secure conversation between the client and service. The security context token issued at the end of the secure conversation handshake is used to secure the messages. The bootstrap security binding element specifies how the secure conversation handshake messages are secured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> object.</para>
+        </returns>
         <param name="requireCancellation">
           <attribution license="cc4" from="Microsoft" modified="false" />true if cancellation is required; otherwise, false. Setting this parameter to false enables a security context token that is useful in Web farm scenarios, because in this mode the session state is encoded inside the established security context token instead of being kept in the server memory.</param>
       </Docs>
@@ -808,7 +889,6 @@
         <Parameter Name="requireClientCertificate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security context token issued after the SSL negotiation is cookie based.</para>
@@ -817,6 +897,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to do SOAP-level SSL negotiation between the client and server, noting whether a client certificate is required.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> that holds the new binding.</para>
+        </returns>
         <param name="requireClientCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />true if a client certificate is required during the SSL negotiation.</param>
       </Docs>
@@ -836,7 +920,6 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security context token issued after the SSL negotiation is session based is <paramref name="requireCancellation" /> is true; otherwise, it is cookie based.</para>
@@ -845,6 +928,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that does SOAP SSL negotiation, noting whether a client certificate and cancellation is required.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> that holds the new binding.</para>
+        </returns>
         <param name="requireClientCertificate">
           <attribution license="cc4" from="Microsoft" modified="false" />true if a client certificate is required during the SSL negotiation.</param>
         <param name="requireCancellation">
@@ -863,7 +950,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security context token issued at the end of the SSPI negotiation is cookie based.</para>
@@ -872,6 +958,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that does SOAP SSPI negotiation based on the Negotiate authentication package.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateSspiNegotiationBindingElement">
@@ -888,7 +978,6 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="requireCancellation" /> is false, the security context token issued at the end of the SSPI negotiation is cookie based; otherwise, it is session based.</para>
@@ -897,6 +986,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that does SOAP SSPI negotiation based on the Negotiate authentication package.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="requireCancellation">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether cancellation is required. Setting it to false enables a security context token that is useful in Web farm scenarios, because in this mode the session state is encoded inside the established security context token instead of being kept in the server memory.</param>
       </Docs>
@@ -913,7 +1006,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security context token issued at the end of SSPI negotiation is cookie based.</para>
@@ -924,6 +1016,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that is configured for client authentication based on SOAP SSPI negotiation using the Negotiate authentication package. The binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateSspiNegotiationOverTransportBindingElement">
@@ -940,7 +1036,6 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="requireCancellation" /> is false, cookie-based security context tokens are issued; otherwise, session-based security context tokens are issued.</para>
@@ -951,6 +1046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that is configured for client authentication based on SOAP SSPI negotiation using the Negotiate authentication package. The binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="requireCancellation">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether cancellation is required. Setting it to false enables a security context token that is useful in Web farm scenarios, because in this mode the session state is encoded inside the established security context token instead of being kept in the server memory.</param>
       </Docs>
@@ -967,7 +1066,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The server certificate must be configured out of band at the client.</para>
@@ -976,6 +1074,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require user name- and password-based client authentication and certificate-based server authentication. The created binding element requires the client to be configured with a service certificate that is out-of-band before opening a communication channel with a service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateUserNameForSslBindingElement">
@@ -990,7 +1092,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security context token issued at the end of SSPI negotiation is cookie based. </para>
@@ -1000,6 +1101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require user name- and password-based client authentication and certificate-based server authentication. The client authenticates the server using the SOAP-level SSL protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateUserNameForSslBindingElement">
@@ -1016,7 +1121,6 @@
         <Parameter Name="requireCancellation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="requireCancellation" /> is false, stateful security context tokens are issued; otherwise, stateless security context tokens are issued.</para>
@@ -1026,6 +1130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a symmetric security binding element that is configured to require user name- and password-based client authentication and certificate-based server authentication. The client authenticates the server using the SOAP-level SSL protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SymmetricSecurityBindingElement" /> object.</para>
+        </returns>
         <param name="requireCancellation">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether cancellation is required. Setting it to false enables a security context token that is useful in Web farm scenarios, because in this mode the session state is encoded inside the established security context token instead of being kept in the server memory.</param>
       </Docs>
@@ -1042,7 +1150,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The created binding has <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.IncludeTimestamp" /> set to true. The <see cref="T:System.ServiceModel.Channels.LocalClientSecuritySettings" /> object returned from <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.LocalClientSettings" /> has its <see cref="P:System.ServiceModel.Channels.LocalClientSecuritySettings.DetectReplays" /> property set to false.</para>
@@ -1052,6 +1159,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security binding element that is configured for client authentication based on a user name and password sent as part of the SOAP message. The binding element requires the transport to provide server authentication and message protection (for example, HTTPS).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.TransportSecurityBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultAlgorithmSuite">
@@ -1124,8 +1235,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method gets the specified object from the base class, or from one of that class's ancestors. The object returned is usually a collection of properties, for example, an object that implements <see cref="T:System.ServiceModel.Channels.ISecurityCapabilities" />. </para>
@@ -1135,8 +1244,14 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a specified object using the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified object from the <see cref="T:System.ServiceModel.Channels.BindingContext" /> or null if the object is not found.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property to get.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="IncludeTimestamp">
@@ -1448,7 +1563,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Information returned by <see cref="M:System.ServiceModel.Channels.SecurityBindingElement.ToString" /> includes the <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.DefaultAlgorithmSuite" />, <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.EndpointSupportingTokenParameters" />, <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.IncludeTimestamp" />, <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.KeyEntropyMode" />, <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.OptionalEndpointSupportingTokenParameters" />, <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.SecurityHeaderLayout" />, and <see cref="P:System.ServiceModel.Channels.SecurityBindingElement.OperationSupportingTokenParameters" /> values of the current instance.</para>
@@ -1457,6 +1571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a description of this class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A description of the current <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

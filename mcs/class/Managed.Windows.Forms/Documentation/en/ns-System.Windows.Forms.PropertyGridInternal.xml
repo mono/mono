@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms.PropertyGridInternal">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The PropertyGridInternal namespace provides internal support for the PropertyGrid control. The classes in this namespace support the .NET Framework infrastructure and are not intended to be used directly from your code.</para>
+    </summary>
   </Docs>
 </Namespace>

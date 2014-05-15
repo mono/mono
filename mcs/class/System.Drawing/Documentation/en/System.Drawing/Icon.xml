@@ -323,12 +323,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones the <see cref="T:System.Drawing.Icon" />, creating a duplicate image.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can be cast to an <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,6 +354,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.Icon" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -370,7 +377,6 @@
         <Parameter Name="filePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A relative path is assumed to be relative to the current working directory.</para>
@@ -380,6 +386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an icon representation of an image that is contained in the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Icon" /> representation of the image that is contained in the specified file.</para>
+        </returns>
         <param name="filePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file that contains an image.</param>
       </Docs>
@@ -410,7 +420,6 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Icon'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When using this method, you must dispose of the original icon by using the <unmanagedCodeEntityReference>DestroyIcon</unmanagedCodeEntityReference> method in the Win32 API to ensure that the resources are released.</para>
@@ -419,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a GDI+ <see cref="T:System.Drawing.Icon" /> from the specified Windows handle to an icon (HICON).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Icon" /> this method creates.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />A Windows handle to an icon. </param>
       </Docs>
@@ -551,7 +564,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Bitmap'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The transparent areas of the icon are lost when it is converted to a bitmap, and the transparent color of the resulting bitmap is set to RGB(13,11,12). The returned bitmap has the same height and width as the original icon.</para>
@@ -560,6 +572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts this <see cref="T:System.Drawing.Icon" /> to a GDI+ <see cref="T:System.Drawing.Bitmap" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Bitmap" /> that represents the converted <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -574,12 +590,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a human-readable string that describes the <see cref="T:System.Drawing.Icon" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that describes the <see cref="T:System.Drawing.Icon" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

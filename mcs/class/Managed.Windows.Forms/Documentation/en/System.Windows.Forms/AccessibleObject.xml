@@ -188,7 +188,6 @@
         <Parameter Name="yTop" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table describes the object types that the <see cref="M:System.Windows.Forms.AccessibleObject.Accessibility#IAccessible#accHitTest(System.Int32,System.Int32)" /> method can return.</para>
@@ -228,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the child object at the specified screen coordinates. For a description of this member, see <see cref="M:Accessibility.IAccessible.accHitTest(System.Int32,System.Int32)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The accessible object at the point specified by <paramref name="xLeft" /> and <paramref name="yTop" />. </para>
+        </returns>
         <param name="xLeft">
           <attribution license="cc4" from="Microsoft" modified="false" />The horizontal coordinate.</param>
         <param name="yTop">
@@ -276,7 +279,6 @@
         <Parameter Name="childID" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table describes the object types that the <see cref="M:System.Windows.Forms.AccessibleObject.Accessibility#IAccessible#accNavigate(System.Int32,System.Object)" /> method can return.</para>
@@ -324,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Navigates to an accessible object relative to the current object. For a description of this member, see <see cref="M:Accessibility.IAccessible.accNavigate(System.Int32,System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The accessible object positioned at the value specified by <paramref name="navDir" />. </para>
+        </returns>
         <param name="navDir">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.AccessibleNavigation" /> enumerations that specifies the direction to navigate. </param>
         <param name="childID">
@@ -860,12 +866,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the accessible child corresponding to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that represents the accessible child corresponding to the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the accessible child. </param>
       </Docs>
@@ -882,12 +891,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the number of children belonging to an accessible object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of children belonging to an accessible object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -902,7 +914,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The concept of keyboard focus is related to that of an active window. An active window is the foreground window in which the user is working. The object with the keyboard focus is either the active window or a child object of the active window.</para>
@@ -912,6 +923,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the object that has the keyboard focus.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that specifies the currently focused child. This method returns the calling object if the object itself is focused. Returns null if no object has focus.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -946,12 +961,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the currently selected child.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that represents the currently selected child. This method returns the calling object if the object itself is selected. Returns null if is no child is currently selected and the object itself does not have focus.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -988,7 +1006,6 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For nonrectangular objects such as list view items, the coordinates of the object's bounding rectangle retrieved by <see cref="P:System.Windows.Forms.AccessibleObject.Bounds" /> can fail if tested with <see cref="M:System.Windows.Forms.AccessibleObject.HitTest(System.Int32,System.Int32)" />, because <see cref="M:System.Windows.Forms.AccessibleObject.HitTest(System.Int32,System.Int32)" /> determines the object's boundaries on a pixel-by-pixel basis.</para>
@@ -997,6 +1014,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the child object at the specified screen coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that represents the child object at the given screen coordinates. This method returns the calling object if the object itself is at the location specified. Returns null if no object is at the tested location.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The horizontal screen coordinate. </param>
         <param name="y">
@@ -1061,7 +1082,6 @@
         <Parameter Name="navdir" Type="System.Windows.Forms.AccessibleNavigation" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Navigation, both spatial and logical, is always restricted to the user interface elements within a container. With spatial navigation, clients can navigate only to a sibling of the starting object. Depending on the navigational flag used with logical navigation, clients can navigate to either a child or to a sibling of the starting object. This method does not change the selection or focus. To change the focus or to select an object, use <see cref="M:System.Windows.Forms.AccessibleObject.Select(System.Windows.Forms.AccessibleSelection)" />. The <see cref="M:System.Windows.Forms.AccessibleObject.Navigate(System.Windows.Forms.AccessibleNavigation)" /> method retrieves only user interface elements that have a defined screen location.</para>
@@ -1070,6 +1090,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Navigates to another accessible object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.AccessibleObject" /> that represents one of the <see cref="T:System.Windows.Forms.AccessibleNavigation" /> values.</para>
+        </returns>
         <param name="navdir">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.AccessibleNavigation" /> values. </param>
       </Docs>
@@ -1247,7 +1271,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1256,6 +1279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Reflection.FieldInfo" /> object corresponding to the specified field and binding flag. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetField(System.String,System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object containing the field information for the named object that meets the search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field to find.</param>
         <param name="bindingAttr">
@@ -1276,7 +1303,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each field must have a unique name. The <see cref="F:System.Reflection.BindingFlags.NonPublic" /> flag specifies that nonpublic fields are included in the search. The <see cref="F:System.Reflection.BindingFlags.Public" /> flag specifies that public fields are included in the search.</para>
@@ -1286,6 +1312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Reflection.FieldInfo" /> objects corresponding to all fields of the current class. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetFields(System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.FieldInfo" /> objects containing all the field information for this reflection object that meets the search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search.</param>
       </Docs>
@@ -1305,7 +1335,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1314,6 +1343,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Reflection.MemberInfo" /> objects corresponding to all public members or to all members that match a specified name. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetMember(System.String,System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects matching the name parameter.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find.</param>
         <param name="bindingAttr">
@@ -1334,7 +1367,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1343,6 +1375,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Reflection.MemberInfo" /> objects corresponding either to all public members or to all members of the current class. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetMembers(System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MemberInfo" /> objects containing all the member information for this reflection object.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search.</param>
       </Docs>
@@ -1362,7 +1398,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1371,6 +1406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.MethodInfo" /> object corresponding to a specified method under specified search constraints. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetMethod(System.String,System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object containing the method information, with the match being based on the method name and search constraints specified in <paramref name="bindingAttr" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find.</param>
         <param name="bindingAttr">
@@ -1395,7 +1434,6 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value is a match based on the method name, the <see cref="T:System.Reflection.BindingFlags" /> enumeration, the kind of type conversion specified by the <paramref name="binder" /> parameter, the overload, and the <see cref="T:System.Reflection.ParameterInfo" /> that describes the signature of the method.</para>
@@ -1405,6 +1443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.MethodInfo" /> object corresponding to a specified method, using a Type array to choose from among overloaded methods. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetMethod(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type[],System.Reflection.ParameterModifier[])" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested method that matches all the specified parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find.</param>
         <param name="bindingAttr">
@@ -1431,7 +1473,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1440,6 +1481,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Reflection.MethodInfo" /> objects with all public methods or all methods of the current class. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetMethods(System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.MethodInfo" /> objects containing all the methods defined for this reflection object that meet the search constraints specified in bindingAttr.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attributes used to control the search. </param>
       </Docs>
@@ -1458,7 +1503,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1467,6 +1511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Reflection.PropertyInfo" /> objects corresponding to all public properties or to all properties of the current class. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetProperties(System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.PropertyInfo" /> objects for all the properties defined on the reflection object.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />The binding attribute used to control the search.</param>
       </Docs>
@@ -1486,7 +1534,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1495,6 +1542,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.PropertyInfo" /> object corresponding to a specified property under specified search constraints. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetProperty(System.String,System.Reflection.BindingFlags)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object for the located property that meets the search constraints specified in <paramref name="bindingAttr" />, or null if the property was not located.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to find.</param>
         <param name="bindingAttr">
@@ -1520,7 +1571,6 @@
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AccessibleObject" /> instance is cast to an <see cref="T:System.Reflection.IReflect" /> interface.</para>
@@ -1529,6 +1579,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Reflection.PropertyInfo" /> object corresponding to a specified property with specified search constraints. For a description of this member, see <see cref="M:System.Reflection.IReflect.GetProperty(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Type,System.Type[],System.Reflection.ParameterModifier[])" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.PropertyInfo" /> object for the located property, if a property with the specified name was located in this reflection object, or null if the property was not located.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find.</param>
         <param name="bindingAttr">
@@ -1564,7 +1618,6 @@
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="invokeAttr" /> parameter may be a constructor, method, property, or field. A suitable invocation attribute must be specified. Invoke the default member of a class by passing the empty string ("") as the name of the member.</para>
@@ -1575,6 +1628,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes a specified member. For a description of this member, see <see cref="M:System.Reflection.IReflect.InvokeMember(System.String,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object,System.Object[],System.Reflection.ParameterModifier[],System.Globalization.CultureInfo,System.String[])" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to find.</param>
         <param name="invokeAttr">

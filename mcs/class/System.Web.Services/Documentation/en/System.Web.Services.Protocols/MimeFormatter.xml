@@ -54,7 +54,6 @@
         <Parameter Name="initializer" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MimeFormatter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method creates an instance of the derived class and invokes the derived class's implementation of the abstract <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method. The <see cref="M:System.Web.Services.Protocols.MimeFormatter.CreateInstance(System.Type,System.Object)" /> method is invoked at the time a request or response is processed.</para>
@@ -64,6 +63,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and initializes an instance of a concrete class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.MimeFormatter" /> object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />, of which to create an instance.</param>
         <param name="initializer">
@@ -84,7 +87,6 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
@@ -94,6 +96,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an initializer for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the initializer for the specified method.</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> that specifies the Web method for which the initializer is obtained.</param>
       </Docs>
@@ -113,7 +119,6 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
@@ -123,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an initializer for the specified method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> object that contains the initializer for the specified method.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />,- for which an initializer is obtained.</param>
         <param name="methodInfo">
@@ -143,7 +152,6 @@
         <Parameter Name="methodInfos" Type="System.Web.Services.Protocols.LogicalMethodInfo[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
@@ -153,6 +161,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an array of initializer objects corresponding to an input array of method definitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of initializer objects corresponding to the input array of method definitions.</para>
+        </returns>
         <param name="methodInfos">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of Web methods where, for each method, the object of the corresponding index in the returned initializer array is obtained.</param>
       </Docs>
@@ -172,7 +184,6 @@
         <Parameter Name="methodInfos" Type="System.Web.Services.Protocols.LogicalMethodInfo[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An initializer is an object passed as a parameter to the <see cref="M:System.Web.Services.Protocols.MimeFormatter.Initialize(System.Object)" /> method.</para>
@@ -182,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of initializer objects corresponding to an input array of method definitions for a specified class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of initializer objects corresponding to the input array of method definitions for a specified class derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The Type, derived from <see cref="T:System.Web.Services.Protocols.MimeFormatter" />, for which initializers are obtained.</param>
         <param name="methodInfos">

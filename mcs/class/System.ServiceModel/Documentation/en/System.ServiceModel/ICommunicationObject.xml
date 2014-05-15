@@ -135,7 +135,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method causes an <see cref="T:System.ServiceModel.ICommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state to the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state. The <see cref="M:System.ServiceModel.ICommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). </para>
@@ -144,6 +143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to close a communication object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation. </para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous close operation.</param>
         <param name="state">
@@ -166,7 +169,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method causes an <see cref="T:System.ServiceModel.ICommunicationObject" /> to gracefully transition from any state, other than the <see cref="F:System.ServiceModel.CommunicationState.Opened" /> state to the <see cref="F:System.ServiceModel.CommunicationState.Closed" /> state with in a specified interval of time. The <see cref="M:System.ServiceModel.ICommunicationObject.BeginClose" /> method allows any unfinished work to be completed before returning. For example, finish sending any buffered messages). </para>
@@ -175,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to close a communication object with a specified timeout.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous close operation.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
         <param name="callback">
@@ -198,7 +204,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an <see cref="T:System.ServiceModel.ICommunicationObject" /> is instantiated, it begins in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state. In the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, the object can be configured (for example, properties can be set, or events can be registered), but it is not yet usable to send or receive messages. The <see cref="M:System.ServiceModel.ICommunicationObject.BeginOpen" /> method causes an <see cref="T:System.ServiceModel.ICommunicationObject" /> to enter into the <see cref="F:System.ServiceModel.CommunicationState.Opening" /> state where it remains until the open operation succeeds, the open operation times out or fails and the object becomes faulted, or the <see cref="T:System.ServiceModel.ICommunicationObject" /> is aborted.</para>
@@ -208,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to open a communication object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate that receives notification of the completion of the asynchronous open operation.</param>
         <param name="state">
@@ -230,7 +239,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an <see cref="T:System.ServiceModel.ICommunicationObject" /> is instantiated, it begins in the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state. In the <see cref="F:System.ServiceModel.CommunicationState.Created" /> state, the object can be configured (for example, properties can be set, or events can be registered), but it is not yet usable to send or receive messages. The <see cref="M:System.ServiceModel.ICommunicationObject.Open" /> method causes an <see cref="T:System.ServiceModel.ICommunicationObject" /> to enter into the <see cref="F:System.ServiceModel.CommunicationState.Opening" /> state where it remains until the open operation succeeds, the open operation times out or fails and the object becomes faulted, or the <see cref="T:System.ServiceModel.ICommunicationObject" /> is aborted.</para>
@@ -240,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to open a communication object within a specified interval of time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous open operation. </para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Timespan" /> that specifies how long the send operation has to complete before timing out.</param>
         <param name="callback">

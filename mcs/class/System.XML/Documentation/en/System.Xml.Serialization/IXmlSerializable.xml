@@ -38,7 +38,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Xml.Schema.XmlSchema'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When serializing or deserializing an object, the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class does not perform XML validation. For this reason, it is often safe to omit schema information by providing a trivial implementation of this method, for example by returning null (Nothing in Visual Basic).</para>
@@ -49,6 +48,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is reserved and should not be used. When implementing the IXmlSerializable interface, you should return null (Nothing in Visual Basic) from this method, and instead, if specifying a custom schema is required, apply the <see cref="T:System.Xml.Serialization.XmlSchemaProviderAttribute" /> to the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> that describes the XML representation of the object that is produced by the <see cref="M:System.Xml.Serialization.IXmlSerializable.WriteXml(System.Xml.XmlWriter)" /> method and consumed by the <see cref="M:System.Xml.Serialization.IXmlSerializable.ReadXml(System.Xml.XmlReader)" /> method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadXml">

@@ -253,7 +253,6 @@
         <Parameter Name="settingsBase" Type="System.Configuration.SettingsBase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -263,6 +262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a <see cref="T:System.Configuration.SettingsBase" /> class that is synchronized (thread safe).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsBase" /> class that is synchronized.</para>
+        </returns>
         <param name="settingsBase">
           <attribution license="cc4" from="Microsoft" modified="false" />The class used to support user property settings.</param>
       </Docs>

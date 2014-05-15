@@ -82,12 +82,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> Returns an enumerator that iterates through the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -101,7 +104,6 @@
         <Parameter Name="schemaClassName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must call the <see cref="M:System.DirectoryServices.DirectoryEntry.CommitChanges" /> method on the new entry to make the creation permanent. When you call this method, you can then set mandatory property values on the new entry. The providers each have different requirements for properties that need to be set before a call to the <see cref="M:System.DirectoryServices.DirectoryEntry.CommitChanges" /> method is made. If those requirements are not met, the provider might throw an exception. Check with your provider to determine which properties must be set before committing changes.</para>
@@ -110,6 +112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new entry in the container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that represents the new entry.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" /> The name of the new entry.</param>
         <param name="schemaClassName">
@@ -149,7 +155,6 @@
       </Parameters>
       <Docs>
         <param name="filter">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If child objects of different types have the same name, the first matching child object is returned.</para>
@@ -162,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the member of this collection with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> that represents the child object that was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -177,7 +186,6 @@
       <Docs>
         <param name="filter">To be added.</param>
         <param name="otype">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If no matching result is found, a <see cref="T:System.DirectoryServices.DirectoryServicesCOMException" /> with error code 0x2030 is thrown.</para>
@@ -186,6 +194,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the member of this collection with the specified name and of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DirectoryServices.DirectoryEntry" /> object that represents the child object that was found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SchemaFilter">

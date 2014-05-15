@@ -53,14 +53,6 @@
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Net.Authorization" /> instance containing the response from the
-   authentication module, or <see langword="null" /> if no authentication module
-   responded to the challenge.</para>
-          <para> Applications do not call this method; it is called by
-<see cref="T:System.Net.WebRequest" /> 
-instances.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="challenge " />, <paramref name="request " />, or <paramref name="credentials " /> is <see langword="null" />.</exception>
         <remarks>
@@ -73,6 +65,10 @@ instances.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls each registered authentication module to find the first module that can respond to the authentication request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Net.Authorization" /> class containing the result of the authorization attempt. If there is no authentication module to respond to the challenge, this method returns null.</para>
+        </returns>
         <param name="challenge">
           <attribution license="cc4" from="Microsoft" modified="false" />The challenge returned by the Internet resource. </param>
         <param name="request">
@@ -161,12 +157,6 @@ instances.</para>
         <Parameter Name="credentials" Type="System.Net.ICredentials" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Net.Authorization" /> instance if an authentication module can provide
-   authentication information to be sent with <paramref name="request" /> ;
-   otherwise, <see langword="null" />. If <paramref name="credentials" />
-   is <see langword="null" />, this method returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="request " />is <see langword="null." /></para>
@@ -180,6 +170,10 @@ instances.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Preauthenticates a request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the <see cref="T:System.Net.Authorization" /> class if the request can be preauthenticated; otherwise, null. If <paramref name="credentials" /> is null, this method returns null.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.WebRequest" /> to an Internet resource. </param>
         <param name="credentials">

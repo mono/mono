@@ -144,7 +144,6 @@
       </Parameters>
       <Docs>
         <param name="param">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -154,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the specified <see cref="T:System.Web.UI.WebControls.Parameter" /> object to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index value of the added item.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,7 +173,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -180,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.WebControls.Parameter" /> object with the specified name and default value, and appends it to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index value of the added item.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
         <param name="value">
@@ -201,7 +207,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -211,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.WebControls.Parameter" /> object with the specified name, <see cref="T:System.TypeCode" />, and default value, and appends it to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index value of the added item.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter. </param>
         <param name="type">
@@ -233,7 +242,6 @@
       </Parameters>
       <Docs>
         <param name="param">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -243,6 +251,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection contains a specific value</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is found in the <see cref="T:System.Web.UI.WebControls.ParameterCollection" />; otherwise, false. If null is passed for the <paramref name="value" /> parameter, false is returned.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -284,7 +296,6 @@
       </Parameters>
       <Docs>
         <param name="idx">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -370,6 +381,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a default <see cref="T:System.Web.UI.WebControls.Parameter" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A default instance of a <see cref="T:System.Web.UI.WebControls.Parameter" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -383,13 +398,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of <see cref="T:System.Web.UI.WebControls.Parameter" /> types that the <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection can contain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered array of <see cref="T:System.Type" /> objects that identify the types of <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that the collection can contain.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -406,7 +424,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -417,6 +434,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an ordered collection of <see cref="T:System.Web.UI.WebControls.Parameter" /> object names and their corresponding values currently contained by the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> of name/value pairs.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpRequest" /> that the <see cref="T:System.Web.UI.WebControls.Parameter" /> binds to.</param>
         <param name="control">
@@ -437,7 +458,6 @@
       </Parameters>
       <Docs>
         <param name="param">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -447,6 +467,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of a specified <see cref="T:System.Web.UI.WebControls.Parameter" /> object in the <see cref="T:System.Web.UI.WebControls.ParameterCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="parameter" />, if it is found in the collection; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

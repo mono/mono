@@ -353,9 +353,10 @@
         <Parameter Name="input" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="input" /> is <see langword="null" />.</exception>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data to read. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -389,7 +390,8 @@
         <Parameter Name="input" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader containing the XML data to read. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -462,12 +464,14 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="fragType">To be added.</param>
-        <param name="context">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="xmlFragment" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="fragType" /> is not an <see langword="Element" />, <see langword="Attribute" />, or <see langword="Document" /><see cref="T:System.Xml.XmlNodeType" />.</exception>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This also determines what the fragment can contain. (See table below.) </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the <paramref name="xmlFragment" /> is to be parsed. This includes the <see cref="T:System.Xml.XmlNameTable" /> to use, encoding, namespace scope, the current xml:lang, and the xml:space scope. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -555,10 +559,12 @@
         <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <param name="nt">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="input" /> or <paramref name="nt" /> is <see langword="null" />.</exception>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to use for resolving external resources. The <see cref="P:System.Xml.XmlTextReader.BaseURI" /> is set to this value. If <paramref name="url" /> is null, BaseURI is set to String.Empty. </param>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNameTable to use. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -595,10 +601,12 @@
         <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <param name="nt">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="nt" /> is <see langword="null" />.</exception>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader containing the XML data to read. </param>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNameTable to use. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -636,12 +644,14 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="fragType">To be added.</param>
-        <param name="context">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="xmlFragment" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="fragType" /> is not an <see langword="Element" />, <see langword="Attribute" />, or <see langword="Document" /><see cref="T:System.Xml.XmlNodeType" />.</exception>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This also determines what the fragment string can contain. (See table below.) </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the <paramref name="xmlFragment" /> is to be parsed. This includes the <see cref="T:System.Xml.XmlNameTable" /> to use, encoding, namespace scope, the current xml:lang, and the xml:space scope. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1117,10 +1127,6 @@ otherwise, <see langword="false" />. </para>
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   value of the specified attribute.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="i" /> is less than 0, or greater than or equal to the <see cref="P:System.Xml.XmlTextReader.AttributeCount" /> of the containing element.<para><block subset="none" type="note"><see cref="P:System.Xml.XmlTextReader.AttributeCount" /> returns zero for all node types except <see langword="Attribute" />, <see langword="DocumentType" />, <see langword="Element" />, and <see langword="XmlDeclaration" />. Therefore, this exception is thrown if the reader is not positioned on one of these node types.</block></para></exception>
         <example>
@@ -1138,6 +1144,10 @@ otherwise, <see langword="false" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the attribute with the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the attribute. The index is zero-based. (The first attribute has index 0.) </param>
       </Docs>
@@ -1160,13 +1170,6 @@ otherwise, <see langword="false" />. </para>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   value of the specified attribute, or <see langword="null" />
-   if
-   the attribute is not found. If <paramref name="name" /> is <see langword="null" />, <see langword="null" />
-   is returned.</para>
-        </returns>
         <example>
           <para>See the <see cref="M:System.Xml.XmlTextReader.GetAttribute(System.Int32)" />(<see langword="String" />, <see langword="String" />) method for an example
    using all three overloads of this method.</para>
@@ -1183,6 +1186,10 @@ otherwise, <see langword="false" />. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the attribute with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
@@ -1206,14 +1213,6 @@ otherwise, <see langword="false" />. </para>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceURI">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" />
-containing the value of the specified attribute, or <see langword="null" />
-if the attribute is not found. If <paramref name="localname" /> is <see langword="null" />,
-<see langword="null" /> 
-is returned.</para>
-        </returns>
         <example>
           <para>This example writes the value of the attributes from the
       following XML fragment to the console:</para>
@@ -1259,6 +1258,8 @@ public class Reader {
           <para> urn:datatypes</para>
           <para> int - int - int</para>
         </example>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1278,6 +1279,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the attribute with the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified attribute. If the attribute is not found, null is returned. This method does not move the reader.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
         <param name="namespaceURI">
@@ -1300,7 +1305,6 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1374,6 +1378,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection that contains all namespaces currently in-scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> object that contains all the current in-scope namespaces. If the reader is not positioned on an element, an empty dictionary (no namespaces) is returned.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> value that specifies the type of namespace nodes to return.</param>
       </Docs>
@@ -1393,9 +1401,6 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The <see cref="T:System.IO.StringReader" qualify="true" /> attached to the XML.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1408,6 +1413,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the remainder of the buffered XML.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.TextReader" /> containing the remainder of the buffered XML.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1424,7 +1433,6 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1436,6 +1444,10 @@ String dt4 = reader.GetAttribute("dt",http://www.w3.org/2000/xmlns/);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the class can return line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the class can return line information; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasValue">
@@ -1857,10 +1869,6 @@ node or, for node types that do not have a name (like
         <Parameter Name="prefix" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" qualify="true" /> containing the 
-   namespace URI to which the prefix maps. If <see cref="P:System.Xml.XmlTextReader.Namespaces" /> is <see langword="false" />, <paramref name="prefix" /> is not in <see cref="P:System.Xml.XmlTextReader.NameTable" />, or no matching namespace is found, <see langword="null" /> is returned.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">The <see cref="P:System.Xml.XmlTextReader.Namespaces" /> property of the current instance is <see langword="true" /> and <paramref name="prefix" /> is <see langword="null" />.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1878,6 +1886,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a namespace prefix in the current element's scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace URI to which the prefix maps or null if no matching prefix is found.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix whose namespace URI you want to resolve. To match the default namespace, pass an empty string. This string does not have to be atomized. </param>
       </Docs>
@@ -1952,12 +1964,6 @@ node or, for node types that do not have a name (like
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the attribute was found. If
-<paramref name="name" /> is <see langword="null" />, or the attribute was not found, 
-<see langword="false" /> is returned and the position
-   of the reader does not change.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1969,6 +1975,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves to the attribute with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. </param>
       </Docs>
@@ -1992,11 +2002,6 @@ node or, for node types that do not have a name (like
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the attribute was found. If
-<paramref name="localname" /> is <see langword="null" />, or the attribute was not found, <see langword="false" /> is returned and the position of the reader does
-   not change.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2008,6 +2013,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves to the attribute with the specified local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute is found; otherwise, false. If false, the reader's position does not change.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute. </param>
         <param name="namespaceURI">
@@ -2030,12 +2039,6 @@ node or, for node types that do not have a name (like
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the reader was moved;
-<see langword="false" /> indicates the reader was not positioned on an 
-<see langword="Attribute" /> node and therefore was not 
-   moved.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2047,6 +2050,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves to the element that contains the current attribute node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reader is positioned on an attribute (the reader moves to the element that owns the attribute); false if the reader is not positioned on an attribute (the position of the reader does not change).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2065,9 +2072,6 @@ node or, for node types that do not have a name (like
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the current node contains at least one attribute; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2078,6 +2082,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves to the first attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if an attribute exists (the reader moves to the first attribute); otherwise, false (the position of the reader does not change).</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2096,10 +2104,6 @@ node or, for node types that do not have a name (like
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the reader moved to the next attribute;
-<see langword="false" /> if there were no more attributes.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2111,6 +2115,10 @@ node or, for node types that do not have a name (like
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Moves to the next attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a next attribute; false if there are no more attributes.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2454,10 +2462,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the node was read successfully, and
-<see langword="false" /> indicates there were no more nodes to read.</para>
-        </returns>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2471,6 +2475,10 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next node from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the next node was read successfully; false if there are no more nodes to read.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2489,12 +2497,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates the attribute value was
-   parsed, and <see langword="false" />
-   indicates the reader was not positioned on an attribute node or all the
-   attribute values have been read.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2506,6 +2508,12 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses the attribute value into one or more Text, EntityReference, or EndEntity nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there are nodes to return.</para>
+          <para>false if the reader is not positioned on an attribute node when the initial call is made or if all the attribute values have been read.</para>
+          <para>An empty attribute, such as, misc="", returns true with a single node with a value of String.Empty.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2528,12 +2536,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes written to <paramref name="array" />, or zero if the current
-instance is not positioned on an element.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -2544,6 +2546,8 @@ instance is not positioned on an element.</para>
             <paramref name="len" /> &gt; <paramref name="array" />.<see langword="Length" /> - <paramref name="offset" />.</para>
         </exception>
         <exception cref="T:System.Xml.XmlException">The Base64 sequence is not valid.</exception>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index into the array specifying where the method can begin to write to the buffer. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2555,6 +2559,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes Base64 and returns the decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters that serves as the buffer to which the text contents are written. </param>
         <param name="offset">
@@ -2583,12 +2591,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" />
-containing the number of bytes written to <paramref name="array" />, or zero if the current
-instance is not positioned on an element.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -2599,6 +2601,8 @@ instance is not positioned on an element.</para>
             <paramref name="len" /> &gt; <paramref name="array" />.<see langword="Length" /> - <paramref name="offset" />.</para>
         </exception>
         <exception cref="T:System.Xml.XmlException">The BinHex sequence is not valid.</exception>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index into the array specifying where the method can begin to write to the buffer. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2610,6 +2614,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decodes BinHex and returns the decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to your buffer.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array that serves as the buffer to which the decoded binary bytes are written. </param>
         <param name="offset">
@@ -2638,11 +2646,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" qualify="true" /> containing the number of characters written to
-<paramref name="buffer" />, 
-   or zero if the current instance is not positioned on an element.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="count" /> &gt; <paramref name="buffer" />.<see langword="Length" /> - <paramref name="index" />.</para>
@@ -2702,6 +2705,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the text contents of an element into a character buffer. This method is designed to read large streams of embedded text by calling it successively.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters read. This can be 0 if the reader is not positioned on an element or if there is no more text content to return in the current context.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of characters that serves as the buffer to which the text contents are written. </param>
         <param name="index">
@@ -2728,7 +2735,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2758,6 +2764,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content and returns the Base64 decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2783,7 +2793,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2813,6 +2822,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content and returns the BinHex decoded binary bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2838,7 +2851,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2855,6 +2867,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element and decodes the Base64 content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2880,7 +2896,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2897,6 +2912,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the element and decodes the BinHex content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written to the buffer.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer into which to copy the resulting text. This value cannot be null.</param>
         <param name="index">
@@ -2950,12 +2969,6 @@ instance is not positioned on an element.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   contents of the <see langword="Element" /> or <see langword="Text" />
-   node, or <see cref="F:System.String.Empty" qualify="true" />
-   if the reader is positioned on any other type of node.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.InvalidOperationException">An invalid operation was attempted.</exception>
         <exception cref="T:System.Xml.XmlException">An error occurred while parsing the XML.</exception>
@@ -2971,6 +2984,11 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the contents of an element or a text node as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the element or text node. This can be an empty string if the reader is positioned on something other than an element or text node, or if there is no more text content to return in the current context.</para>
+          <para>Note: The text node can be either an element or an attribute text node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ResetState">
@@ -3125,7 +3143,6 @@ instance is not positioned on an element.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.XmlTextReader" /> instance is cast to an <see cref="T:System.Xml.IXmlLineInfo" /> interface. </para>
@@ -3134,6 +3151,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.IXmlLineInfo.HasLineInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="P:System.Xml.IXmlLineInfo.LineNumber" /> and <see cref="P:System.Xml.IXmlLineInfo.LinePosition" /> can be provided; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3154,7 +3175,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="scope" Type="System.Xml.XmlNamespaceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3164,6 +3184,10 @@ instance is not positioned on an element.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.GetNamespacesInScope(System.Xml.XmlNamespaceScope)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> that contains the current in-scope namespaces.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlNamespaceScope" /> value that specifies the type of namespace nodes to return.</param>
       </Docs>
@@ -3184,13 +3208,16 @@ instance is not positioned on an element.</para>
       </Parameters>
       <Docs>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.IXmlNamespaceResolver.LookupPrefix(System.String)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The prefix that is mapped to the namespace URI; null if the namespace URI is not mapped to a prefix.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

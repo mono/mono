@@ -110,12 +110,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a custom binding element object from the setting of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A custom <see cref="T:System.ServiceModel.Channels.BindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultAlgorithmSuite">

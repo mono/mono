@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Resources.Tools">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Resources.Tools" /> namespace contains the <see cref="T:System.Resources.Tools.StronglyTypedResourceBuilder" /> class, which provides support for strongly-typed resources. Beginning with the .NET Framework version 2.0, this compile-time feature encapsulates access to resources by creating classes that contain a set of static read-only (get) properties, thus making it easier to consume resources.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about strongly-typed resources, see <see cref="T:System.Resources.Tools.StronglyTypedResourceBuilder" />.</para>
+    </remarks>
   </Docs>
 </Namespace>

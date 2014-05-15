@@ -51,6 +51,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the command using the specified temporary files and waits for the call to return.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from the compiler.</para>
+        </returns>
         <param name="cmd">
           <attribution license="cc4" from="Microsoft" modified="false" />The command to execute. </param>
         <param name="tempFiles">

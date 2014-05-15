@@ -88,13 +88,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls the host object to perform the work of the task.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method was successfule; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -133,12 +136,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Runs the exectuable file with the specified task parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the task runs successfully; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ExecuteTool">
@@ -153,13 +159,16 @@
         <Parameter Name="commandLineCommands" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a temporoary response (.rsp) file and runs the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The returned exit code of the executable file. If the task logged errors, but the executable returned an exit code of 0, this method returns -1.</para>
+        </returns>
         <param name="pathToTool">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the executable file.</param>
         <param name="responseFileCommands">
@@ -203,7 +212,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -213,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string value containing the command line arguments to pass directly to the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string value containing the command line arguments to pass directly to the executable file.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -226,7 +238,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -236,6 +247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified path to the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified path to the executable file.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -249,7 +264,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -259,6 +273,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string value containing the command line arguments to add to the response (.rsp) file before running the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>a string value containing the command line arguments to add to the response (.rsp) file before running the executable file.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -274,7 +292,6 @@
         <Parameter Name="responseFilePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -285,6 +302,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the command line switch used by the executable file to specifiy a response (.rsp) file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The command line switch used by the executable file to specifiy a response (.rsp) file.</para>
+        </returns>
         <param name="responseFilePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The full path to the temporary .rsp file.</param>
       </Docs>
@@ -300,7 +321,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -310,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the directory in which to run the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The directory in which to run the executable file, or a null reference (Nothing in vbprvb) if the executable file should be run in the current directory.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -323,7 +347,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -334,6 +357,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles execution errors raised by the executable file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method runs successfully; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -347,13 +374,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes the host object of the task.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:Microsoft.Build.Utilities.HostObjectInitializationStatus" /> of the host object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -463,7 +493,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -473,6 +502,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether task execution should be skipped.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to skip task execution; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -625,13 +658,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether all task paratmeters are valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all task parameters are valid; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

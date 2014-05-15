@@ -94,7 +94,6 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -105,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a value to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the value within the collection; otherwise, -1 if the value is already in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,7 +174,6 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -181,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.ParserError" /> object is located in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.ParserError" /> is in the collection; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -239,7 +245,6 @@
       </Parameters>
       <Docs>
         <param name="error">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -249,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the specified <see cref="T:System.Web.ParserError" /> object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the <see cref="T:System.Web.ParserError" /> objects within the collection; otherwise, 1 if the <see cref="T:System.Web.ParserError" /> is not in the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -117,12 +117,15 @@
         <Parameter Name="infos" Type="System.Reflection.ParameterInfo[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified parameter information to an <see cref="T:System.Windows.Forms.Design.AxParameterData" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Windows.Forms.Design.AxParameterData" /> objects representing the specified array of <see cref="T:System.Reflection.ParameterInfo" /> objects.</para>
+        </returns>
         <param name="infos">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.ParameterInfo" /> objects to convert. </param>
       </Docs>
@@ -142,12 +145,15 @@
         <Parameter Name="ignoreByRefs" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified parameter information to an <see cref="T:System.Windows.Forms.Design.AxParameterData" /> object, according to the specified value indicating whether to ignore by reference parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Windows.Forms.Design.AxParameterData" /> objects representing the specified array of <see cref="T:System.Reflection.ParameterInfo" /> objects.</para>
+        </returns>
         <param name="infos">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Reflection.ParameterInfo" /> objects to convert. </param>
         <param name="ignoreByRefs">

@@ -49,10 +49,15 @@
         <Parameter Name="exportedValueGetter" Type="System.Func&lt;System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <param name="exportedValueGetter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> class with the specified export definition and exported object getter.</para>
+        </summary>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that describes the contract that the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object satisfies.</param>
+        <param name="exportedValueGetter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that is called to create the exported object of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" />. This delays the creation of the object until the <see cref="P:System.ComponentModel.Composition.Primitives.Export.Value" /> property is called. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -67,10 +72,15 @@
         <Parameter Name="exportedValueGetter" Type="System.Func&lt;System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="exportedValueGetter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> class with the specified contract name and exported value getter.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object.</param>
+        <param name="exportedValueGetter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that is called to create the exported object of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" />. This delays the creation of the object until the <see cref="P:System.ComponentModel.Composition.Primitives.Export.Value" /> method is called.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -86,11 +96,17 @@
         <Parameter Name="exportedValueGetter" Type="System.Func&lt;System.Object&gt;" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="metadata">To be added.</param>
-        <param name="exportedValueGetter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> class with the specified contract name, metadata, and exported value getter.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object.</param>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> object or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.Export.Metadata" /> property to an empty, read-only <see cref="T:System.Collections.Generic.IDictionary`2" /> object.</param>
+        <param name="exportedValueGetter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that is called to create the exported object of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" />. This delays the creation of the object until the <see cref="P:System.ComponentModel.Composition.Primitives.Export.Value" /> method is called.</param>
       </Docs>
     </Member>
     <Member MemberName="Definition">
@@ -127,12 +143,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the exported object the export provides.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exported object the export provides.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Metadata">

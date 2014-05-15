@@ -119,7 +119,6 @@
         <Parameter Name="e" Type="System.Drawing.Printing.PrintPageEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Drawing.Graphics'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -131,6 +130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins the control sequence that determines when and how to print a page in a document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Graphics" /> object that represents a page from a <see cref="T:System.Drawing.Printing.PrintDocument" />.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Printing.PrintDocument" /> that represents the document being printed. </param>
         <param name="e">

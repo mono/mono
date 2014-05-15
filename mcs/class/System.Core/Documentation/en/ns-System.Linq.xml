@@ -1,6 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Linq">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Linq" /> namespace provides classes and interfaces that support queries that use vbteclinqext.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Linq" /> namespace is in the System.Core assembly (in System.Core.dll).</para>
+      <para>The <see cref="T:System.Linq.Enumerable" /> class contains vbteclinq standard query operators that operate on objects that implement <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+      <para>The <see cref="T:System.Linq.Queryable" /> class contains vbteclinq standard query operators that operate on objects that implement <see cref="T:System.Linq.IQueryable`1" />.</para>
+      <para>For information about LINQ to SQL, see <format type="text/html"><a href="73d13345-eece-471a-af40-4cc7a2f11655">LINQ to SQL</a></format>.</para>
+    </remarks>
   </Docs>
 </Namespace>

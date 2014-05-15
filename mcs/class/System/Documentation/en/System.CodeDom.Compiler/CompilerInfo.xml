@@ -67,7 +67,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -79,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the configured compiler settings for the language provider implementation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> instance that contains the compiler options and settings configured for the language provider. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateProvider">
@@ -94,7 +97,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -105,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider associated with the language provider configuration. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateProvider">
@@ -121,10 +127,21 @@
         <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="providerOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider(System.Collections.Generic.IDictionary{System.String,System.String})" /> method returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings and the specified provider options. For information about supported provider options, see the specific CodeDOM provider documentation.</para>
+          <para>Use the <see cref="M:System.CodeDom.Compiler.CompilerInfo.CreateProvider(System.Collections.Generic.IDictionary{System.String,System.String})" /> method to get a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> implementation for a <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance returned by the <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetAllCompilerInfo" /> or <see cref="M:System.CodeDom.Compiler.CodeDomProvider.GetCompilerInfo(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.CodeDom.Compiler.CodeDomProvider" /> instance for the current language provider settings and specified options.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CodeDOM provider associated with the language provider configuration and specified options.</para>
+        </returns>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of provider options from the configuration file.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -142,7 +159,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -161,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object represents the same language provider and compiler settings as the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> object and its value is the same as this instance; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" />. </param>
       </Docs>
@@ -178,7 +198,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -188,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the file name extensions supported by the language provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of file name extensions supported by the language provider.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -203,7 +226,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code for the current <see cref="T:System.CodeDom.Compiler.CompilerInfo" /> instance, suitable for use in hashing algorithms and data structures such as a hash table. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLanguages">
@@ -229,7 +255,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -239,6 +264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the language names supported by the language provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of language names supported by the language provider.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsCodeDomProviderTypeValid">

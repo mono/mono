@@ -43,7 +43,6 @@
         <Parameter Name="serverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>CreateInstance is called by the common language runtime when a new object of the specified type needs to be created. Override this method to provide your own custom class factory.</para>
@@ -52,6 +51,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.MarshalByRefObject" /> associated with the specified type.</para>
+        </returns>
         <param name="serverType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to activate. </param>
       </Docs>

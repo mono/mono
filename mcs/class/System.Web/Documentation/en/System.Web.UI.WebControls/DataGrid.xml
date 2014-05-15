@@ -952,12 +952,15 @@
         <Parameter Name="useDataSource" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Collections.ArrayList" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the set of columns to be used to build up the control hierarchy. When <see cref="P:System.Web.UI.WebControls.DataGrid.AutoGenerateColumns" /> is true, the columns are created to match the data source and are appended to the set of columns defined in the <see cref="P:System.Web.UI.WebControls.DataGrid.Columns" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ArrayList" /> containing the effective set of columns in the right order.</para>
+        </returns>
         <param name="dataSource">
           <attribution license="cc4" from="Microsoft" modified="false" />The data source being used to create the control hierarchy </param>
         <param name="useDataSource">
@@ -1002,12 +1005,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.WebControls.Style" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates new control style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Style" /> the represents the new style.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1026,7 +1032,6 @@
         <Parameter Name="itemType" Type="System.Web.UI.WebControls.ListItemType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataGridItem'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.DataGrid.CreateItem(System.Int32,System.Int32,System.Web.UI.WebControls.ListItemType)" /> is a helper method used by the <see cref="T:System.Web.UI.WebControls.DataGrid" /> class to create its <see cref="T:System.Web.UI.WebControls.DataGridItem" /> objects.</para>
@@ -1038,6 +1043,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object.</para>
+        </returns>
         <param name="itemIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index for the <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object.</param>
         <param name="dataSourceIndex">
@@ -1706,7 +1715,6 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.DataGrid.OnBubbleEvent(System.Object,System.EventArgs)" /> method to pass an event raised by a control within the container up the page's UI server control hierarchy.</para>
@@ -1718,6 +1726,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Passes the event raised by a control within the container up the page's UI server control hierarchy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate that this method is passing an event raised by a control within the container up the page's UI server control hierarchy; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
         <param name="e">
@@ -2190,12 +2202,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the current state of the <see cref="T:System.Web.UI.WebControls.DataGrid" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The saved state of the <see cref="T:System.Web.UI.WebControls.DataGrid" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

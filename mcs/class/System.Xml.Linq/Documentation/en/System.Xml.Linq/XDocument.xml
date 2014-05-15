@@ -189,7 +189,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you want to control load options, use the <see cref="Overload:System.Xml.Linq.XDocument.Load" /> overload that takes <see cref="T:System.Xml.Linq.LoadOptions" /> as a parameter.</para>
@@ -208,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> instance by using the specified stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> object that reads the data that is contained in the stream. </para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the XML data.</param>
       </Docs>
@@ -226,7 +229,6 @@
         <Parameter Name="textReader" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>LINQ to XML's loading functionality is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document.</para>
@@ -235,6 +237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a <see cref="T:System.IO.TextReader" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified <see cref="T:System.IO.TextReader" />.</para>
+        </returns>
         <param name="textReader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
       </Docs>
@@ -253,7 +259,6 @@
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses an underlying <see cref="T:System.Xml.XmlReader" /> to read the XML into an XML tree.</para>
@@ -264,6 +269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a file. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified file.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />A URI string that references the file to load into a new <see cref="T:System.Xml.Linq.XDocument" />.</param>
       </Docs>
@@ -282,7 +291,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>One possible use for this method is to create a copy of a DOM document in a LINQ to XML tree. To do this, you create an <see cref="T:System.Xml.XmlNodeReader" /> from a DOM document, and then use the <see cref="T:System.Xml.XmlNodeReader" /> to create an <see cref="T:System.Xml.Linq.XDocument" />.</para>
@@ -292,6 +300,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from an <see cref="T:System.Xml.XmlReader" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
       </Docs>
@@ -311,7 +323,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The loading functionality of LINQ to XML is built upon <see cref="T:System.Xml.XmlReader" />. Therefore, you might catch any exceptions that are thrown by the <see cref="Overload:System.Xml.XmlReader.Create" /> overload methods and the <see cref="T:System.Xml.XmlReader" /> methods that read and parse the document. </para>
@@ -329,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> instance by using the specified stream, optionally preserving white space, setting the base URI, and retaining line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> object that reads the data that is contained in the stream.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data.</param>
         <param name="options">
@@ -350,7 +365,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
@@ -367,6 +381,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a <see cref="T:System.IO.TextReader" />, optionally preserving white space, setting the base URI, and retaining line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the XML that was read from the specified <see cref="T:System.IO.TextReader" />.</para>
+        </returns>
         <param name="textReader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.TextReader" /> that contains the content for the <see cref="T:System.Xml.Linq.XDocument" />.</param>
         <param name="options">
@@ -388,7 +406,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
@@ -404,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a file, optionally preserving white space, setting the base URI, and retaining line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the contents of the specified file.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />A URI string that references the file to load into a new <see cref="T:System.Xml.Linq.XDocument" />.</param>
         <param name="options">
@@ -425,7 +446,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By creating an <see cref="T:System.Xml.XmlNodeReader" /> from a DOM document, and then using the <see cref="T:System.Xml.XmlNodeReader" /> to create an <see cref="T:System.Xml.Linq.XElement" />, this method can be used to create a copy of a DOM document in a LINQ to XML tree.</para>
@@ -441,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads an <see cref="T:System.Xml.Linq.XDocument" /> from an <see cref="T:System.Xml.XmlReader" />, optionally setting the base URI, and retaining line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> that contains the XML that was read from the specified <see cref="T:System.Xml.XmlReader" />.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlReader" /> that will be read for the content of the <see cref="T:System.Xml.Linq.XDocument" />.</param>
         <param name="options">
@@ -483,7 +507,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not preserve white space. If you want to preserve white space in the XML tree, use the overload of <see cref="Overload:System.Xml.Linq.XDocument.Parse" /> that takes <see cref="T:System.Xml.Linq.LoadOptions" /> as a parameter.</para>
@@ -494,6 +517,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> populated from the string that contains XML.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains XML.</param>
       </Docs>
@@ -513,7 +540,6 @@
         <Parameter Name="options" Type="System.Xml.Linq.LoadOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the source XML is indented, setting the <see cref="F:System.Xml.Linq.LoadOptions.PreserveWhitespace" /> flag in <paramref name="options" /> causes the reader to read all white space in the source XML. Nodes of type <see cref="T:System.Xml.Linq.XText" /> are created for both significant and insignificant white space.</para>
@@ -529,6 +555,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.Linq.XDocument" /> from a string, optionally preserving white space, setting the base URI, and retaining line information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XDocument" /> populated from the string that contains XML.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains XML.</param>
         <param name="options">

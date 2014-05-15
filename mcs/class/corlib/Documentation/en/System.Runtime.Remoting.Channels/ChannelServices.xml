@@ -50,7 +50,6 @@
         <Parameter Name="replySink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageCtrl'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current method returns immediately, whether the server processed the specified message or not.</para>
@@ -59,6 +58,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously dispatches the given message to the server-side chain(s) based on the URI embedded in the message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.Messaging.IMessageCtrl" /> object used to control the asynchronously dispatched message.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to dispatch. </param>
         <param name="replySink">
@@ -82,12 +85,15 @@
         <Parameter Name="channel" Type="System.Runtime.Remoting.Channels.IChannelReceiver" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IServerChannelSink'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel sink chain for the specified channel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new channel sink chain for the specified channel.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />The first provider in the chain of sink providers that will create the channel sink chain. </param>
         <param name="channel">
@@ -136,12 +142,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IChannel'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a registered channel with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An interface to a registered channel, or null if the channel is not registered.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The channel name. </param>
       </Docs>
@@ -162,12 +171,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Collections.IDictionary'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Collections.IDictionary" /> of properties for a given proxy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An interface to the dictionary of properties, or null if no properties were found.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The proxy to retrieve properties for. </param>
       </Docs>
@@ -188,12 +200,15 @@
         <Parameter Name="obj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the URLs that can be used to reach the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings that contains the URLs that can be used to remotely identify the object, or null if none were found.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to retrieve the URL array for. </param>
       </Docs>
@@ -311,12 +326,15 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessage'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Synchronously dispatches the incoming message to the server-side chain(s) based on the URI embedded in the message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reply message is returned by the call to the server-side chain.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to dispatch. </param>
       </Docs>

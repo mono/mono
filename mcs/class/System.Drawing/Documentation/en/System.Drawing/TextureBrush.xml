@@ -231,12 +231,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this <see cref="T:System.Drawing.TextureBrush" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.TextureBrush" /> object this method creates, cast as an <see cref="T:System.Object" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -280,6 +283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiplies the <see cref="T:System.Drawing.Drawing2D.Matrix" /> object that represents the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by prepending the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="matrix">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by which to multiply the geometric transformation. </param>
       </Docs>
@@ -307,6 +314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiplies the <see cref="T:System.Drawing.Drawing2D.Matrix" /> object that represents the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified <see cref="T:System.Drawing.Drawing2D.Matrix" /> object in the specified order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="matrix">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Drawing2D.Matrix" /> object by which to multiply the geometric transformation. </param>
         <param name="order">
@@ -330,6 +341,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets the Transform property of this <see cref="T:System.Drawing.TextureBrush" /> object to identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -351,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rotates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amount. This method prepends the rotation to the transformation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="angle">
           <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
       </Docs>
@@ -375,6 +394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Rotates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amount in the specified order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="angle">
           <attribution license="cc4" from="Microsoft" modified="false" />The angle of rotation. </param>
         <param name="order">
@@ -401,6 +424,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Scales the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amounts. This method prepends the scaling matrix to the transformation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="sx">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the x direction. </param>
         <param name="sy">
@@ -428,6 +455,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Scales the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified amounts in the specified order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="sx">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to scale the transformation in the x direction. </param>
         <param name="sy">
@@ -480,6 +511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified dimensions. This method prepends the translation to the transformation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="dx">
           <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the x direction. </param>
         <param name="dy">
@@ -507,6 +542,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates the local geometric transformation of this <see cref="T:System.Drawing.TextureBrush" /> object by the specified dimensions in the specified order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="dx">
           <attribution license="cc4" from="Microsoft" modified="false" />The dimension by which to translate the transformation in the x direction. </param>
         <param name="dy">

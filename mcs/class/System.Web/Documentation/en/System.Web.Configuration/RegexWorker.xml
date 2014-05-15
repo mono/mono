@@ -69,13 +69,16 @@
         <Parameter Name="regexExpression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally at run time to determine whether the specified request-header value matches any of the capabilities of an internal collection of browsers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified request-header value matches any of the capabilities of an internal collection of browsers; otherwise, false. The default is false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The capabilities value from an internal collection of browsers.</param>
         <param name="regexExpression">

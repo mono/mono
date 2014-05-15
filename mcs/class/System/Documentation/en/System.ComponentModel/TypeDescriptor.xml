@@ -98,7 +98,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddAttributes(System.Object,System.Attribute[])" /> method adds class-level attributes to the specified instance of a component. Because this is a common requirement of applications using the vsprvs Windows Forms Designer and Properties window, this method provides a shortcut by creating a type description provider that merges the provided attributes with the attributes that already exist on the class. The return value is the type description provider that was used to add the attributes. This provider can later be passed to the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Object)" /> method when the added attributes are no longer needed.</para>
@@ -107,6 +106,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds class-level attributes to the target component instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that was used to add the specified attributes.</para>
+        </returns>
         <param name="instance">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
         <param name="attributes">
@@ -140,7 +143,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.TypeDescriptor.AddAttributes(System.Type,System.Attribute[])" /> method adds class-level attributes to the specified type of a component. Because this is a common requirement of applications using the vsprvs Windows Forms Designer and Properties window, this method provides a shortcut by creating a type description provider that merges the provided attributes with the attributes that already exist on the class. The return value is the type description provider that was used to add the attributes. This provider can later be passed to the <see cref="M:System.ComponentModel.TypeDescriptor.RemoveProvider(System.ComponentModel.TypeDescriptionProvider,System.Type)" /> method when the added attributes are no longer needed.</para>
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds class-level attributes to the target component type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that was used to add the specified attributes.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
         <param name="attributes">
@@ -474,7 +480,6 @@
         <Parameter Name="designerBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Design.IDesigner'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this method cannot find a valid <see cref="T:System.ComponentModel.DesignerAttribute" />, it searches up the class hierarchy for a designer. If it cannot find a designer in the class hierarchy, it returns null.</para>
@@ -483,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the designer associated with the specified component and of the specified type of designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.Design.IDesigner" /> that is an instance of the designer for the component, or null if no designer can be found.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.IComponent" /> that specifies the component to associate with the designer. </param>
         <param name="designerBaseType">
@@ -513,12 +522,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new event descriptor that is identical to an existing event descriptor, when passed the existing <see cref="T:System.ComponentModel.EventDescriptor" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.EventDescriptor" /> that has merged the specified metadata attributes with the existing metadata attributes.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the component for which to create the new event. </param>
         <param name="oldEventDescriptor">
@@ -552,12 +564,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new event descriptor that is identical to an existing event descriptor by dynamically generating descriptor information from a specified event on a type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> that is bound to a type.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the component the event lives on. </param>
         <param name="name">
@@ -591,7 +606,6 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.TypeDescriptor.CreateInstance(System.IServiceProvider,System.Type,System.Type[],System.Object[])" /> method will search for a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> that is associated with the specified <paramref name="objectType" /> data type. This method first tries to obtain a type description provider from the <paramref name="provider" /> parameter. If this fails, it searches its own internal tables for a provider (these entries were created through previous calls to <see cref="Overload:System.ComponentModel.TypeDescriptor.AddProvider" />). If it finds a provider, this method will delegate the creation call to that object. </para>
@@ -600,6 +614,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an object that can substitute for another data type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the substitute data type if an associated <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> is found; otherwise, null.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />The service provider that provides a <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> service. This parameter can be null.</param>
         <param name="objectType">
@@ -634,12 +652,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new property descriptor from an existing property descriptor, using the specified existing <see cref="T:System.ComponentModel.PropertyDescriptor" /> and attribute array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.PropertyDescriptor" /> that has the specified metadata attributes merged with the existing metadata attributes.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the component that the property is a member of. </param>
         <param name="oldPropertyDescriptor">
@@ -673,12 +694,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and dynamically binds a property descriptor to a type, using the specified property name, type, and attribute array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that is bound to the specified type and that has the specified metadata attributes merged with the existing metadata attributes.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the component that the property is a member of. </param>
         <param name="name">
@@ -713,7 +737,6 @@
         <Parameter Name="primary" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a previous association has been made for the <paramref name="type" /> parameter using the <see cref="M:System.ComponentModel.TypeDescriptor.CreateAssociation(System.Object,System.Object)" /> method, then the <see cref="M:System.ComponentModel.TypeDescriptor.GetAssociation(System.Type,System.Object)" /> method returns the correct secondary object to invoke for the requested type. Otherwise, <see cref="M:System.ComponentModel.TypeDescriptor.GetAssociation(System.Type,System.Object)" /> searches for a compatible designer for <paramref name="type" /> and returns the designer if one is found. This method never returns null.</para>
@@ -723,6 +746,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an instance of the type associated with the specified primary object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the secondary type that has been associated with the primary object if an association exists; otherwise, <paramref name="primary" /> if no specified association exists.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
         <param name="primary">
@@ -745,7 +772,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The attributes returned by the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetAttributes" /> method may be dynamically modified from the original component's source listing by extender providers (<see cref="T:System.ComponentModel.IExtenderProvider" />), filter services (<see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />), and attribute filters.</para>
@@ -758,6 +784,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of attributes for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> containing the attributes for the component. If <paramref name="component" /> is null, this method returns an empty collection.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to get attributes. </param>
       </Docs>
@@ -778,7 +808,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -792,6 +821,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of attributes for the specified type of component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> with the attributes for the type of the component. If the component is null, this method returns an empty collection.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component. </param>
       </Docs>
@@ -818,7 +851,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The attributes returned by the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetAttributes" /> method may be dynamically modified from the original components source listing by extender providers (<see cref="T:System.ComponentModel.IExtenderProvider" />), filter services (<see cref="T:System.ComponentModel.Design.ITypeDescriptorFilterService" />), and attribute filters.</para>
@@ -831,6 +863,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of attributes for the specified component and a Boolean indicating that a custom type descriptor has been created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.AttributeCollection" /> with the attributes for the component. If the component is null, this method returns an empty collection.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to get attributes. </param>
         <param name="noCustomTypeDesc">
@@ -853,7 +889,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, this method returns the full <see cref="T:System.Type" /> name for the <paramref name="component" /> parameter type. For example, the class name for a button is "System.Windows.Forms.Button". If <paramref name="component" /> implements <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />, it can return an alternate name. </para>
@@ -863,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the class for the specified component using the default type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
       </Docs>
@@ -887,7 +926,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the cached custom type descriptor for the specified type to discover the associated class name.</para>
@@ -896,6 +934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the class for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component type.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
@@ -922,7 +964,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, this method returns the full <see cref="T:System.Type" /> name for the <paramref name="component" /> parameter type. For example, the class name for a button is "System.Windows.Forms.Button". If the <paramref name="component" /> parameter implements <see cref="T:System.ComponentModel.ICustomTypeDescriptor" />, it can return an alternate name. </para>
@@ -931,6 +972,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the class for the specified component using a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the class for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
         <param name="noCustomTypeDesc">
@@ -953,7 +998,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, this method returns the name for the site of the component, if one exists. For example, the class name for a button is "System.Windows.Forms.Button".</para>
@@ -964,6 +1008,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the specified component using the default type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> containing the name of the specified component, or null if there is no component name.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
       </Docs>
@@ -990,7 +1038,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used at design time to retrieve the name of an instance of a component. Typically, this method returns the name for the site of the component, if one exists. For example, the class name for a button is "System.Windows.Forms.Button". If the component implements the <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface, it can return an alternate name.</para>
@@ -999,6 +1046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the specified component using a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the class for the specified component, or null if there is no component name.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which you want the class name. </param>
         <param name="noCustomTypeDesc">
@@ -1021,7 +1072,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method locates an appropriate type converter by looking for a <see cref="T:System.ComponentModel.TypeConverterAttribute" />. If it cannot find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />, it traverses the base class hierarchy of the class until it finds a primitive type.</para>
@@ -1031,6 +1081,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for the type of the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the converter for. </param>
       </Docs>
@@ -1051,7 +1105,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1061,6 +1114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component. </param>
       </Docs>
@@ -1087,7 +1144,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeConverter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method looks for the appropriate type converter by trying to find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />. If it cannot find a <see cref="T:System.ComponentModel.TypeConverterAttribute" />, it traverses the base class hierarchy of the class until it finds a primitive type.</para>
@@ -1096,6 +1152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for the type of the specified component with a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter" /> for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the converter for. </param>
         <param name="noCustomTypeDesc">
@@ -1118,7 +1178,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to the overloaded <see cref="M:System.ComponentModel.TypeDescriptor.GetDefaultEvent(System.Object,System.Boolean)" /> method with a second parameter of false.</para>
@@ -1127,6 +1186,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the event for. </param>
       </Docs>
@@ -1147,7 +1210,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1156,6 +1218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for the specified type of component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
@@ -1182,12 +1248,15 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptor'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for a component with a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> with the default event, or null if there are no events.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the event for. </param>
         <param name="noCustomTypeDesc">
@@ -1210,7 +1279,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="component" /> parameter is null, this method returns null.</para>
@@ -1219,6 +1287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for. </param>
       </Docs>
@@ -1239,7 +1311,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1249,6 +1320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for the specified type of component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the class to get the property for. </param>
       </Docs>
@@ -1275,7 +1350,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptor'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="component" /> parameter is null, this method returns null.</para>
@@ -1284,6 +1358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for the specified component with a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptor" /> with the default property, or null if there are no properties.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the default property for. </param>
         <param name="noCustomTypeDesc">
@@ -1307,7 +1385,6 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example, <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
@@ -1317,6 +1394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an editor with the specified base type for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor that can be cast to the specified editor type, or null if no editor of the requested type can be found.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for. </param>
         <param name="editorBaseType">
@@ -1341,7 +1422,6 @@
       </Parameters>
       <Docs>
         <param name="componentType">To be added.</param>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
@@ -1352,6 +1432,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor with the specified base type for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor object that can be cast to the given base type, or null if no editor of the requested type can be found.</para>
+        </returns>
         <param name="editorBaseType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the base type of the editor you are trying to find. </param>
       </Docs>
@@ -1379,7 +1463,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The type of <paramref name="editorBaseType" /> is usually <see cref="T:System.Drawing.Design.UITypeEditor" />, but you can also use other types (for example <see cref="T:System.ComponentModel.ComponentEditor" /> and <see cref="T:System.ComponentModel.InstanceCreationEditor" />).</para>
@@ -1389,6 +1472,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor with the specified base type and with a custom type descriptor for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the editor that can be cast to the specified editor type, or null if no editor of the requested type can be found.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to get the editor for. </param>
         <param name="editorBaseType">
@@ -1413,7 +1500,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a collection of events that the given <paramref name="component" /> parameter instance provides. This collection can differ from the set of events the class provides. If the <paramref name="component" /> parameter is sited, the site can add or remove additional events.</para>
@@ -1424,6 +1510,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
       </Docs>
@@ -1444,7 +1534,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1455,6 +1544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for a specified type of component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
@@ -1476,7 +1569,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The events for the <paramref name="component" /> parameter can differ from the events of a class, because the site can add or remove events if the <paramref name="component" /> parameter is sited.</para>
@@ -1502,6 +1594,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for a specified component using a specified array of attributes as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
         <param name="attributes">
@@ -1530,7 +1626,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves a collection of events that the given <paramref name="component" /> parameter instance provides. This can differ from the set of events the class provides. If the <paramref name="component" /> parameter is sited, the site can add or remove additional events.</para>
@@ -1541,6 +1636,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for a specified component with a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events for this component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
         <param name="noCustomTypeDesc">
@@ -1564,7 +1663,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1590,6 +1688,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for a specified type of component using a specified array of attributes as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
         <param name="attributes">
@@ -1619,7 +1721,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The events for the <paramref name="component" /> parameter can differ from the events of a class, because the site can add or remove events if the <paramref name="component" /> parameter is sited.</para>
@@ -1645,6 +1746,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of events for a specified component using a specified array of attributes as a filter and using a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.EventDescriptorCollection" /> with the events that match the specified attributes for this component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the events for. </param>
         <param name="attributes">
@@ -1673,7 +1778,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In many cases, the <see cref="M:System.ComponentModel.TypeDescriptor.GetFullComponentName(System.Object)" /> method will return the same value as the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetComponentName" /> method. However, if the component resides in a nested container or has other nested semantics, it may return a different fully qualified name.</para>
@@ -1682,6 +1786,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified name of the component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fully qualified name of the specified component, or null if the component has no name.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Component" /> to find the name for.</param>
       </Docs>
@@ -1702,7 +1810,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The properties for a component can differ from the properties of a class, because the site can add or remove properties if the component is sited.</para>
@@ -1713,6 +1820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
       </Docs>
@@ -1733,7 +1844,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1744,6 +1854,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified type of component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for a specified type of component.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the component to get properties for.</param>
       </Docs>
@@ -1765,7 +1879,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The properties for the <paramref name="component" /> parameter can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> parameter is sited.</para>
@@ -1791,6 +1904,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified component using a specified array of attributes as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that match the specified attributes for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
         <param name="attributes">
@@ -1819,7 +1936,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The properties for the <paramref name="component" /> parameter can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> parameter is sited.</para>
@@ -1830,6 +1946,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified component using the default type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties for a specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
         <param name="noCustomTypeDesc">
@@ -1853,7 +1973,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this version of this method only when you do not have an instance of the object.</para>
@@ -1879,6 +1998,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified type of component using a specified array of attributes as a filter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that match the specified attributes for this type of component.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
         <param name="attributes">
@@ -1903,7 +2026,6 @@
         <Parameter Name="noCustomTypeDesc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The properties for a <paramref name="component" /> can differ from the properties of a class, because the site can add or remove properties if the <paramref name="component" /> is sited.</para>
@@ -1929,6 +2051,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of properties for a specified component using a specified array of attributes as a filter and using a custom type descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the events that match the specified attributes for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />A component to get the properties for. </param>
         <param name="attributes">
@@ -1957,7 +2083,6 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetProvider" /> method will always return a type description provider. Even the default <see cref="T:System.ComponentModel.TypeDescriptor" /> implementation is built on a <see cref="T:System.ComponentModel.TypeDescriptionProvider" />.</para>
@@ -1966,6 +2091,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type description provider for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> associated with the specified component.</para>
+        </returns>
         <param name="instance">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
@@ -1990,7 +2119,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetProvider" /> method will always return a type description provider. Even the default <see cref="T:System.ComponentModel.TypeDescriptor" /> implementation is built on a <see cref="T:System.ComponentModel.TypeDescriptionProvider" />.</para>
@@ -1999,6 +2127,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type description provider for the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeDescriptionProvider" /> associated with the specified type.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>
@@ -2023,7 +2155,6 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> method is a low-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> is typically used to perform standard reflection against an object when no custom type descriptor can be located for it.</para>
@@ -2032,6 +2163,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> that can be used to perform reflection, given an object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> for the specified object.</para>
+        </returns>
         <param name="instance">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the target component.</param>
       </Docs>
@@ -2056,7 +2191,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> method is a low-level version of the <see cref="Overload:System.ComponentModel.TypeDescriptionProvider.GetTypeDescriptor" /> method. <see cref="Overload:System.ComponentModel.TypeDescriptor.GetReflectionType" /> is typically used to perform standard reflection against a class when no custom type descriptor can be located for it.</para>
@@ -2065,6 +2199,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> that can be used to perform reflection, given a class type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> of the specified class.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the target component.</param>
       </Docs>

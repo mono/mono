@@ -130,7 +130,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ServiceDescription'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance obtained subsequently gets populated with objects that correspond to WSDL entities that are reflected from the input Web service class.</para>
@@ -139,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object for a given XML namespace and the applicable communication protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.ServiceDescription" /> object for a given XML namespace and the applicable communication protocol.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> instance obtained subsequently gets populated with objects that correspond to Web Services Description Language (WSDL) entities that are reflected from the input Web service class.</param>
       </Docs>
@@ -414,7 +417,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An implementation of the <see cref="M:System.Web.Services.Description.ProtocolReflector.ReflectMethod" /> method should generate information such as operation binding, abstract operation, and messages.</para>
@@ -423,6 +425,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, generates method-specific information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object corresponding to a binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Method-specific information that gets placed in a <see cref="T:System.Web.Services.Description.ServiceDescription" /> object corresponding to a binding.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -437,12 +443,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the name of the binding that a method belongs to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the binding that a method belongs to.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

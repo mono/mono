@@ -51,9 +51,13 @@
         <Parameter Name="endpoints" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ServiceEndpoint&gt;" />
       </Parameters>
       <Docs>
-        <param name="endpoints">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.ServiceDescription" /> class from a specified enumeration of service endpoints.</para>
+        </summary>
+        <param name="endpoints">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IEnumerable`1" /> of type <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> used to initialize the service description.</param>
       </Docs>
     </Member>
     <Member MemberName="Behaviors">
@@ -140,7 +144,6 @@
       </Parameters>
       <Docs>
         <param name="wellKnown">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to reflect on behaviors using the indigo1 programming model when replacing <see cref="T:System.ServiceModel.ServiceHostBase" /> with you own hosting mechanism. </para>
@@ -151,6 +154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service description initialized with a specified service object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> for the service object provided.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetService">
@@ -168,7 +175,6 @@
       </Parameters>
       <Docs>
         <param name="type">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to reflect on behaviors using the indigo1 programming model when replacing <see cref="T:System.ServiceModel.ServiceHostBase" /> with you own hosting mechanism. </para>
@@ -179,6 +185,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a service description initialized with a specified service type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceDescription" /> for the service type provided.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Name">

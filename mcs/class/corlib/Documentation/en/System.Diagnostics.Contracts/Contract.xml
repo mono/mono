@@ -355,7 +355,6 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown.</para>
@@ -377,6 +376,8 @@
         </summary>
         <param name="condition">
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
@@ -409,7 +410,6 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown. The <paramref name="message" /> parameter specifies a message to display if the condition is false.</para>
@@ -436,6 +436,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
         <param name="userMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the expression is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Exists">
@@ -459,12 +461,25 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">The inclusive start of the range.</param>
-        <param name="toExclusive">The exclusive end of the range.</param>
-        <param name="predicate">TThe predicate to apply to each value within the range.</param>
-        <summary>Determines that at least one value in the range satisfies the predicate.</summary>
-        <returns>Whether at least one value in the range satisfies the predicate.</returns>
-        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a specified test is true for any integer within a range of integers.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="predicate" /> returns true for any integer starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />One more than the last integer to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for any value of the integer in the specified range.</param>
       </Docs>
     </Member>
     <Member MemberName="Exists&lt;T&gt;">
@@ -490,12 +505,22 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">The type of elements in the collection.</typeparam>
-        <param name="collection">The collection to check.</param>
-        <param name="predicate">The predicate to apply to each element of the collection.</param>
-        <summary>Determines that at least one element in the collection satisfies the predicate.</summary>
-        <returns>Whether at least one element in the collection satisfies the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an element within a collection of elements exists within a function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if and only if <paramref name="predicate" /> returns true for any element of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for an element in <paramref name="collection" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that is contained in <paramref name="collection" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForAll">
@@ -519,12 +544,25 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <param name="fromInclusive">The inclusive start of the range.</param>
-        <param name="toExclusive">The exclusive end of the range.</param>
-        <param name="predicate">The predicate to apply to each value within the range.</param>
-        <summary>Determines that all values in the range satisfy the predicate.</summary>
-        <returns>Whether all values in the range satisfy the predicate.</returns>
-        <remarks>This method can be used within a contract condition to allow contracts to be applied to integer ranges.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a particular condition is valid for all integers in a specified range.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if <paramref name="predicate" /> returns true for all integers starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
+        <param name="fromInclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
+        <param name="toExclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />One more than the last integer to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for the existence of the integers in the specified range.</param>
       </Docs>
     </Member>
     <Member MemberName="ForAll&lt;T&gt;">
@@ -550,12 +588,22 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">The type of elements in the collection.</typeparam>
-        <param name="collection">The collection to check.</param>
-        <param name="predicate">The predicate to apply to each element of the collection.</param>
-        <summary>Determines that all elements in the collection satisfy the predicate.</summary>
-        <returns>Whether all elements in the collection satisfy the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether all the elements in a collection exist within a function.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                            true if and only if <paramref name="predicate" /> returns true for all elements of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
+        <param name="collection">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to evaluate for the existence of all the elements in <paramref name="collection" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type that is contained in <paramref name="collection" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Invariant">
@@ -808,7 +856,6 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -832,6 +879,8 @@
         </summary>
         <param name="condition">
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -956,7 +1005,6 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <list type="bullet">
@@ -982,6 +1030,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
         <param name="userMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the condition is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -1105,8 +1155,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">The type of the return value.</typeparam>
-        <returns>The return value.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used only in the conditional expression for the <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" /> contract.</para>
@@ -1115,6 +1163,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents the return value of a method or property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return value of the enclosing method or property.</para>
+        </returns>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of return value of the enclosing method or property.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ValueAtReturn&lt;T&gt;">

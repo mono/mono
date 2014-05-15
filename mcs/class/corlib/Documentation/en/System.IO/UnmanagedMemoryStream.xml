@@ -491,7 +491,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -502,6 +501,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the specified number of bytes into the specified array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero (0) if the end of the stream has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced by the bytes read from the current source. This parameter is passed uninitialized.</param>
         <param name="offset">
@@ -523,7 +526,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -533,6 +535,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from a stream and advances the position within the stream by one byte, or returns -1 if at the end of the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unsigned byte cast to an <see cref="T:System.Int32" /> object, or -1 if at the end of the stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Seek">
@@ -551,7 +557,6 @@
         <Parameter Name="loc" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -561,6 +566,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current position of the current stream to the given value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position in the stream.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The point relative to <paramref name="origin" /> to begin seeking from. </param>
         <param name="loc">

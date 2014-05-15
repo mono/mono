@@ -206,9 +206,6 @@ public static void PrintValues( IEnumerable myList ) {
         <Parameter Name="list" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Collections.ArrayList" /> wrapper for <paramref name="list" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="list" /> is <see langword="null" />.</exception>
         <remarks>
@@ -226,6 +223,10 @@ public static void PrintValues( IEnumerable myList ) {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Collections.ArrayList" /> wrapper for a specific <see cref="T:System.Collections.IList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ArrayList" /> wrapper around the <see cref="T:System.Collections.IList" />.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IList" /> to wrap.</param>
       </Docs>
@@ -248,10 +249,6 @@ public static void PrintValues( IEnumerable myList ) {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the current instance at which <paramref name="value" /> has
-   been added.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">
           <para>The current instance is read-only or has a fixed size.</para>
         </exception>
@@ -266,6 +263,10 @@ public static void PrintValues( IEnumerable myList ) {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an object to the end of the <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ArrayList" /> index at which the <paramref name="value" /> has been added.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to be added to the end of the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
       </Docs>
@@ -327,45 +328,6 @@ public static void PrintValues( IEnumerable myList ) {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that
-   specifies the results of the search as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the current
-      instance.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The
-      bitwise complement
-      of the index of the first element
-      that is greater than <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at least one
-   element in the current instance is greater than
-<paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" />
-is greater than all elements in the current
-instance.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
-bitwise complement of the return value indicates the index in the current instance
-where <paramref name="value" /> would be
-found.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="value" /> is not assignment-compatible with at least one element in the current instance.</para>
@@ -385,6 +347,10 @@ found.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the entire sorted <see cref="T:System.Collections.ArrayList" /> for an element using the default comparer and returns the zero-based index of the element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of <paramref name="value" /> in the sorted <see cref="T:System.Collections.ArrayList" />, if <paramref name="value" /> is found; otherwise, a negative number, which is the bitwise complement of the index of the next element that is larger than <paramref name="value" /> or, if there is no larger element, the bitwise complement of <see cref="P:System.Collections.ArrayList.Count" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate. The value can be null. </param>
       </Docs>
@@ -408,44 +374,6 @@ found.</block>
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that
-   specifies the results of the search as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the current
-      instance.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The
-      bitwise
-      complement of the index of the first element
-      that is greater than <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at least one
-   element in the current instance is greater than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" />
-is greater than all elements in the current
-instance.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
-bitwise complement of the return value indicates the index in the current instance
-where <paramref name="value" /> would be
-found.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and <paramref name="value" /> is not assignment-compatible with at least one element in the current instance.</para>
@@ -468,6 +396,10 @@ found.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the entire sorted <see cref="T:System.Collections.ArrayList" /> for an element using the specified comparer and returns the zero-based index of the element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of <paramref name="value" /> in the sorted <see cref="T:System.Collections.ArrayList" />, if <paramref name="value" /> is found; otherwise, a negative number, which is the bitwise complement of the index of the next element that is larger than <paramref name="value" /> or, if there is no larger element, the bitwise complement of <see cref="P:System.Collections.ArrayList.Count" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate. The value can be null. </param>
         <param name="comparer">
@@ -495,48 +427,6 @@ found.</block>
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that
-   specifies the results of the search as follows:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the current
-      instance.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The
-      bitwise complement
-      of the index of the first element that is
-      greater than <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at
-   least one element in the range of <paramref name="index" /> to <paramref name="index" /> +
-<paramref name="count" /> - 1 in the current instance is greater than
-<paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of (<paramref name="index" /> +
-<paramref name="count" />)</term>
-              <description>
-                <paramref name="value" /> was not found, and
-<paramref name="value" /> is greater than all elements in the range of 
-<paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1 in the current 
-instance.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note">If <paramref name="value" /> is not found and the current instance is already sorted, the
-bitwise complement of the return value indicates the index in the current instance
-where <paramref name="value" /> would be found in the range of <paramref name="index" /> to
-<paramref name="index" /> + <paramref name="count" /> - 1.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <see cref="P:System.Collections.ArrayList.Count" /> of the current instance - <paramref name="index" /> &lt; <paramref name="count" />.</para>
@@ -567,6 +457,10 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches a range of elements in the sorted <see cref="T:System.Collections.ArrayList" /> for an element using the specified comparer and returns the zero-based index of the element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of <paramref name="value" /> in the sorted <see cref="T:System.Collections.ArrayList" />, if <paramref name="value" /> is found; otherwise, a negative number, which is the bitwise complement of the index of the next element that is larger than <paramref name="value" /> or, if there is no larger element, the bitwise complement of <see cref="P:System.Collections.ArrayList.Count" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the range to search. </param>
         <param name="count">
@@ -663,10 +557,6 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -677,6 +567,10 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -697,11 +591,6 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="item" /> is contained in the current instance;
-   otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method performs a linear search; therefore, this method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.ArrayList.Count" />.</para>
@@ -712,6 +601,10 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an element is in the <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="item" /> is found in the <see cref="T:System.Collections.ArrayList" />; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
       </Docs>
@@ -930,10 +823,6 @@ where <paramref name="value" /> would be found in the range of <paramref name="i
         <Parameter Name="list" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.ArrayList" />
-wrapper with a fixed size.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="list" /> is <see langword="null" />.</exception>
         <remarks>
@@ -946,6 +835,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.ArrayList" /> wrapper with a fixed size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ArrayList" /> wrapper with a fixed size.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.ArrayList" /> to wrap. </param>
       </Docs>
@@ -967,7 +860,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="list" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This wrapper can be used to prevent additions to and deletions from the original <see cref="T:System.Collections.IList" />. The elements can still be modified or replaced.</para>
@@ -978,6 +870,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IList" /> wrapper with a fixed size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> wrapper with a fixed size.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IList" /> to wrap. </param>
       </Docs>
@@ -997,9 +893,6 @@ wrapper with a fixed size.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" /> for the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (for each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -1016,6 +909,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for the entire <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the entire <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1037,11 +934,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" /> that can iterate over the range
-   of <paramref name="index" /> to <paramref name="index" /> + <paramref name="count" /> - 1 in the current
-   instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> &lt; 0.</para>
@@ -1071,6 +963,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for a range of elements in the <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the specified range of elements in the <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the <see cref="T:System.Collections.ArrayList" /> section that the enumerator should refer to. </param>
         <param name="count">
@@ -1096,11 +992,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Collections.ArrayList" /> that
-   represents the range in the current instance from <paramref name="index" /> to
-<paramref name="index" /> + <paramref name="count" /> - 1.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="index" /> &lt; 0.</para>
@@ -1121,6 +1012,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.ArrayList" /> which represents a subset of the elements in the source <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ArrayList" /> which represents a subset of the elements in the source <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based <see cref="T:System.Collections.ArrayList" /> index at which the range starts. </param>
         <param name="count">
@@ -1145,14 +1040,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="    value" /> in the current instance, if found;
-   otherwise, -1.</para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.ArrayList" /> is searched forward starting at the first element and ending at the last element.</para>
@@ -1164,6 +1051,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the first occurrence within the entire <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the entire <see cref="T:System.Collections.ArrayList" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
       </Docs>
@@ -1187,15 +1078,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="value" /> in the current
-   instance, if found within the range <paramref name="    startIndex" />
-   to the end of the current instance; otherwise, -1.</para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> &lt; 0.</para>
@@ -1214,6 +1096,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that extends from the specified index to the last element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that extends from <paramref name="startIndex" /> to the last element, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
         <param name="startIndex">
@@ -1240,15 +1126,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the first occurrence of <paramref name="value" /> in
-   the current instance, within the range <paramref name="startIndex " />to
-<paramref name="startIndex" /> + <paramref name=" count" /> - 1, if found; otherwise, -1.</para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" />&gt;= <see cref="P:System.Collections.ArrayList.Count" /> of the current instance.</para>
@@ -1270,6 +1147,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that starts at the specified index and contains the specified number of elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that starts at <paramref name="startIndex" /> and contains <paramref name="count" /> number of elements, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
         <param name="startIndex">
@@ -1540,14 +1421,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of <paramref name="    value" /> in the current
-   instance, if found; otherwise, -1.</para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.ArrayList" /> is searched backward starting at the last element and ending at the first element.</para>
@@ -1558,6 +1431,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the last occurrence within the entire <see cref="T:System.Collections.ArrayList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" /> within the entire the <see cref="T:System.Collections.ArrayList" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
       </Docs>
@@ -1581,16 +1458,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of <paramref name="value" /> in
-   the range of <paramref name="startIndex" />
-   through the first element of the current
-   instance, if found; otherwise, -1.</para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> &lt; 0.</para>
@@ -1609,6 +1476,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that extends from the first element to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" /> within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that extends from the first element to <paramref name="startIndex" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
         <param name="startIndex">
@@ -1635,15 +1506,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that specifies the index of the last occurrence of value in the current
-   instance, within the range <paramref name="startIndex" /> through
-<paramref name="startIndex" /> - <paramref name="count" /> + 1, if found; otherwise, -1. </para>
-          <para>
-            <block subset="none" type="note">This provides the caller with a standard
-   code for a failed search.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> &lt; 0.</para>
@@ -1671,6 +1533,10 @@ wrapper with a fixed size.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Object" /> and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that contains the specified number of elements and ends at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of <paramref name="value" /> within the range of elements in the <see cref="T:System.Collections.ArrayList" /> that contains <paramref name="count" /> number of elements and ends at <paramref name="startIndex" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to locate in the <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
         <param name="startIndex">
@@ -1697,10 +1563,6 @@ wrapper with a fixed size.</para>
         <Parameter Name="list" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A read-only <see cref="T:System.Collections.ArrayList" />
-wrapper around <paramref name="list" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="list" /> is <see langword="null" />. </exception>
         <remarks>
@@ -1713,6 +1575,10 @@ wrapper around <paramref name="list" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only <see cref="T:System.Collections.ArrayList" /> wrapper.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Collections.ArrayList" /> wrapper around <paramref name="list" />.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.ArrayList" /> to wrap. </param>
       </Docs>
@@ -1734,7 +1600,6 @@ wrapper around <paramref name="list" />.</para>
         <Parameter Name="list" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To prevent any modifications to <paramref name="list" />, expose <paramref name="list" /> only through this wrapper.</para>
@@ -1745,6 +1610,10 @@ wrapper around <paramref name="list" />.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only <see cref="T:System.Collections.IList" /> wrapper.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Collections.IList" /> wrapper around <paramref name="list" />.</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IList" /> to wrap. </param>
       </Docs>
@@ -1891,11 +1760,6 @@ wrapper around <paramref name="list" />.</para>
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Collections.ArrayList" />
-with <paramref name="count" /> number of elements, all of which are copies of
-<paramref name="value" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="count" /> &lt; 0.</exception>
         <remarks>
@@ -1908,6 +1772,10 @@ with <paramref name="count" /> number of elements, all of which are copies of
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.ArrayList" /> whose elements are copies of the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ArrayList" /> with <paramref name="count" /> number of elements, all of which are copies of <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to copy multiple times in the new <see cref="T:System.Collections.ArrayList" />. The value can be null. </param>
         <param name="count">
@@ -2171,10 +2039,6 @@ with <paramref name="count" /> number of elements, all of which are copies of
         <Parameter Name="list" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.ArrayList" /> wrapper that is
-   synchronized (thread-safe).</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="list" /> is <see langword="null" />. </exception>
         <remarks>
@@ -2186,6 +2050,10 @@ with <paramref name="count" /> number of elements, all of which are copies of
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.ArrayList" /> wrapper that is synchronized (thread safe).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ArrayList" /> wrapper that is synchronized (thread safe).</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.ArrayList" /> to synchronize. </param>
       </Docs>
@@ -2207,7 +2075,6 @@ with <paramref name="count" /> number of elements, all of which are copies of
         <Parameter Name="list" Type="System.Collections.IList" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To guarantee the thread safety of the <see cref="T:System.Collections.ArrayList" />, all operations must be done through this wrapper.</para>
@@ -2217,6 +2084,10 @@ with <paramref name="count" /> number of elements, all of which are copies of
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IList" /> wrapper that is synchronized (thread safe).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IList" /> wrapper that is synchronized (thread safe).</para>
+        </returns>
         <param name="list">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IList" /> to synchronize. </param>
       </Docs>
@@ -2267,10 +2138,6 @@ with <paramref name="count" /> number of elements, all of which are copies of
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> array containing
-   copies of the elements of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements are copied using <see cref="Overload:System.Array.Copy" />, which is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <see cref="P:System.Collections.ArrayList.Count" />.</para>
@@ -2279,6 +2146,10 @@ with <paramref name="count" /> number of elements, all of which are copies of
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the elements of the <see cref="T:System.Collections.ArrayList" /> to a new <see cref="T:System.Object" /> array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> array containing copies of the elements of the <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2299,10 +2170,6 @@ with <paramref name="count" /> number of elements, all of which are copies of
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array of <see cref="T:System.Type" /><paramref name="type" /> containing copies of the elements of the current
-instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="type" /> is <see langword="null" />.</exception>
         <exception cref="T:System.InvalidCastException">At least one element of the current instance cannot be cast to the <see cref="T:System.Type" /><paramref name="type" />.</exception>
@@ -2315,6 +2182,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the elements of the <see cref="T:System.Collections.ArrayList" /> to a new array of the specified element type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the specified element type containing copies of the elements of the <see cref="T:System.Collections.ArrayList" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The element <see cref="T:System.Type" /> of the destination array to create and copy elements to.</param>
       </Docs>

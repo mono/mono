@@ -268,7 +268,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bits in the integer returned by the <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -277,6 +276,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified double-precision floating point number to a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer whose value is equivalent to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -297,12 +300,15 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>Returns 1 byte (true: 1, false: 0)</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified Boolean value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value. </param>
       </Docs>
@@ -323,7 +329,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -332,6 +337,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified Unicode character value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A character to convert. </param>
       </Docs>
@@ -352,7 +361,6 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -361,6 +369,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified double-precision floating point value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -381,7 +393,6 @@
         <Parameter Name="value" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -390,6 +401,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 16-bit signed integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -410,7 +425,6 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -419,6 +433,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 32-bit signed integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -439,7 +457,6 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -448,6 +465,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 64-bit signed integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -468,7 +489,6 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -477,6 +497,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified single-precision floating point value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -502,8 +526,6 @@
         <Parameter Name="value" Type="System.UInt16" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -512,6 +534,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 16-bit unsigned integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 2.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -537,7 +563,6 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -546,6 +571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 32-bit unsigned integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 4.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -571,7 +600,6 @@
         <Parameter Name="value" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>The binary representation of the value as an <see cref="T:System.Array" /> of bytes</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of bytes in the array returned by the <see cref="M:System.BitConverter.GetBytes(System.Boolean)" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -580,6 +608,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified 64-bit unsigned integer value as an array of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of bytes with length 8.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -600,7 +632,6 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, <paramref name="value" /> is an integer that is returned by the <see cref="M:System.BitConverter.DoubleToInt64Bits(System.Double)" /> method.</para>
@@ -609,6 +640,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified 64-bit signed integer to a double-precision floating point number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating point number whose value is equivalent to <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to convert. </param>
       </Docs>
@@ -655,12 +690,15 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value converted from one byte at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the byte at <paramref name="startIndex" /> in <paramref name="value" /> is nonzero; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -684,7 +722,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToChar(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to a <see cref="T:System.Char" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -693,6 +730,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Unicode character converted from two bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array. </param>
         <param name="startIndex">
@@ -716,7 +757,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToDouble(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.Double" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -725,6 +765,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a double-precision floating point number converted from eight bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double precision floating point number formed by eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -748,7 +792,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToInt16(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to an <see cref="T:System.Int16" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -757,6 +800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit signed integer formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -780,7 +827,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToInt32(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to an <see cref="T:System.Int32" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of <see cref="T:System.BitConverter" />.</para>
@@ -789,6 +835,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -812,7 +862,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToInt64(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.Int64" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -821,6 +870,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit signed integer formed by eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -844,7 +897,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToSingle(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to a <see cref="T:System.Single" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of <see cref="T:System.BitConverter" />. </para>
@@ -853,6 +905,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a single-precision floating point number converted from four bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single-precision floating point number formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -875,7 +931,6 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>All the elements of <paramref name="value" /> are converted. The order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -884,6 +939,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of each element of a specified array of bytes to its equivalent hexadecimal string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
       </Docs>
@@ -905,7 +964,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The elements from array position <paramref name="startIndex" /> to the end of the array are converted. The order of hexadecimal strings returned by the <see cref="M:System.BitConverter.ToString(System.Byte[])" /> method depends on whether the computer architecture is little-endian or big-endian.</para>
@@ -914,6 +972,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in a subarray of <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -938,7 +1000,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="length" /> elements from array position <paramref name="startIndex" /> are converted. If <paramref name="length" /> equals zero, the method returns <see cref="F:System.String.Empty" />.</para>
@@ -948,6 +1009,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of each element of a specified subarray of bytes to its equivalent hexadecimal string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of hexadecimal pairs separated by hyphens, where each pair represents the corresponding element in a subarray of <paramref name="value" />; for example, "7F-2C-4A-00".</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -978,7 +1043,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ushort'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToUInt16(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 1 to a <see cref="T:System.UInt16" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -987,6 +1051,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-bit unsigned integer formed by two bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of bytes. </param>
         <param name="startIndex">
@@ -1015,7 +1083,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'uint'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToUInt32(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 3 to a <see cref="T:System.UInt32" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -1024,6 +1091,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit unsigned integer formed by four bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">
@@ -1052,7 +1123,6 @@
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ulong'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.BitConverter.ToUInt64(System.Byte[],System.Int32)" /> method converts the bytes from index <paramref name="startIndex" /> to <paramref name="startIndex" /> + 7 to a <see cref="T:System.UInt64" /> value. The order of bytes in the array must reflect the endianness of the computer system's architecture; for more information, see the Remarks section of the <see cref="T:System.BitConverter" /> class topic. </para>
@@ -1061,6 +1131,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit unsigned integer formed by the eight bytes beginning at <paramref name="startIndex" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. </param>
         <param name="startIndex">

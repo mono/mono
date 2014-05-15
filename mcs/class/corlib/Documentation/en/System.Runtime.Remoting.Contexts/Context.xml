@@ -66,7 +66,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The slot is allocated on all the contexts.</para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates an unnamed data slot.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local data slot.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllocateNamedDataSlot">
@@ -93,7 +96,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The slot is allocated on all the contexts. Named data slots are public and can be manipulated by anyone.</para>
@@ -102,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a named data slot.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A local data slot object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The required name for the data slot. </param>
       </Docs>
@@ -292,12 +298,15 @@
         <Parameter Name="slot" Type="System.LocalDataStoreSlot" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value from the specified slot on the current context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the data associated with <paramref name="slot" />. </para>
+        </returns>
         <param name="slot">
           <attribution license="cc4" from="Microsoft" modified="false" />The data slot that contains the data. </param>
       </Docs>
@@ -318,7 +327,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LocalDataStoreSlot'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the name has not been used, a new slot is allocated. Named data slots are public and can be manipulated by anyone.</para>
@@ -327,6 +335,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Looks up a named data slot.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a local data slot.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The data slot name. </param>
       </Docs>
@@ -347,12 +359,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IContextProperty'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a specific context property, specified by name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified context property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. </param>
       </Docs>
@@ -375,7 +390,6 @@
         <Parameter Name="ctx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Based on <paramref name="obj" /> and <paramref name="ctx" />, <paramref name="prop" /> is asked to contribute a sink that is placed at some location in the path of remoting calls. If multiple properties are registered, their sinks will be called in an arbitrary order that can change between calls.</para>
@@ -387,6 +401,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a dynamic property implementing the <see cref="T:System.Runtime.Remoting.Contexts.IDynamicProperty" /> interface with the remoting service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the property was successfully registered; otherwise, false.</para>
+        </returns>
         <param name="prop">
           <attribution license="cc4" from="Microsoft" modified="false" />The dynamic property to register. </param>
         <param name="obj">
@@ -465,12 +483,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> class representation of the current context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> class representation of the current context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UnregisterDynamicProperty">
@@ -491,12 +512,15 @@
         <Parameter Name="ctx" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unregisters a dynamic property implementing the <see cref="T:System.Runtime.Remoting.Contexts.IDynamicProperty" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object was successfully unregistered; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic property to unregister. </param>
         <param name="obj">

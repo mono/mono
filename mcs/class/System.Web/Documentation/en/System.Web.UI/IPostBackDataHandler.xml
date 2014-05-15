@@ -32,7 +32,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The ASP.NET page framework tracks all the server controls that return true to this method call, and then invokes the <see cref="M:System.Web.UI.IPostBackDataHandler.RaisePostDataChangedEvent" /> method on those controls.</para>
@@ -41,6 +40,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented by a class, processes postback data for an ASP.NET server control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control's state changes as a result of the postback; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control. </param>
         <param name="postCollection">

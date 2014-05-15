@@ -169,7 +169,6 @@
         <Parameter Name="isLocalRequest" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Complete exception information includes the exact server exception and the server stack trace. Filtered information includes a standard remoting exception but no server stack trace.</para>
@@ -320,6 +319,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the server channels in this application domain return filtered or complete exception information to local or remote callers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if only filtered exception information is returned to local or remote callers, as specified by the <paramref name="isLocalRequest" /> parameter; false if complete exception information is returned.</para>
+        </returns>
         <param name="isLocalRequest">
           <attribution license="cc4" from="Microsoft" modified="false" />true to specify local callers; false to specify remote callers. </param>
       </Docs>
@@ -358,7 +361,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
@@ -367,6 +369,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of object types registered on the client as types that will be activated remotely.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the client as types that will be activated remotely.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRegisteredActivatedServiceTypes">
@@ -383,7 +389,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ActivatedServiceTypeEntry []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a detailed description of client-activated objects, see <format type="text/html"><a href="4A791494-C18A-4711-A5C1-4AB0E49A8F1A">[&lt;topic://cpconClientActivation&gt;]</a></format>.</para>
@@ -392,6 +397,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of object types registered on the service end that can be activated on request from a client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the service end that can be activated on request from a client.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRegisteredWellKnownClientTypes">
@@ -408,7 +417,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Well-known object types can be either single call or singleton. If an object type is single call, then a new instance of it is created each time a call from the client comes in. All calls to a singleton object are handled by one instance of that object.</para>
@@ -418,6 +426,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of object types registered on the client end as well-known types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the client end as well-known types.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRegisteredWellKnownServiceTypes">
@@ -434,7 +446,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'WellKnownServiceTypeEntry []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Well-known object types can be either single call or singleton. If an object type is single call, then a new instance of it is created each time a call from the client comes in. All calls to a singleton object are handled by one instance of that object.</para>
@@ -444,6 +455,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of object types registered on the service end as well-known types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of object types registered on the service end as well-known types.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsActivationAllowed">
@@ -462,7 +477,6 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current method is used at the server end to determine whether an activation of the object <see cref="T:System.Type" /> is explicitly allowed by the server.</para>
@@ -471,6 +485,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value that indicates whether the specified <see cref="T:System.Type" /> is allowed to be client activated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Type" /> is allowed to be client activated; otherwise, false.</para>
+        </returns>
         <param name="svrType">
           <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" /> to check. </param>
       </Docs>
@@ -491,12 +509,15 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the specified object <see cref="T:System.Type" /> is registered as a remotely activated client type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
         <param name="svrType">
           <attribution license="cc4" from="Microsoft" modified="false" />The object type to check. </param>
       </Docs>
@@ -518,12 +539,15 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the object specified by its type name and assembly name is registered as a remotely activated client type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.ActivatedClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The type name of the object to check. </param>
         <param name="assemblyName">
@@ -546,12 +570,15 @@
         <Parameter Name="svrType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the specified object <see cref="T:System.Type" /> is registered as a well-known client type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
         <param name="svrType">
           <attribution license="cc4" from="Microsoft" modified="false" />The object <see cref="T:System.Type" /> to check. </param>
       </Docs>
@@ -573,12 +600,15 @@
         <Parameter Name="assemblyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the object specified by its type name and assembly name is registered as a well-known client type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.WellKnownClientTypeEntry" /> that corresponds to the specified object type.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The type name of the object to check. </param>
         <param name="assemblyName">

@@ -240,7 +240,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You should use an <see cref="T:System.Collections.IEnumerator" /> only to read data in the collection. Enumerators cannot be used to modify the underlying collection. The enumerator does not have exclusive access to the collection.</para>
@@ -250,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that can iterate through a <see cref="T:System.Net.CookieCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of an implementation of an <see cref="T:System.Collections.IEnumerator" /> interface that can iterate through a <see cref="T:System.Net.CookieCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">

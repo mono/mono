@@ -143,7 +143,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For two <see cref="T:System.Xml.Linq.XNamespace" /> objects to be equal, they must have the same URI.</para>
@@ -152,6 +151,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Xml.Linq.XNamespace" /> is equal to the current <see cref="T:System.Xml.Linq.XNamespace" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> that indicates whether the specified <see cref="T:System.Xml.Linq.XNamespace" /> is equal to the current <see cref="T:System.Xml.Linq.XNamespace" />.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNamespace" /> to compare to the current <see cref="T:System.Xml.Linq.XNamespace" />.</param>
       </Docs>
@@ -170,7 +173,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="namespaceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned <see cref="T:System.Xml.Linq.XNamespace" /> object is guaranteed to be atomic (that is, it is the only one in the system for that particular URI).</para>
@@ -179,6 +181,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Xml.Linq.XNamespace" /> for the specified Uniform Resource Identifier (URI).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XNamespace" /> created from the specified URI.</para>
+        </returns>
         <param name="namespaceName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a namespace URI.</param>
       </Docs>
@@ -195,7 +201,6 @@ Console.WriteLine(e)</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method serves as a hash function for <see cref="T:System.Xml.Linq.XNamespace" />. You can use <see cref="M:System.Xml.Linq.XNamespace.GetHashCode" /> in hashing algorithms and data structures like a hash table.</para>
@@ -204,6 +209,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for this <see cref="T:System.Xml.Linq.XNamespace" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> that contains the hash code for the <see cref="T:System.Xml.Linq.XNamespace" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetName">
@@ -220,7 +229,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="localName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned <see cref="T:System.Xml.Linq.XName" /> object is guaranteed to be atomic (that is, it is the only one in the system for a specific expanded name).</para>
@@ -229,6 +237,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.Linq.XName" /> object created from this <see cref="T:System.Xml.Linq.XNamespace" /> and the specified local name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XName" /> created from this <see cref="T:System.Xml.Linq.XNamespace" /> and the specified local name.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains a local name.</param>
       </Docs>
@@ -289,7 +301,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="localName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operator enables the common idiom of combining a namespace and a local name in the construction of an element or attribute. This idiom provides some of the benefits of having namespace prefixes, in that you can refer to a namespace using a variable that is short. This eliminates syntactic noise in the code that creates XML trees.</para>
@@ -298,6 +309,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Combines an <see cref="T:System.Xml.Linq.XNamespace" /> object with a local name to create an <see cref="T:System.Xml.Linq.XName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Xml.Linq.XName" /> constructed from the namespace and local name.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XNamespace" /> that contains the namespace.</param>
         <param name="localName">
@@ -319,7 +334,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="right" Type="System.Xml.Linq.XNamespace" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The operator overloads == and != are provided to enable comparisons between <see cref="T:System.Xml.Linq.XNamespace" /> and string (for example, element.Name.Namespace == "http://www.adventure-works.com"). The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only, and do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XNamespace" />.</para>
@@ -328,6 +342,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XNamespace" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> that indicates whether <paramref name="left" /> and <paramref name="right" /> are equal.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNamespace" /> to compare.</param>
         <param name="right">
@@ -374,7 +392,6 @@ Console.WriteLine(e)</code>
         <Parameter Name="right" Type="System.Xml.Linq.XNamespace" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The operator overloads == and != are provided to enable comparisons between <see cref="T:System.Xml.Linq.XNamespace" /> and string (for example, element.Name.Namespace == "http://www.adventure-works.com"). The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only, and do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XNamespace" />.</para>
@@ -383,6 +400,10 @@ Console.WriteLine(e)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XNamespace" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> that indicates whether <paramref name="left" /> and <paramref name="right" /> are not equal.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNamespace" /> to compare.</param>
         <param name="right">
@@ -401,12 +422,15 @@ Console.WriteLine(e)</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the URI of this <see cref="T:System.Xml.Linq.XNamespace" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URI of this <see cref="T:System.Xml.Linq.XNamespace" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Xml">

@@ -38,13 +38,30 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata and the default <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> is <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.MetadataExchange" />.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts, using the specified address and asynchronous state and delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation. </para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginResolve">
@@ -64,7 +81,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata and the default <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> is <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.MetadataExchange" />.</para>
@@ -79,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract using the specified address and asynchronous state and delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation.</para>
+        </returns>
         <param name="contract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract for which to download and resolve metadata.</param>
         <param name="address">
@@ -107,14 +127,32 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="client">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> is <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.MetadataExchange" />.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts, using the specified address, <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" />, asynchronous state and delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="client">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> used to retrieve the metadata.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginResolve">
@@ -135,14 +173,32 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts, using the specified address, <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> value, asynchronous state and delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode of retrieval.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginResolve">
@@ -163,7 +219,6 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata.</para>
@@ -176,6 +231,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract, using the specified address, <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" />, asynchronous state and delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation.</para>
+        </returns>
         <param name="contract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract for which to download and resolve metadata.</param>
         <param name="address">
@@ -207,15 +266,33 @@
         <Parameter Name="asyncState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <param name="client">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="asyncState">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins an asynchronous call that resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts, using the specified address, <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" />, <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" />, asynchronous state, and delegate.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous resolve operation.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode of retrieval.</param>
+        <param name="client">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> used to retrieve the metadata.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The asynchronous callback delegate invoked when the call is complete.</param>
+        <param name="asyncState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The state associated with the asynchronous call.</param>
       </Docs>
     </Member>
     <Member MemberName="EndResolve">
@@ -232,7 +309,6 @@
         <Parameter Name="result" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous call to one of the <see cref="Overload:System.ServiceModel.Description.MetadataResolver.BeginResolve" /> methods.</para>
@@ -241,6 +317,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Completes an asynchronous call to resolve metadata into a collection of endpoints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the endpoints contained in the metadata.</para>
+        </returns>
         <param name="result">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> object that was received from a call to the <see cref="Overload:System.ServiceModel.Description.MetadataResolver.BeginResolve" /> method.</param>
       </Docs>
@@ -260,11 +340,26 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata and the default <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> is <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.MetadataExchange" />.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts using the specified metadata address.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
       </Docs>
     </Member>
     <Member MemberName="Resolve">
@@ -282,7 +377,6 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.MetadataResolver.Resolve(System.Type,System.ServiceModel.EndpointAddress)" /> method to specify the contract and the metadata address to use when downloading and resolving metadata. </para>
@@ -298,6 +392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Downloads and resolves a metadata address into a collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for a specified contract at a specified address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
         <param name="contract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
         <param name="address">
@@ -320,12 +418,28 @@
         <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="client">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default <see cref="T:System.ServiceModel.Description.MetadataExchangeClientMode" /> is <see cref="F:System.ServiceModel.Description.MetadataExchangeClientMode.MetadataExchange" />.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts using the specified metadata address and <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" />.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="client">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> used to retrieve the metadata.</param>
       </Docs>
     </Member>
     <Member MemberName="Resolve">
@@ -344,12 +458,28 @@
         <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default settings on the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> are used to retrieve the metadata.</para>
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts using the specified address and transfer mode.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode of retrieval.</param>
       </Docs>
     </Member>
     <Member MemberName="Resolve">
@@ -368,7 +498,6 @@
         <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.MetadataResolver.Resolve(System.Type,System.Uri,System.ServiceModel.Description.MetadataExchangeClientMode)" /> method to specify a contract, and address, and the download mechanism to use.</para>
@@ -382,6 +511,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract using the specified address and transfer mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
         <param name="contract">
           <attribution license="cc4" from="Microsoft" modified="false" />The contract for which to download and resolve metadata.</param>
         <param name="address">
@@ -407,13 +540,29 @@
         <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
       </Parameters>
       <Docs>
-        <param name="contracts">To be added.</param>
-        <param name="address">To be added.</param>
-        <param name="mode">To be added.</param>
-        <param name="client">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To download metadata but not resolve the information into <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects, use the <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> directly.</para>
+          <block subset="none" type="note">
+            <para>An empty collection is returned if no endpoints were imported or if no endpoints matched the contract. If an empty collection is returned, a warning trace is written.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resolves a metadata address into the <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contracts using the specified address, transfer mode, and transfer client.</para>
+        </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects for the specified contract.</para>
+        </returns>
+        <param name="contracts">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contracts for which to download and resolve metadata.</param>
+        <param name="address">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata address.</param>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode of retrieval.</param>
+        <param name="client">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataExchangeClient" /> used to retrieve the metadata.</param>
       </Docs>
     </Member>
   </Members>

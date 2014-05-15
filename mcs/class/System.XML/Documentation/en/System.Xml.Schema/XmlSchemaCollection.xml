@@ -103,7 +103,6 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The targetNamespace attribute is used to identify this schema.</para>
@@ -121,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the <see cref="T:System.Xml.Schema.XmlSchema" /> to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlSchema object.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema to add to the collection. </param>
       </Docs>
@@ -178,7 +181,6 @@
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection. For example, in the following C# code, authors.xsd is removed from the collection and names.xsd is added.</para>
@@ -198,6 +200,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the schema located by the given URL into the schema collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema. </para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
         <param name="uri">
@@ -221,7 +227,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSchema'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection.</para>
@@ -240,6 +245,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the schema contained in the <see cref="T:System.Xml.XmlReader" /> to the schema collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
         <param name="reader">
@@ -264,7 +273,6 @@
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The targetNamespace attribute is used to identify this schema.</para>
@@ -277,6 +285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the <see cref="T:System.Xml.Schema.XmlSchema" /> to the collection. The specified <see cref="T:System.Xml.XmlResolver" /> is used to resolve any external references.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlSchema added to the schema collection.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema to add to the collection. </param>
         <param name="resolver">
@@ -301,7 +313,6 @@
         <Parameter Name="resolver" Type="System.Xml.XmlResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="ns" /> has already been associated with another schema in the collection, the schema being added replaces the original schema in the collection.</para>
@@ -315,6 +326,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the schema contained in the <see cref="T:System.Xml.XmlReader" /> to the schema collection. The specified <see cref="T:System.Xml.XmlResolver" /> is used to resolve any external resources.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> added to the schema collection; null if the schema being added is an XDR schema or if there are compilation errors in the schema.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the targetNamespace. </param>
         <param name="reader">
@@ -340,7 +355,6 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -351,6 +365,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether a schema with the specified namespace is in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a schema with the specified namespace is in the collection; otherwise, false.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI associated with the schema. For XML Schemas, this will typically be the target namespace. </param>
       </Docs>
@@ -371,7 +389,6 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -382,6 +399,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the targetNamespace of the specified <see cref="T:System.Xml.Schema.XmlSchema" /> is in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a schema in the collection with the same targetNamespace; otherwise, false.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlSchema object. </param>
       </Docs>
@@ -459,7 +480,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'XmlSchemaCollectionEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -470,6 +490,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides support for the "for each" style iteration over the collection of schemas.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for iterating over all schemas in the current collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -637,7 +661,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Xml.Schema.XmlSchemaCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -646,6 +669,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Xml.Schema.XmlSchemaCollection.GetEnumerator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Collections.IEnumerator" /> for the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidationEventHandler">

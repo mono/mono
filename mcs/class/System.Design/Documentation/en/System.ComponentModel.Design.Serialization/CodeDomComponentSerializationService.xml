@@ -66,7 +66,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The serialization store can be passed to any of the <see cref="M:System.ComponentModel.Design.Serialization.CodeDomComponentSerializationService.Serialize(System.ComponentModel.Design.Serialization.SerializationStore,System.Object)" /> methods to build up serialization state for a group of objects.</para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new serialization store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -90,12 +93,15 @@
         <Parameter Name="store" Type="System.ComponentModel.Design.Serialization.SerializationStore" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the given store to produce a collection of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of deserialized components.</para>
+        </returns>
         <param name="store">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> from which objects will be deserialized.</param>
       </Docs>
@@ -114,7 +120,6 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Created objects that implement the <see cref="T:System.ComponentModel.IComponent" /> interface will be added to the <paramref name="container" /> parameter.</para>
@@ -123,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the given store and populates the given <see cref="T:System.ComponentModel.IContainer" /> with deserialized <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of deserialized components.</para>
+        </returns>
         <param name="store">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> from which objects will be deserialized.</param>
         <param name="container">
@@ -176,7 +185,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the returned store to deserialize objects by passing it to the various <see cref="Overload:System.ComponentModel.Design.Serialization.CodeDomComponentSerializationService.Deserialize" /> methods.</para>
@@ -185,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> from the given stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to load the <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</param>
       </Docs>

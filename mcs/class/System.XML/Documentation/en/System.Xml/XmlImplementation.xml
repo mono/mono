@@ -81,7 +81,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'XmlDocument'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>XmlDocument objects created from the same implementation share the same name table. This enables users to compare attribute and element names between the objects more efficiently.</para>
@@ -91,6 +90,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XmlDocument" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlDocument object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasFeature">
@@ -110,12 +113,44 @@
         <Parameter Name="strVersion" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests if the Document Object Model (DOM) implementation implements a specific feature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the feature is implemented in the specified version; otherwise, false.</para>
+          <para>The following table shows the combinations that cause HasFeature to return true.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>strFeature </para>
+                </term>
+                <description>
+                  <para>strVersion </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>1.0 </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>XML </para>
+              </term>
+              <description>
+                <para>2.0 </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="strFeature">
           <attribution license="cc4" from="Microsoft" modified="false" />The package name of the feature to test. This name is not case-sensitive. </param>
         <param name="strVersion">

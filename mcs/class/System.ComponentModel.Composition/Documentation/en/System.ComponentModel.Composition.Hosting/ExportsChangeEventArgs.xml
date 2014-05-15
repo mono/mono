@@ -31,11 +31,17 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <param name="addedExports">To be added.</param>
-        <param name="removedExports">To be added.</param>
-        <param name="atomicComposition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" /> class. </para>
+        </summary>
+        <param name="addedExports">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events that were added.</param>
+        <param name="removedExports">
+          <attribution license="cc4" from="Microsoft" modified="false" />The events that were removed.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition transaction that contains the change.</param>
       </Docs>
     </Member>
     <Member MemberName="AddedExports">
