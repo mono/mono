@@ -73,6 +73,12 @@ namespace Microsoft.Build.Internal.Expressions
 		//public Func<string,IEnumerable<KeyValuePair<string,string>>> GetItems { get; private set; }
 		//public Func<string,KeyValuePair<string,string>> GetProperty { get; private set; }
 		
+		List<ITaskItem> evaluated_task_items = new List<ITaskItem> ();
+
+		public IList<ITaskItem> EvaluatedTaskItems {
+			get { return evaluated_task_items; }
+		}
+
 		public string Evaluate (string source)
 		{
 			return Evaluate (source, new ExpressionParserManual (source ?? string.Empty, ExpressionValidationType.LaxString).Parse ());
@@ -122,12 +128,6 @@ namespace Microsoft.Build.Internal.Expressions
 		Stack<object> evaluating_items = new Stack<object> ();
 		Stack<object> evaluating_props = new Stack<object> ();
 
-		List<ITaskItem> evaluated_task_items = new List<ITaskItem> ();
-
-		public IList<ITaskItem> EvaluatedTaskItems {
-			get { return evaluated_task_items; }
-		}
-		
 		public IEnumerable<object> GetItems (string name)
 		{
 			if (Evaluator.Project != null)
@@ -155,8 +155,8 @@ namespace Microsoft.Build.Internal.Expressions
 					return Evaluator.Evaluate (eval.EvaluatedInclude);
 				else {
 					var inst = (ProjectItemInstance) item;
-					if (!evaluated_task_items.Contains (inst))
-						evaluated_task_items.Add (inst);
+					if (!Evaluator.EvaluatedTaskItems.Contains (inst))
+						Evaluator.EvaluatedTaskItems.Add (inst);
 					return Evaluator.Evaluate (inst.EvaluatedInclude);
 				}
 			} finally {
@@ -428,7 +428,6 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			// FIXME: enable this and fix regressions.
 			/*
 			var ret = EvaluateAsStringOrItems (context);
 			if (ret == null)
@@ -458,7 +457,6 @@ namespace Microsoft.Build.Internal.Expressions
 			return EvaluateAsString (context);
 		}
 
-		// FIXME: enable this and fix regressions.
 		/*
 		public override object EvaluateAsStringOrItems (EvaluationContext context)
 		{

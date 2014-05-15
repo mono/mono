@@ -36,6 +36,7 @@ using System.IO;
 using Microsoft.Build.Exceptions;
 using System.Globalization;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Internal.Expressions;
 
 namespace Microsoft.Build.Internal
 {
@@ -239,7 +240,7 @@ namespace Microsoft.Build.Internal
 				return false;
 			}
 			
-			try {
+			//try {
 				foreach (var child in target.Children) {
 					// Evaluate additional target properties
 					var tp = child as ProjectPropertyGroupTaskInstance;
@@ -276,7 +277,7 @@ namespace Microsoft.Build.Internal
 							return false;
 					}
 				}
-			} catch (Exception ex) {
+			/*} catch (Exception ex) {
 				// fallback task specified by OnError element
 				foreach (var c in target.Children.OfType<ProjectOnErrorInstance> ()) {
 					if (!args.Project.EvaluateCondition (c.Condition))
@@ -289,7 +290,7 @@ namespace Microsoft.Build.Internal
 				LogErrorEvent (new BuildErrorEventArgs (null, null, target.FullPath, line, col, 0, 0, ex.Message, null, null));
 				targetResult.Failure (ex);
 				return false;
-			}
+			}*/
 			return true;
 		}
 		
@@ -311,8 +312,10 @@ namespace Microsoft.Build.Internal
 			task.BuildEngine = this;
 			
 			// Prepare task parameters.
-			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,object[]> (p.Key, project.EvaluateAsStringOrItems (p.Value).ToArray ()));
-			
+			var evaluator = new ExpressionEvaluator (project);
+			//var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,object[]> (p.Key, project.EvaluateAsStringOrItems (evaluator, p.Value).ToArray ()));
+			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (evaluator, p.Value)));
+
 			var requiredProps = task.GetType ().GetProperties ()
 				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
 			var missings = requiredProps.Where (p => !evaluatedTaskParams.Any (tp => tp.Key.Equals (p.Name, StringComparison.OrdinalIgnoreCase)));
@@ -333,16 +336,18 @@ namespace Microsoft.Build.Internal
 				if (!prop.CanWrite)
 					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", taskInstance.Name, p.Key));
 				try {
-					if (p.Value.All (o => o is ITaskItem)) {
-						valueInstance = ConvertTo (p.Value, prop.PropertyType);
-						prop.SetValue (task, valueInstance, null);
-					} else if (p.Value.Any ()) {
-						string valueString = string.Join (";", p.Value.Where (o => o != null).Select (o => ConvertTo (o, typeof (string))).Where (s => s != null));
+					//Console.Error.WriteLine ("$$$$$$$ " + evaluator.EvaluatedTaskItems.Count);
+					//foreach (var i in evaluator.EvaluatedTaskItems) Console.Error.WriteLine ("!!! {0}", i.ItemSpec, i.MetadataCount);
+					//if (prop.PropertyType == typeof (ITaskItem) || prop.PropertyType == typeof (ITaskItem [])) {
+					//	valueInstance = ConvertTo (p.Value, prop.PropertyType);
+					//	prop.SetValue (task, valueInstance, null);
+					//} else if (p.Value.Any ()) {
+					string valueString = p.Value;//string.Join (";", p.Value.Where (o => o != null).Select (o => ConvertTo (o, typeof (string))).Where (s => s != null));
 						if (string.IsNullOrEmpty (valueString) && !requiredProps.Contains (prop))
 							continue;
-						valueInstance = ConvertTo (valueString, prop.PropertyType);
+					valueInstance = ConvertTo (valueString, prop.PropertyType, evaluator);
 						prop.SetValue (task, valueInstance, null);
-					}
+					//}
 				} catch (Exception ex) {
 					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType), ex);
 				}
@@ -403,9 +408,10 @@ namespace Microsoft.Build.Internal
 			}
 			return true;
 		}
-		
-		object ConvertTo (object sourceObject, Type targetType)
+
+		object ConvertTo (object sourceObject, Type targetType, ExpressionEvaluator evaluator)
 		{
+			/*
 			if (sourceObject == null)
 				return null;
 			if (sourceObject.GetType () == targetType)
@@ -414,13 +420,22 @@ namespace Microsoft.Build.Internal
 				: sourceObject is ICollection
 				? (object []) new ArrayList ((ICollection) sourceObject).ToArray (typeof(object)) : null;
 			if (targetType.IsArray && sourceObject.GetType ().IsArray)
-				return new ArrayList (arr.Select (o => ConvertTo (o, targetType.GetElementType ())).Where (o => o != null).ToArray ())
+				return new ArrayList (arr.Select (o => ConvertTo (o, targetType.GetElementType (), evaluator)).Where (o => o != null).ToArray ())
 						.ToArray (targetType.GetElementType ());
-			var source = sourceObject is string ? (string) sourceObject : arr == null || !arr.Any () ? string.Empty : string.Join (";", arr.Select (o => ConvertTo (o, typeof (string))).Where (s => s != null));
-			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
-				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
+			var source = sourceObject is string ? (string) sourceObject : arr == null || !arr.Any () ? string.Empty : string.Join (";", arr.Select (o => ConvertTo (o, typeof (string), evaluator)).Where (s => s != null));
+			*/
+			var source = (string) sourceObject;
+
+			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem))) {
+				var item = evaluator.EvaluatedTaskItems.FirstOrDefault (i => string.Equals (i.ItemSpec, source.Trim (), StringComparison.OrdinalIgnoreCase));
+				var ret = new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
+				if (item != null)
+					foreach (string name in item.MetadataNames)
+						ret.SetMetadata (name, item.GetMetadata (name));
+				return ret;
+			}
 			if (targetType.IsArray)
-				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
+				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType (), evaluator)).ToArray ())
 						.ToArray (targetType.GetElementType ());
 			if (targetType == typeof (bool)) {
 				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {

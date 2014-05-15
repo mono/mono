@@ -446,9 +446,14 @@ namespace Microsoft.Build.Execution
 			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this).Evaluate (unexpandedValue));
 		}
 
-		internal IEnumerable<object> EvaluateAsStringOrItems (string unexpandedValue)
+		internal string ExpandString (ExpressionEvaluator evaluator, string unexpandedValue)
 		{
-			return new ExpressionEvaluator (this).EvaluateAsStringOrItems (unexpandedValue);
+			return WindowsCompatibilityExtensions.NormalizeFilePath (evaluator.Evaluate (unexpandedValue));
+		}
+
+		internal IEnumerable<object> EvaluateAsStringOrItems (ExpressionEvaluator evaluator, string unexpandedValue)
+		{
+			return evaluator.EvaluateAsStringOrItems (unexpandedValue);
 		}
 
 		public ICollection<ProjectItemInstance> GetItems (string itemType)
