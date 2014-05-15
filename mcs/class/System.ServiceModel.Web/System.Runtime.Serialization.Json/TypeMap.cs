@@ -94,18 +94,40 @@ namespace System.Runtime.Serialization.Json
 
 		internal static bool IsDictionary (Type type)
 		{
-			if (type.GetInterface ("System.Collections.IDictionary", false) != null)
+			Type inter;
+			inter = type.GetInterface ("System.Collections.IDictionary", false);
+			if (inter != null
+				&& type.GetMethod ("Add", new Type[] { typeof (object), typeof (object) }) != null)
 				return true;
-			if (type.GetInterface ("System.Collections.Generic.IDictionary`2", false) != null)
+			
+			inter = type.GetInterface ("System.Collections.Generic.IDictionary`2", false);
+			if (inter != null
+				&& type.GetMethod ("Add", new Type[] { inter.GetGenericArguments() [0], 
+					                                   inter.GetGenericArguments() [1] }) != null)
 				return true;
 			return false;
 		}
 
-		internal static bool IsCollection (Type type)
+		internal static bool IsEnumerable (Type type)
 		{
+			if (type.IsGenericType && 
+				type.GetGenericTypeDefinition() == typeof (LinkedList<>))
+				return true;
+			
 			if (IsPrimitiveType (type) || IsDictionary (type))
 				return false;
-			if (type.GetInterface ("System.Collections.IEnumerable", false) != null)
+			
+			Type inter;
+			inter = type.GetInterface ("System.Collections.Generic.IReadOnlyCollection`1", false);
+			if (inter != null)
+				return true;
+			
+			inter = type.GetInterface ("System.Collections.IEnumerable", false);
+			if (inter != null && type.GetMethod ("Add", new Type[] { typeof (object) }) != null)
+				return true;
+			
+			inter = type.GetInterface ("System.Collections.Generic.IEnumerable`1", false);
+			if (inter != null && type.GetMethod ("Add", new Type[] { inter.GetGenericArguments() [0] }) != null)
 				return true;
 			return false;
 		}
@@ -140,7 +162,7 @@ namespace System.Runtime.Serialization.Json
 						continue;
 					if (pi.GetIndexParameters ().Length > 0)
 						continue;
-					if (IsCollection (pi.PropertyType)) {
+					if (IsEnumerable (pi.PropertyType) || IsDictionary (pi.PropertyType)) {
 						if (!pi.CanRead)
 							throw new InvalidDataContractException (String.Format ("Property {0} must have a getter", pi));
 					}
@@ -210,7 +232,7 @@ namespace System.Runtime.Serialization.Json
 					return Activator.CreateInstance (typeof (Dictionary<,>).MakeGenericType (type.GetGenericArguments ()));
 				else
 					return new Hashtable ();
-			} else if (TypeMap.IsCollection (type)) {
+			} else if (TypeMap.IsEnumerable (type)) {
 				if (type.IsGenericType)
 					return Activator.CreateInstance (typeof (List<>).MakeGenericType (type.GetGenericArguments ()));
 				else
@@ -220,7 +242,7 @@ namespace System.Runtime.Serialization.Json
 				return FormatterServices.GetUninitializedObject (type);
 		}
 
-		public virtual object Deserialize (JsonSerializationReader jsr)
+		public virtual object Deserialize (JsonSerializationReader jsr, object o)
 		{
 			XmlReader reader = jsr.Reader;
 			bool isNull = reader.GetAttribute ("type") == "null";
@@ -238,7 +260,7 @@ namespace System.Runtime.Serialization.Json
 					if (mm.Name == reader.LocalName && reader.NamespaceURI == String.Empty) {
 						if (filled.ContainsKey (mm))
 							throw new SerializationException (String.Format ("Object content '{0}' for '{1}' already appeared in the reader", reader.LocalName, type));
-						mm.SetMemberValue (ret, jsr.ReadObject (mm.Type));
+						mm.SetMemberValue (ret, jsr);
 						filled [mm] = true;
 						consumed = true;
 						break;
@@ -285,7 +307,7 @@ namespace System.Runtime.Serialization.Json
 
 		public abstract object GetMemberOf (object owner);
 
-		public abstract void SetMemberValue (object owner, object value);
+		public abstract void SetMemberValue (object owner, JsonSerializationReader value);
 	}
 
 	class TypeMapField : TypeMapMember
@@ -306,10 +328,10 @@ namespace System.Runtime.Serialization.Json
 		{
 			return field.GetValue (owner);
 		}
-
-		public override void SetMemberValue (object owner, object value)
+		
+		public override void SetMemberValue (object owner, JsonSerializationReader jsr)
 		{
-			field.SetValue (owner, value);
+			field.SetValue (owner, jsr.ReadObject (this.Type));
 		}
 	}
 
@@ -332,9 +354,21 @@ namespace System.Runtime.Serialization.Json
 			return property.GetValue (owner, null);
 		}
 
-		public override void SetMemberValue (object owner, object value)
+		public override void SetMemberValue (object owner, JsonSerializationReader jsr)
 		{
-			property.SetValue (owner, value, null);
+			var pSetter = this.property.GetSetMethod (true);
+			if (pSetter != null) {
+				property.SetValue (owner, jsr.ReadObject (this.Type), null);
+				
+			} else { // no setter
+				var oldValue = property.GetValue (owner, null);
+				try {
+					jsr.ReadObject (this.Type, oldValue);
+				} catch (MissingMethodException e) {
+					throw new InvalidDataContractException (string.Format ("No set method for property '{0}' "
+						+ "in type '{1}'.", this.property.Name, this.property.PropertyType.FullName), e);
+				}
+			}
 		}
 	}
 }
