@@ -1,10 +1,12 @@
 //
 // Expression.cs: Stores references to items or properties.
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Marek Safar (marek.safar@gmail.com)
 // 
 // (C) 2005 Marek Sieradzki
+// Copyright (c) 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -56,7 +58,6 @@ namespace Microsoft.Build.BuildEngine {
 		ExpressionCollection expressionCollection;
 
 		static Regex item_regex;
-		static Regex property_regex;
 		static Regex metadata_regex;
 	
 		public Expression ()
@@ -99,6 +100,9 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				parts = new string [] { expression };
 
+			// TODO: Too complicated, each part parses only its known part
+			// we should simply do it in one go and avoid all this parts code madness
+
 			List <ArrayList> p1 = new List <ArrayList> (parts.Length);
 			List <ArrayList> p2 = new List <ArrayList> (parts.Length);
 			List <ArrayList> p3 = new List <ArrayList> (parts.Length);
@@ -114,7 +118,7 @@ namespace Microsoft.Build.BuildEngine {
 				p2 [i] = new ArrayList ();
 				foreach (object o in p1 [i]) {
 					if (o is string)
-						p2 [i].AddRange (SplitProperties ((string) o));
+						p2 [i].AddRange (ExtractProperties ((string) o));
 					else
 						p2 [i].Add (o);
 				}
@@ -206,45 +210,336 @@ namespace Microsoft.Build.BuildEngine {
 			return phase2;
 		}
 
-		ArrayList SplitProperties (string text)
+		//
+		// Parses property syntax
+		//
+		static List<object> ExtractProperties (string text)
 		{
-			ArrayList phase1 = new ArrayList ();
-			Match m;
-			m = PropertyRegex.Match (text);
+			var phase = new List<object> ();
 
-			while (m.Success) {
-				string name = null;
-				PropertyReference pr;
-				
-				name = m.Groups [PropertyRegex.GroupNumberFromName ("name")].Value;
-				
-				pr = new PropertyReference (name, m.Groups [0].Index, m.Groups [0].Length);
-				phase1.Add (pr);
-				m = m.NextMatch ();
+			var	pos = text.IndexOf ("$(", StringComparison.Ordinal);
+			if (pos < 0) {
+				phase.Add (text);
+				return phase;
 			}
 
-			ArrayList phase2 = new ArrayList ();
-			int last_end = -1;
-			int end = text.Length - 1;
+			if (pos != 0) {
+				// Extract any whitespaces before property reference
+				phase.Add (text.Substring (0, pos));
+			}
 
-			foreach (PropertyReference pr in phase1) {
-				int a,b;
+			while (pos < text.Length) {
+				pos += 2;
+				int start = pos;
+				int end = 0;
+					
+				var ch = text [pos];
+				if ((ch == 'r' || ch == 'R') && text.Substring (pos + 1).StartsWith ("egistry:", StringComparison.OrdinalIgnoreCase)) {
+					pos += 9;
+					ParseRegistryFunction (text, pos);
+				} else {
+					while (char.IsWhiteSpace (ch))
+						ch = text [pos++];
 
-				a = last_end;
-				b = pr.Start;
+					if (ch == '[') {
+						phase.Add (ParsePropertyFunction (text, ref pos));
+					} else {
+						// TODO: There is something like char index syntax as well: $(aa [10])
+						// text.IndexOf ('[');
 
-				if (b - a - 1 > 0) {
-					phase2.Add (text.Substring (a + 1, b - a - 1));
+						end = text.IndexOf (')', pos) + 1;
+						if (end > 0) {
+							//
+							// Instance string method, $(foo.Substring (0, 3))
+							//
+							var dot = text.IndexOf ('.', pos, end - pos);
+							if (dot > 0) {
+								var name = text.Substring (start, dot - start);
+								++dot;
+								var res = ParseInvocation (text, ref dot, null, new PropertyReference (name));
+								if (res != null) {
+									phase.Add (res);
+									end = dot;
+								}
+							} else {
+								var name = text.Substring (start, end - start - 1);
+
+								//
+								// Check for wrong syntax e.g $(foo()
+								//
+								var open_parens = name.IndexOf ('(');
+								if (open_parens < 0) {
+									//
+									// Simple property reference $(Foo)
+									//
+									phase.Add (new PropertyReference (name));
+								} else {
+									end = 0;
+								}
+							}
+						}
+
+						if (end == 0) {
+							end = text.Length;
+							start -= 2;
+							phase.Add (text.Substring (start, end - start));
+						}
+
+						pos = end;
+					}
 				}
 
-				last_end = pr.End;
-				phase2.Add (pr);
+				end = text.IndexOf ("$(", pos, StringComparison.Ordinal);
+				if (end < 0)
+					end = text.Length;
+
+				if (end - pos > 0)
+					phase.Add (text.Substring (pos, end - pos));
+
+				pos = end;
 			}
 
-			if (last_end < end)
-				phase2.Add (text.Substring (last_end + 1, end - last_end));
+			return phase;
+		}
 
-			return phase2;
+		//
+		// Property function with syntax $([Class]::Method(Parameters))
+		//
+		static MemberInvocationReference ParsePropertyFunction (string text, ref int pos)
+		{
+			int p = text.IndexOf ("]::", pos, StringComparison.Ordinal);
+			if (p < 0)
+				throw new InvalidProjectFileException (string.Format ("Invalid static method invocation syntax '{0}'", text.Substring (pos)));
+
+			var type_name = text.Substring (pos + 1, p - pos - 1);
+			var type = GetTypeForStaticMethod (type_name);
+			if (type == null) {
+				if (type_name.Contains ("."))
+					throw new InvalidProjectFileException (string.Format ("Invalid type '{0}' used in static method invocation", type_name));
+
+				throw new InvalidProjectFileException (string.Format ("'{0}': Static method invocation requires full type name to be used", type_name));
+			}
+
+			pos = p + 3;
+			return ParseInvocation (text, ref pos, type, null);
+		}
+
+		//
+		// Property function with syntax $(Registry:Call)
+		//
+		static void ParseRegistryFunction (string text, int pos)
+		{
+			throw new NotImplementedException ("Registry function");
+		}
+
+		static Type GetTypeForStaticMethod (string typeName)
+		{
+			//
+			// In static property functions, you can use any static method or property of these system classes:
+			//
+			switch (typeName.ToLowerInvariant ()) {
+			case "system.byte":
+				return typeof (byte);
+			case "system.char":
+				return typeof (char);
+			case "system.convert":
+				return typeof (Convert);
+			case "system.datetime":
+				return typeof (DateTime);
+			case "system.decimal":
+				return typeof (decimal);
+			case "system.double":
+				return typeof (double);
+			case "system.enum":
+				return typeof (Enum);
+			case "system.guid":
+				return typeof (Guid);
+			case "system.int16":
+				return typeof (Int16);
+			case "system.int32":
+				return typeof (Int32);
+			case "system.int64":
+				return typeof (Int64);
+			case "system.io.path":
+				return typeof (System.IO.Path);
+			case "system.math":
+				return typeof (Math);
+			case "system.uint16":
+				return typeof (UInt16);
+			case "system.uint32":
+				return typeof (UInt32);
+			case "system.uint64":
+				return typeof (UInt64);
+			case "system.sbyte":
+				return typeof (sbyte);
+			case "system.single":
+				return typeof (float);
+			case "system.string":
+				return typeof (string);
+			case "system.stringcomparer":
+				return typeof (StringComparer);
+			case "system.timespan":
+				return typeof (TimeSpan);
+			case "system.text.regularexpressions.regex":
+				return typeof (System.Text.RegularExpressions.Regex);
+			case "system.version":
+				return typeof (Version);
+			case "microsoft.build.utilities.toollocationhelper":
+				throw new NotImplementedException (typeName);
+			case "msbuild":
+				return typeof (PredefinedPropertyFunctions);
+			case "system.environment":
+				return typeof (System.Environment);
+			case "system.io.directory":
+				return typeof (System.IO.Directory);
+			case "system.io.file":
+				return typeof (System.IO.File);
+			}
+
+			return null;
+		}
+
+		static bool IsMethodAllowed (Type type, string name)
+		{
+			if (type == typeof (System.Environment)) {
+				switch (name.ToLowerInvariant ()) {
+				case "commandline":
+				case "expandenvironmentvariables":
+				case "getenvironmentvariable":
+				case "getenvironmentvariables":
+				case "getfolderpath":
+				case "getlogicaldrives":
+					return true;
+				}
+
+				return false;
+			}
+
+			if (type == typeof (System.IO.Directory)) {
+				switch (name.ToLowerInvariant ()) {
+				case "getdirectories":
+				case "getfiles":
+				case "getlastaccesstime":
+				case "getlastwritetime":
+					return true;
+				}
+
+				return false;
+			}
+
+			if (type == typeof (System.IO.File)) {
+				switch (name.ToLowerInvariant ()) {
+				case "getcreationtime":
+				case "getattributes":
+				case "getlastaccesstime":
+				case "getlastwritetime":
+				case "readalltext":
+					return true;
+				}
+			}
+
+			return true;
+		}
+
+		static List<string> ParseArguments (string text, ref int pos)
+		{
+			List<string> args = new List<string> ();
+			int parens = 0;
+			bool backticks = false;
+			int start = pos;
+			for (; pos < text.Length; ++pos) {
+				var ch = text [pos];
+
+				if (ch == '`') {
+					backticks = !backticks;
+					continue;
+				}
+
+				if (backticks)
+					continue;
+
+				if (ch == '(') {
+					++parens;
+					continue;
+				}
+
+				if (ch == ')') {
+					if (parens == 0) {
+						var arg = text.Substring (start, pos - start).Trim ();
+						if (arg.Length > 0)
+							args.Add (arg);
+
+						++pos;
+						return args;
+					}
+
+					--parens;
+					continue;
+				}
+
+				if (parens != 0)
+					continue;
+
+				if (ch == ',') {
+					args.Add (text.Substring (start, pos - start));
+					start = pos + 1;
+					continue;
+				}
+			}
+
+			// Invalid syntax
+			return null;
+		}
+
+		static MemberInvocationReference ParseInvocation (string text, ref int p, Type type, IReference instance)
+		{
+			var open_parens = text.IndexOf ('(', p);
+			string name;
+			int end;
+			List<string> args;
+
+			//
+			// Is it method or property
+			//
+			if (open_parens > 0) {
+				name = text.Substring (p, open_parens - p);
+
+				//
+				// It can be instance method on static property
+				//
+				if (name.IndexOf ('.') > 0) {
+					var names = name.Split ('.');
+					int i;
+					for (i = 0; i < names.Length - 1; ++i) {
+						instance = new MemberInvocationReference (type, names [i]) {
+							Instance = instance
+						};
+					}
+
+					type = null;
+					name = names [i];
+				}
+				++open_parens;
+				args = ParseArguments (text, ref open_parens);
+				end = text.IndexOf (')', open_parens);
+			} else {
+				end = text.IndexOf (')', p);
+				if (end < 0)
+					throw new InvalidProjectFileException (string.Format ("Invalid static method invocation syntax '{0}'", text.Substring (p)));
+
+				name = text.Substring (p, end - p);
+				args = null;
+			}
+
+			name = name.TrimEnd ();
+			if (!IsMethodAllowed (type, name))
+				throw new InvalidProjectFileException (string.Format ("The function '{0}' on type '{1}' has not been enabled for execution", name, type.FullName));
+
+			p = end + 1;
+			return new MemberInvocationReference (type, name) {
+				Arguments = args,
+				Instance = instance
+			};
 		}
 
 		ArrayList SplitMetadata (string text)
@@ -318,18 +613,7 @@ namespace Microsoft.Build.BuildEngine {
 				return item_regex;
 			}
 		}
-
-		static Regex PropertyRegex {
-			get {
-				if (property_regex == null)
-					property_regex = new Regex (
-						@"\$\(\s*"
-						+ @"(?<name>[_a-zA-Z][_\-0-9a-zA-Z]*)"
-						+ @"\s*\)");
-				return property_regex;
-			}
-		}
-
+			
 		static Regex MetadataRegex {
 			get {
 				if (metadata_regex == null)
