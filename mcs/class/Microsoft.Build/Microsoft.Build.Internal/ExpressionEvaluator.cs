@@ -108,7 +108,7 @@ namespace Microsoft.Build.Internal.Expressions
 			var exprList = new ExpressionParserManual (unexpandedValue ?? string.Empty, ExpressionValidationType.LaxString).Parse ();
 			if (exprList == null)
 				throw new ArgumentNullException ("exprList");
-			return exprList.Select (e => e.EvaluateAsStringOrItems (CreateContext (unexpandedValue)));
+			return exprList.Select (e => e.EvaluateAsString (CreateContext (unexpandedValue)));
 		}
 	}
 	
