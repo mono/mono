@@ -24,12 +24,12 @@ EXTRA_DISTFILES = \
 
 include ../../build/library.make
 
-$(build_lib): $(secxml_libdir)/System.dll $(bare_libdir)/Mono.Security.dll
+$(build_lib): $(secxml_libdir)/System.dll $(the_libdir_base)/Mono.Security.dll
 
 $(secxml_libdir)/System.dll:
 	(cd ../System; $(MAKE) $@)
 
-$(bare_libdir)/Mono.Security.dll:
+$(the_libdir_base)/Mono.Security.dll:
 	(cd ../Mono.Security; $(MAKE))
 
 .NOTPARALLEL: $(secxml_libdir)/System.dll $(bare_libdir)/Mono.Security.dll

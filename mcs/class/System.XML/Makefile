@@ -121,5 +121,3 @@ $(bare_libdir)/System.Xml.dll: $(bare_libdir)/System.dll
 $(the_libdir_base)System.Configuration.dll:
 	(cd ../System.Configuration; $(MAKE) $@)
 
-
-
