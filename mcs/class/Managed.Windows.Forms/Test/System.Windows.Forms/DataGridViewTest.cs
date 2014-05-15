@@ -2513,6 +2513,62 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNull (dgvr2.DataGridView, "#5");
 			Assert.IsNull (dgvr3.DataGridView, "#6");
 		}
+
+		[Test] // Xamarin bug #2394
+		public void Bug2394_RowHeightLessThanOldMinHeightVirtMode ()
+		{
+			using (var dgv = new DataGridView ()) {
+				dgv.VirtualMode = true;
+				dgv.RowCount = 1;
+				dgv.Rows [0].MinimumHeight = 5;
+				dgv.Rows [0].Height = 10;
+				dgv.RowHeightInfoNeeded += (sender, e) => {
+					// NOTE: the order is important here.
+					e.MinimumHeight = 2;
+					e.Height = 2;
+				};
+				dgv.UpdateRowHeightInfo (0, false);
+				Assert.AreEqual (2, dgv.Rows [0].Height);
+				Assert.AreEqual (2, dgv.Rows [0].MinimumHeight);
+			}
+		}
+
+		[Test] // Xamarin bug #2394
+		public void Bug2394_RowHeightLessThanMinHeightVirtMode ()
+		{
+			using (var dgv = new DataGridView ()) {
+				dgv.VirtualMode = true;
+				dgv.RowCount = 1;
+				dgv.Rows [0].Height = 10;
+				dgv.Rows [0].MinimumHeight = 5;
+				dgv.RowHeightInfoNeeded += (sender, e) => {
+					// Setting the height to a value less than the minimum height
+					// will be silently ignored and instead set to MinimumHeight.
+					e.Height = 2;
+				};
+				dgv.UpdateRowHeightInfo (0, false);
+				Assert.AreEqual(5, dgv.Rows[0].Height);
+				Assert.AreEqual(5, dgv.Rows[0].MinimumHeight);
+			}
+		}
+
+		[Test] // Xamarin bug #2394
+		public void Bug2394_MinHeightGreaterThanOldRowHeightVirtMode ()
+		{
+			using (var dgv = new DataGridView ()) {
+				dgv.VirtualMode = true;
+				dgv.RowCount = 1;
+				dgv.Rows [0].Height = 10;
+				dgv.Rows [0].MinimumHeight = 5;
+				dgv.RowHeightInfoNeeded += (sender, e) => {
+					e.MinimumHeight = 30;
+					e.Height = 40;
+				};
+				dgv.UpdateRowHeightInfo (0, false);
+				Assert.AreEqual (40, dgv.Rows [0].Height);
+				Assert.AreEqual (30, dgv.Rows [0].MinimumHeight);
+			}
+		}
 	}
 	
 	[TestFixture]
