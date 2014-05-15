@@ -209,11 +209,6 @@ namespace Microsoft.Build.Internal.Expressions
 			}
 			throw new InvalidProjectFileException (this.Location, string.Format ("Condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
 		}
-
-		public virtual object EvaluateAsStringOrItems (EvaluationContext context)
-		{
-			return EvaluateAsString (context);
-		}
 	}
 	
 	partial class BinaryExpression : Expression
@@ -428,15 +423,6 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
-			/*
-			var ret = EvaluateAsStringOrItems (context);
-			if (ret == null)
-				return null;
-			if (ret is string)
-				return (string) ret;
-			string itemType = Application.Name.Name;
-			return string.Join (";", ((IEnumerable<object>) ret).Select (item => context.EvaluateItem (itemType, item)));
-			*/
 			string itemType = Application.Name.Name;
 			var items = context.GetItems (itemType);
 			if (!items.Any ())
@@ -456,25 +442,6 @@ namespace Microsoft.Build.Internal.Expressions
 		{
 			return EvaluateAsString (context);
 		}
-
-		/*
-		public override object EvaluateAsStringOrItems (EvaluationContext context)
-		{
-			string itemType = Application.Name.Name;
-			var items = context.GetItems (itemType);
-			if (!items.Any ())
-				return null;
-			if (Application.Expressions == null)
-				return items;
-			else
-				return string.Join (";", items.Select (item => {
-					context.ContextItem = item;
-					var ret = string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)));
-					context.ContextItem = null;
-					return ret;
-				}));
-		}
-		*/
 	}
 
 	partial class MetadataAccessExpression : Expression

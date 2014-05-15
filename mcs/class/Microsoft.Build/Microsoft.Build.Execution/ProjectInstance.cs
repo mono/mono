@@ -451,11 +451,6 @@ namespace Microsoft.Build.Execution
 			return WindowsCompatibilityExtensions.NormalizeFilePath (evaluator.Evaluate (unexpandedValue));
 		}
 
-		internal IEnumerable<object> EvaluateAsStringOrItems (ExpressionEvaluator evaluator, string unexpandedValue)
-		{
-			return evaluator.EvaluateAsStringOrItems (unexpandedValue);
-		}
-
 		public ICollection<ProjectItemInstance> GetItems (string itemType)
 		{
 			return new CollectionFromEnumerable<ProjectItemInstance> (Items.Where (p => p.ItemType.Equals (itemType, StringComparison.OrdinalIgnoreCase)));
