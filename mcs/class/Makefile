@@ -104,15 +104,15 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	System.Dynamic			\
 	Mono.CSharp			\
-	System.Net				\
+	System.Net			\
 	System.Json
 
 net_2_0_only_dirs := \
 	System.Web.Extensions_1.0	\
-	System.Web.Extensions.Design_1.0	\
+	System.Web.Extensions.Design_1.0\
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
-	System.ServiceModel.Web \
+	System.ServiceModel.Web 	\
 	System.Data.Services.Client	\
 	System.Data.Services		\
 	System.Web.Mvc \
