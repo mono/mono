@@ -2727,9 +2727,14 @@ namespace System.Windows.Forms {
 			while (f != null) {
 				XConvertSelection(DisplayHandle, CLIPBOARD, (IntPtr)f.Id, (IntPtr)f.Id, FosterParent, IntPtr.Zero);
 
+				var timeToWaitForSelectionFormats = TimeSpan.FromSeconds(4);
+				var startTime = DateTime.Now;
 				Clipboard.Enumerating = true;
 				while (Clipboard.Enumerating) {
 					UpdateMessageQueue(null, false);
+
+					if (DateTime.Now - startTime > timeToWaitForSelectionFormats)
+						break;
 				}
 				f = f.Next;
 			}
