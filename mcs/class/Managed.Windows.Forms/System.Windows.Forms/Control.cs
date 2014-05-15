@@ -714,7 +714,7 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (Control value)
 			{
-				if (value == null)
+				if (value == null || !list.Contains(value))
 					return;
 
 				all_controls = null;
