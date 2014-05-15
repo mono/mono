@@ -29,6 +29,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 namespace System.Data.SqlClient
 {
 	/// <summary>
@@ -49,4 +50,5 @@ namespace System.Data.SqlClient
 		Unknown = -1,
 	}
 }
+#endif
 #endif

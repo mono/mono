@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if !WINDOWS_PHONE && !NETFX_CORE
 
 using System;
 using System.Data.SqlTypes;
@@ -88,4 +89,5 @@ namespace Microsoft.SqlServer.Server {
 	}
 }
 
+#endif
 #endif

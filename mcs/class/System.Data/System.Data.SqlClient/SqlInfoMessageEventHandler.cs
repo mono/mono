@@ -31,9 +31,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 using System;
 using System.Data;
 
 namespace System.Data.SqlClient {
 	public delegate void SqlInfoMessageEventHandler (object sender, SqlInfoMessageEventArgs e);
 }
+#endif
