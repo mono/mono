@@ -402,7 +402,7 @@ namespace Microsoft.Build.Internal
 		{
 			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem))) {
 				var item = evaluator.EvaluatedTaskItems.FirstOrDefault (i => string.Equals (i.ItemSpec, source.Trim (), StringComparison.OrdinalIgnoreCase));
-				var ret = new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
+				var ret = new TargetOutputTaskItem () { ItemSpec = source.Trim () };
 				if (item != null)
 					foreach (string name in item.MetadataNames)
 						ret.SetMetadata (name, item.GetMetadata (name));
@@ -498,6 +498,11 @@ namespace Microsoft.Build.Internal
 				get { return metadata.Keys; }
 			}
 			#endregion
+
+			public override string ToString ()
+			{
+				return ItemSpec;
+			}
 		}
 		
 #if NET_4_5
