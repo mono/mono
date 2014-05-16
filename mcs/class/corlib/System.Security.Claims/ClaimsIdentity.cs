@@ -101,8 +101,8 @@ namespace System.Security.Claims {
 				Label = ci.Label;
 				NameClaimType = ci.NameClaimType;
 				RoleClaimType = ci.RoleClaimType;
-			} 
-			AuthenticationType = identity.AuthenticationType;
+				AuthenticationType = ci.AuthenticationType;
+			}
 		}
 
 		[MonoTODO]
