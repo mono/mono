@@ -176,7 +176,7 @@
 
 					<xsl:when test="$show='namespace'">
 						<xsl:value-of select="$namespace"/>
-						<xsl:text> FOO Namespace</xsl:text>
+						<xsl:text> Namespace</xsl:text>
 					</xsl:when>
 					
 					<xsl:when test="$show='overloads'">
