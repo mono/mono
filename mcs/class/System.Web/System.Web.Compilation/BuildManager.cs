@@ -95,11 +95,7 @@ namespace System.Web.Compilation
 		internal static bool suppressDebugModeMessages;
 
 		// See comment for the cacheLock field at top of System.Web.Caching/Cache.cs
-#if SYSTEMCORE_DEP
 		static ReaderWriterLockSlim buildCacheLock;
-#else
-		static ReaderWriterLock buildCacheLock;
-#endif
 		static ulong recursionDepth;
 
 		internal static bool AllowReferencedAssembliesCaching {
@@ -192,11 +188,7 @@ namespace System.Web.Compilation
 		{
 			hosted = (AppDomain.CurrentDomain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
 			buildCache = new Dictionary <string, BuildManagerCacheItem> (RuntimeHelpers.StringEqualityComparer);
-#if SYSTEMCORE_DEP
 			buildCacheLock = new ReaderWriterLockSlim ();
-#else
-			buildCacheLock = new ReaderWriterLock ();
-#endif
 			referencedAssemblies = new List <Assembly> ();
 			recursionDepth = 0;
 
@@ -851,11 +843,7 @@ namespace System.Web.Compilation
 			// to be added to the cache.
 			Assembly compiledAssembly = results != null ? results.CompiledAssembly : null;
 			try {
-#if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
-#else
-				buildCacheLock.AcquireWriterLock (-1);
-#endif
 				if (compiledAssembly != null)
 					referencedAssemblies.Add (compiledAssembly);
 				
@@ -866,11 +854,7 @@ namespace System.Web.Compilation
 					StoreInCache (bp, compiledAssembly, results);
 				}
 			} finally {
-#if SYSTEMCORE_DEP
 				buildCacheLock.ExitWriteLock ();
-#else
-				buildCacheLock.ReleaseWriterLock ();
-#endif
 			}
 		}
 		
@@ -913,18 +897,10 @@ namespace System.Web.Compilation
 		static BuildManagerCacheItem GetCachedItem (string vp)
 		{
 			try {
-#if SYSTEMCORE_DEP
 				buildCacheLock.EnterReadLock ();
-#else
-				buildCacheLock.AcquireReaderLock (-1);
-#endif
 				return GetCachedItemNoLock (vp);
 			} finally {
-#if SYSTEMCORE_DEP
 				buildCacheLock.ExitReadLock ();
-#else
-				buildCacheLock.ReleaseReaderLock ();
-#endif
 			}
 		}
 
@@ -1361,21 +1337,13 @@ namespace System.Web.Compilation
 				return;
 			
 			try {
-#if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
-#else
-				buildCacheLock.AcquireWriterLock (-1);
-#endif
 				if (HasCachedItemNoLock (virtualPath)) {
 					buildCache [virtualPath] = null;
 					OnEntryRemoved (virtualPath);
 				}
 			} finally {
-#if SYSTEMCORE_DEP
 				buildCacheLock.ExitWriteLock ();
-#else
-				buildCacheLock.ReleaseWriterLock ();
-#endif
 			}
 		}
 		
