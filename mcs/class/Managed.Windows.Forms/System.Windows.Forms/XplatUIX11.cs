@@ -6109,12 +6109,13 @@ namespace System.Windows.Forms {
 			}
 
 			hwnd.opacity = (uint)(0xffffffff * transparency);
-			opacity = (IntPtr)((int)hwnd.opacity);
+			opacity = (IntPtr)hwnd.opacity;
 
-			IntPtr w = hwnd.whole_window;
-			if (hwnd.reparented)
-				w = XGetParent (hwnd.whole_window);
-			XChangeProperty(DisplayHandle, w, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+			if (transparency >= 1.0) {
+				XDeleteProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY);
+			} else {
+				XChangeProperty (DisplayHandle, hwnd.whole_window, _NET_WM_WINDOW_OPACITY, (IntPtr)Atom.XA_CARDINAL, 32, PropertyMode.Replace, ref opacity, 1);
+			}
 		}
 
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom)
