@@ -1505,6 +1505,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO]
+		internal override Screen[] AllScreens {
+			get {
+				// To support multiples, we need to use GetMonitorInfo API on Win32
+				return null;
+			}
+		}
+
 		internal override bool ThemesEnabled {
 			get {
 				return XplatUIWin32.themes_enabled;

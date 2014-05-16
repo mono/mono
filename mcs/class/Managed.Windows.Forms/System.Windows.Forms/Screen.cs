@@ -24,21 +24,13 @@
 //
 //
 
-// NOTE: We made a concious decision to have only a single 'screen'
-// due to the differences in platforms. On Win32 we could gather
-// all information, but not for X11 (and possibly Mac). So for now
-// we'll stick with a single screen, but the functions are still 
-// written to support multiple screens, simply beef up the all_screens 
-// assignment to get multiples
-// To support multiples, we need to use GetMonitorInfo API on Win32
-
 using System;
 using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class Screen {
 		#region Local Variables
-		private static Screen[] all_screens = { new Screen(true, "Mono MWF Primary Display", SystemInformation.VirtualScreen, SystemInformation.WorkingArea) };
+		private static Screen[] all_screens;
 		private bool		primary;
 		private Rectangle	bounds;
 		private Rectangle	workarea;
@@ -47,12 +39,28 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region	Constructors
-		private Screen() {
-			this.primary = true;
-			this.bounds = SystemInformation.WorkingArea;
+		static Screen ()
+		{
+			try {
+				all_screens = XplatUI.AllScreens;
+			}
+			catch (Exception e) {
+				Console.WriteLine ("{0} trying to get all screens: {1}", e.GetType (), e.Message);
+			}
+
+			if (all_screens == null || all_screens.Length == 0) {
+				// just use a default one
+				all_screens = new[] { new Screen(true, "Mono MWF Primary Display",
+					XplatUI.VirtualScreen, XplatUI.WorkingArea) };
+			}
 		}
 
-		private Screen(bool primary, string name, Rectangle bounds, Rectangle workarea) {
+		internal Screen() {
+			this.primary = true;
+			this.bounds = XplatUI.WorkingArea;
+		}
+
+		internal Screen(bool primary, string name, Rectangle bounds, Rectangle workarea) {
 			this.primary = primary;
 			this.name = name;
 			this.bounds = bounds;
