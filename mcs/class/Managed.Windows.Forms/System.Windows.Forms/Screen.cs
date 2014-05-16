@@ -24,21 +24,13 @@
 //
 //
 
-// NOTE: We made a concious decision to have only a single 'screen'
-// due to the differences in platforms. On Win32 we could gather
-// all information, but not for X11 (and possibly Mac). So for now
-// we'll stick with a single screen, but the functions are still 
-// written to support multiple screens, simply beef up the all_screens 
-// assignment to get multiples
-// To support multiples, we need to use GetMonitorInfo API on Win32
-
 using System;
 using System.Drawing;
 
 namespace System.Windows.Forms {
 	public class Screen {
 		#region Local Variables
-		private static Screen[] all_screens = { new Screen(true, "Mono MWF Primary Display", SystemInformation.VirtualScreen, SystemInformation.WorkingArea) };
+		private static Screen[] all_screens;
 		private bool		primary;
 		private Rectangle	bounds;
 		private Rectangle	workarea;
@@ -47,12 +39,28 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region	Constructors
-		private Screen() {
-			this.primary = true;
-			this.bounds = SystemInformation.WorkingArea;
+		static Screen ()
+		{
+			try {
+				all_screens = XplatUI.AllScreens;
+			}
+			catch (Exception e) {
+				Console.WriteLine ("{0} trying to get all screens: {1}", e.GetType (), e.Message);
+			}
+
+			if (all_screens == null || all_screens.Length == 0) {
+				// just use a default one
+				all_screens = new[] { new Screen(true, "Mono MWF Primary Display",
+					XplatUI.VirtualScreen, XplatUI.WorkingArea) };
+			}
 		}
 
-		private Screen(bool primary, string name, Rectangle bounds, Rectangle workarea) {
+		internal Screen() {
+			this.primary = true;
+			this.bounds = XplatUI.WorkingArea;
+		}
+
+		internal Screen(bool primary, string name, Rectangle bounds, Rectangle workarea) {
 			this.primary = primary;
 			this.name = name;
 			this.bounds = bounds;
@@ -133,7 +141,33 @@ namespace System.Windows.Forms {
 		}
 
 		public static Screen FromRectangle(Rectangle rect) {
-			return Screen.FromPoint(new Point(rect.Left, rect.Top));
+			Screen bestScrn = null;
+			int closest = Int32.MaxValue;
+			foreach (Screen scrn in Screen.AllScreens) {
+				Rectangle rcBounds = scrn.Bounds;
+				int distance = 0;
+				if (rect.Left > rcBounds.Right)
+					distance += rect.Left - rcBounds.Right;
+				else if (rcBounds.Left > rect.Left)
+					distance += rcBounds.Left - rect.Left;
+				if (rcBounds.Left > rect.Right)
+					distance += rcBounds.Left - rect.Right;
+				else if (rect.Right > rcBounds.Right)
+					distance += rect.Right - rcBounds.Right;
+				if (rect.Top > rcBounds.Bottom)
+					distance += rect.Top - rcBounds.Bottom;
+				else if (rcBounds.Top > rect.Top)
+					distance += rcBounds.Top - rect.Top;
+				if (rcBounds.Top > rect.Bottom)
+					distance += rcBounds.Top - rect.Bottom;
+				else if (rect.Bottom > rcBounds.Bottom)
+					distance += rect.Bottom - rcBounds.Bottom;
+				if (distance < closest) {
+					bestScrn = scrn;
+					closest = distance;
+				}
+			}
+			return bestScrn;
 		}
 
 		public static Rectangle GetBounds(Control ctl) {

@@ -2594,6 +2594,28 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override Screen[] AllScreens {
+			get {
+				if (!XineramaIsActive (DisplayHandle))
+					return null;
+				int nScreens;
+				IntPtr xineramaScreens = XineramaQueryScreens (DisplayHandle, out nScreens);
+				var screens = new Screen [nScreens];
+				IntPtr current = xineramaScreens;
+				for (int i = 0; i < nScreens; i++) {
+					var screen = (XineramaScreenInfo)Marshal.PtrToStructure (current,
+						typeof (XineramaScreenInfo));
+					var screenRect = new Rectangle (screen.x_org, screen.y_org, screen.width,
+						screen.height);
+					var name = string.Format ("Display {0}", screen.screen_number);
+					screens [i] = new Screen (i == 0, name, screenRect, screenRect);
+					current = (IntPtr)( (ulong)current + (ulong)Marshal.SizeOf(typeof (XineramaScreenInfo)));
+				}
+				XFree (xineramaScreens);
+				return screens;
+			}
+		}
+
 		internal override bool ThemesEnabled {
 			get {
 				return XplatUIX11.themes_enabled;
@@ -7236,6 +7258,34 @@ namespace System.Windows.Forms {
 		}
 #endregion
 
+#region Xinerama imports
+		[DllImport ("libXinerama", EntryPoint="XineramaQueryScreens")]
+		extern static IntPtr _XineramaQueryScreens (IntPtr display, out int number);
+		internal static IntPtr XineramaQueryScreens (IntPtr display, out int number)
+		{
+			DebugHelper.TraceWriteLine ("XineramaQueryScreens");
+			return _XineramaQueryScreens (display, out number);
+		}
+
+		[DllImport ("libXinerama", EntryPoint="XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			DebugHelper.TraceWriteLine ("XineramaIsActive");
+
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
+#endregion
 
 #else //no TRACE defined
 
@@ -7604,6 +7654,29 @@ namespace System.Windows.Forms {
 
 		[DllImport("libgtk-x11-2.0")]
 		internal extern static void gtk_clipboard_set_text (IntPtr clipboard, string text, int len);
+#endregion
+
+
+#region Xinerama imports
+		[DllImport ("libXinerama")]
+		internal extern static IntPtr XineramaQueryScreens (IntPtr display, out int number);
+
+		[DllImport ("libXinerama", EntryPoint = "XineramaIsActive")]
+		extern static bool _XineramaIsActive (IntPtr display);
+		static bool XineramaNotInstalled;
+
+		internal static bool XineramaIsActive (IntPtr display)
+		{
+			if (XineramaNotInstalled)
+				return false;
+			try {
+				return _XineramaIsActive (display);
+			} catch (DllNotFoundException) {
+				// Xinerama isn't installed
+				XineramaNotInstalled = true;
+				return false;
+			}
+		}
 #endregion
 
 #endif
