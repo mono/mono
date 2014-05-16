@@ -235,6 +235,36 @@ namespace MonoTests.Microsoft.Build.Execution
 			var proj = new ProjectInstance (root);
 			Assert.AreEqual ("xxx;yyy", proj.ExpandString ("@(FOO)"), "#1"); // so, metadata is gone...
 		}
+
+		[Test]
+		public void EvaluatePropertyWithQuotation ()
+		{
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='abc/xxx.txt' />
+  </ItemGroup>
+  <PropertyGroup>
+    <B>foobar</B>
+  </PropertyGroup>
+  <Target Name='default'>
+    <CreateProperty Value=""@(Foo->'%(Filename)%(Extension)')"">
+      <Output TaskParameter='Value' PropertyName='P' />
+    </CreateProperty>
+    <CreateProperty Value='$(B)|$(P)'>
+      <Output TaskParameter='Value' PropertyName='Q' />
+    </CreateProperty>
+  </Target>
+</Project>";
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.EvaluatePropertyWithQuotation.proj";
+			var proj = new ProjectInstance (root);
+			proj.Build ();
+			var p = proj.GetProperty ("P");
+			Assert.AreEqual ("xxx.txt", p.EvaluatedValue, "#1");
+			var q = proj.GetProperty ("Q");
+			Assert.AreEqual ("foobar|xxx.txt", q.EvaluatedValue, "#2");
+		}
 	}
 	
 	namespace SubNamespace
