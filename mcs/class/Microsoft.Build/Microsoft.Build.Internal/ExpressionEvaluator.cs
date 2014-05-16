@@ -102,14 +102,6 @@ namespace Microsoft.Build.Internal.Expressions
 				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}': {1}", source, ex.Message), ex);
 			}
 		}
-
-		public IEnumerable<object> EvaluateAsStringOrItems (string unexpandedValue)
-		{
-			var exprList = new ExpressionParserManual (unexpandedValue ?? string.Empty, ExpressionValidationType.LaxString).Parse ();
-			if (exprList == null)
-				throw new ArgumentNullException ("exprList");
-			return exprList.Select (e => e.EvaluateAsString (CreateContext (unexpandedValue)));
-		}
 	}
 	
 	class EvaluationContext
