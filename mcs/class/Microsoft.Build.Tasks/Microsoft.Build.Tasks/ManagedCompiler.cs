@@ -156,6 +156,15 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
+		protected internal virtual bool UseAlternateCommandLineToolToExecute ()
+		{
+			//
+			// If an alternate tool name or tool path was specified in the project file, then that tool is used 
+			// rather than the host compiler for integrated development environment (IDE) builds.
+			//
+			return !string.IsNullOrEmpty (ToolPath) || ToolName != ToolExe;
+		}
+
 		[MonoTODO]
 		protected override bool ValidateParameters ()
 		{
