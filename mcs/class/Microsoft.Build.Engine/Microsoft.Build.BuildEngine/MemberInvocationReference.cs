@@ -184,6 +184,10 @@ namespace Microsoft.Build.BuildEngine
 				var s = value as string;
 				if (s != null)
 					return ConvertToEnum (s, ptype);
+			} else if (ptype == typeof (char[])) {
+				var s = value as string;
+				if (s != null)
+					return s.ToCharArray ();
 			}
 
 			try {
