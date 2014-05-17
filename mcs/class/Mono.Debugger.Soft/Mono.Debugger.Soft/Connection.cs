@@ -415,7 +415,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 33;
+		internal const int MINOR_VERSION = 34;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -484,7 +484,9 @@ namespace Mono.Debugger.Soft
 			SET_KEEPALIVE = 10,
 			GET_TYPES_FOR_SOURCE_FILE = 11,
 			GET_TYPES = 12,
-			INVOKE_METHODS = 13
+			INVOKE_METHODS = 13,
+			START_BUFFERING = 14,
+			STOP_BUFFERING = 15
 		}
 
 		enum CmdEvent {
@@ -1680,6 +1682,14 @@ namespace Mono.Debugger.Soft
 			for (int i = 0; i < count; ++i)
 				types [i] = res.ReadId ();
 			return types;
+		}
+
+		internal void VM_StartBuffering () {
+			SendReceive (CommandSet.VM, (int)CmdVM.START_BUFFERING);
+		}
+
+		internal void VM_StopBuffering () {
+			SendReceive (CommandSet.VM, (int)CmdVM.STOP_BUFFERING);
 		}
 
 		/*
